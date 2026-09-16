@@ -68,11 +68,11 @@
     align-items: center;
     justify-content: space-between;
     padding: 16px 32px;
-    background: rgba(13, 18, 15, 0.75);
+    background: rgba(13, 18, 15, 0.85);
     backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--card-border);
   }
-  [data-theme="light"] .topnav { background: rgba(244, 241, 234, 0.85); }
+  [data-theme="light"] .topnav { background: rgba(244, 241, 234, 0.88); }
 
   .nav-controls { display: flex; align-items: center; gap: 10px; }
 
@@ -81,6 +81,8 @@
     color: var(--text); padding: 8px 14px; border-radius: 20px;
     font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 6px;
     transition: all 0.2s ease;
+    min-height: 40px;
+    touch-action: manipulation;
   }
   .theme-toggle:hover, .accent-select:hover, .btn-secondary:hover { border-color: var(--today); }
 
@@ -152,12 +154,14 @@
   }
 
   .btn-primary {
-    display: inline-flex; align-items: center; gap: 10px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
     background: linear-gradient(135deg, var(--today) 0%, #E8B96C 100%);
     color: #0D120F; font-weight: 600; font-size: 1rem; padding: 16px 32px;
     border-radius: 14px; border: none; cursor: pointer;
     box-shadow: 0 4px 24px var(--accent-glow);
     transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+    min-height: 48px;
+    touch-action: manipulation;
   }
   .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(242, 204, 143, 0.3); }
 
@@ -180,7 +184,7 @@
   }
 
   .hero-content {
-    position: relative; z-index: 2; padding: 140px 0 60px;
+    position: relative; z-index: 2; padding: 120px 0 60px;
     display: flex; flex-direction: column; align-items: center;
     pointer-events: none; width: 100%;
   }
@@ -200,14 +204,13 @@
     opacity: 0; animation: fadeInSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
   }
 
-  /* --- SLIT-SCAN REVEAL & TYPEWRITER ANIMATION (STABLE) --- */
   .combined-heading {
     display: flex;
     justify-content: center;
     align-items: baseline;
     flex-wrap: wrap;
     font-family: 'Fraunces', Georgia, serif;
-    font-size: clamp(2.2rem, 5.5vw, 4.2rem);
+    font-size: clamp(2rem, 5.5vw, 4.2rem);
     font-weight: 700;
     line-height: 1.25;
     margin: 0 0 24px;
@@ -275,7 +278,7 @@
   }
 
   .hero p {
-    font-size: 1.2rem; color: var(--text-dim); max-width: 52ch;
+    font-size: clamp(1rem, 2vw, 1.2rem); color: var(--text-dim); max-width: 52ch;
     line-height: 1.65; margin: 0 0 24px; font-weight: 300;
     opacity: 0; animation: fadeInSlideUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
   }
@@ -285,32 +288,37 @@
     border-radius: 20px; padding: 24px; margin-bottom: 32px;
     display: flex; flex-direction: column; gap: 16px; text-align: left;
     max-width: 640px; width: 100%; box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    backdrop-filter: blur(8px);
     opacity: 0; animation: fadeInSlideUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 1.0s forwards;
     pointer-events: auto;
   }
 
   .today-card-header {
     display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 10px; border-bottom: 1px solid var(--card-border);
+    flex-wrap: wrap; gap: 12px; border-bottom: 1px solid var(--card-border);
     padding-bottom: 12px;
   }
 
   .today-preview-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--today); font-weight: 600; }
 
-  .macro-chips { display: flex; gap: 8px; }
+  .macro-chips { display: flex; gap: 8px; flex-wrap: wrap; }
   .chip { background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; color: var(--text-dim); }
 
-  .dietary-toggle { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--text-dim); }
-  .dietary-toggle input { cursor: pointer; accent-color: var(--today); }
+  .dietary-toggle { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-dim); cursor: pointer; }
+  .dietary-toggle input { cursor: pointer; accent-color: var(--today); width: 18px; height: 18px; }
 
   .today-checklist { display: flex; flex-direction: column; gap: 10px; }
-  .meal-item-row { display: flex; align-items: center; gap: 12px; font-size: 0.95rem; line-height: 1.4; color: var(--text); }
+  .meal-item-row { 
+    display: flex; align-items: center; gap: 12px; font-size: 0.95rem; line-height: 1.4; color: var(--text);
+    padding: 8px 12px; border-radius: 10px; background: rgba(255,255,255,0.02); transition: background 0.2s ease;
+  }
+  .meal-item-row:hover { background: var(--card-hover); }
   .meal-item-row.completed span { text-decoration: line-through; opacity: 0.5; }
-  .meal-item-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--today); cursor: pointer; }
+  .meal-item-row input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--today); cursor: pointer; flex-shrink: 0; }
 
   .principles {
-    position: relative; z-index: 2; padding: 40px 0 100px;
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
+    position: relative; z-index: 2; padding: 40px 0 80px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
   }
 
   .principle {
@@ -329,39 +337,39 @@
   .principle h3 { font-family: 'Fraunces', serif; font-size: 1.25rem; margin: 0 0 12px; }
   .principle p { font-size: 0.95rem; color: var(--text-dim); line-height: 1.6; margin: 0; }
 
-  @media (max-width: 860px) { .principles { grid-template-columns: 1fr; } }
-
+  /* --- ADAPTIVE FOOTER STYLING --- */
   .site-footer {
     position: relative; z-index: 2;
     background: var(--card); border-top: 1px solid var(--card-border);
-    padding: 64px 0 32px; margin-top: 40px;
+    padding: 56px 0 32px; margin-top: 40px;
   }
-  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
   .footer-col h4 { font-family: 'Fraunces', serif; font-size: 1.1rem; margin: 0 0 16px; }
   .footer-col p { color: var(--text-dim); font-size: 0.9rem; line-height: 1.6; margin: 0; }
-  .footer-links { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
-  .footer-links a { color: var(--text-dim); font-size: 0.9rem; transition: color 0.2s ease; }
+  .footer-links { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+  .footer-links a { color: var(--text-dim); font-size: 0.9rem; transition: color 0.2s ease; display: inline-block; padding: 2px 0; }
   .footer-links a:hover { color: var(--today); }
 
   .footer-bottom {
     border-top: 1px solid var(--card-border);
-    padding-top: 28px; display: flex; align-items: center; justify-content: space-between;
+    padding-top: 24px; display: flex; align-items: center; justify-content: space-between;
     flex-wrap: wrap; gap: 16px; font-size: 0.85rem; color: var(--text-dim);
   }
 
   .signature { font-family: 'Caveat', cursive; color: var(--today); font-size: 1.3rem; font-weight: 600; }
 
+  /* --- MODAL STYLING --- */
   .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    position: fixed; inset: 0; background: rgba(0,0,0,0.75);
     backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center;
     z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-    padding: 20px;
+    padding: 16px;
   }
   .modal-overlay.open { opacity: 1; pointer-events: auto; }
 
   .modal-card {
     background: var(--card); border: 1px solid var(--card-border);
-    border-radius: 24px; max-width: 500px; width: 100%; max-height: 80vh;
+    border-radius: 24px; max-width: 500px; width: 100%; max-height: 85vh;
     display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
   }
 
@@ -370,11 +378,52 @@
     display: flex; justify-content: space-between; align-items: center;
   }
   .modal-header h3 { font-family: 'Fraunces', serif; margin: 0; font-size: 1.25rem; }
-  .close-modal { background: none; border: none; color: var(--text-dim); font-size: 1.4rem; cursor: pointer; }
+  .close-modal { background: none; border: none; color: var(--text-dim); font-size: 1.5rem; cursor: pointer; padding: 4px; }
 
   .modal-body { padding: 24px; overflow-y: auto; line-height: 1.6; color: var(--text-dim); font-size: 0.95rem; }
   .modal-body ul { padding-left: 20px; margin: 8px 0 20px; color: var(--text); }
   .modal-footer { padding: 16px 24px; border-top: 1px solid var(--card-border); text-align: right; }
+
+  /* --- MEDIA QUERIES FOR DEVICE ADAPTABILITY --- */
+  @media (max-width: 860px) {
+    .principles { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 768px) {
+    .topnav { padding: 12px 16px; }
+    .wrap { padding: 0 16px; }
+    
+    /* Responsive Footer Stacking */
+    .footer-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .hero-actions {
+      width: 100%;
+      flex-direction: column;
+    }
+
+    .btn-primary, .btn-secondary {
+      width: 100%;
+    }
+
+    .today-card-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .brand { font-size: 1.2rem; }
+    .today-preview-box { padding: 16px; }
+    .footer-bottom {
+      flex-direction: column;
+      text-align: center;
+      gap: 12px;
+    }
+    .modal-card { max-height: 90vh; border-radius: 18px; }
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .word-mask span, .accent-mask-inner, .badge-tag, .hero p, .today-preview-box, .principle {
@@ -422,7 +471,6 @@
   <div class="hero-content wrap">
     <div class="badge-tag">🌱 Complete Weekly Nutrition</div>
     
-    <!-- Slit-Scan Masking Intro into Dynamic Typewriter Header -->
     <h1 class="combined-heading">
       <div class="word-mask"><span>Eat</span></div>
       <div class="word-mask"><span>Well,</span></div>
@@ -441,7 +489,7 @@
       <div class="today-card-header">
         <div>
           <div class="today-preview-title" id="todayTitle">Today's Menu</div>
-          <div class="macro-chips" style="margin-top:4px;">
+          <div class="macro-chips" style="margin-top:6px;">
             <span class="chip">~2,050 kcal</span>
             <span class="chip">135g Protein</span>
             <span class="chip">42g Fiber</span>
@@ -519,14 +567,14 @@
     <div class="footer-bottom">
       <div>Weekly family meal system · Auto-resets every Monday</div>
       <div>
-        &copy; 2026 All rights reserved. Developed by <span class="signature" cite="topic-1">Sumit Rajbanshi</span>
+        &copy; 2026 All rights reserved. Developed by <span class="signature">Sumit Rajbanshi</span>
       </div>
     </div>
   </div>
 </footer>
 
 <script>
-  /* Theme & Custom Accent Controller */
+  /* Theme Controller */
   (function() {
     const savedTheme = localStorage.getItem('nutriFlowTheme') || 'dark';
     const savedAccent = localStorage.getItem('nutriFlowAccent') || 'gold';
@@ -556,7 +604,7 @@
     }
   })();
 
-  /* Mobile Navigation Controller */
+  /* Mobile Nav Controller */
   (function () {
     const btn = document.getElementById('menuBtn');
     const panel = document.getElementById('navPanel');
@@ -571,7 +619,7 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
   })();
 
-  /* Dynamic Menu & Checklist Controller */
+  /* Checklist Controller */
   (function () {
     const PLAN = {
       Monday: {
@@ -645,7 +693,7 @@
     renderChecklist();
   })();
 
-  /* Scroll Observer */
+  /* Observer */
   (function() {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -658,7 +706,7 @@
     document.querySelectorAll('.principle').forEach(card => observer.observe(card));
   })();
 
-  /* Grocery Modal Controller */
+  /* Grocery Modal */
   (function() {
     const modal = document.getElementById('groceryModal');
     const openBtn = document.getElementById('groceryBtn');
@@ -704,7 +752,7 @@
     function initNodes() {
       const count = Math.round((w * h) / 9000);
       const colors = ['#F2CC8F', '#E07A5F', '#81B29A', '#6A93B0'];
-      nodes = Array.from({ length: Math.max(60, Math.min(count, 130)) }, () => {
+      nodes = Array.from({ length: Math.max(50, Math.min(count, 120)) }, () => {
         const speed = 0.8 + Math.random() * 1.0;
         const angle = Math.random() * Math.PI * 2;
         return {
@@ -725,10 +773,10 @@
           const dx = nodes[i].x - nodes[j].x;
           const dy = nodes[i].y - nodes[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 140) {
+          if (dist < 130) {
             ctx.beginPath();
             ctx.strokeStyle = lineColor;
-            ctx.globalAlpha = (1 - dist / 140) * 0.25;
+            ctx.globalAlpha = (1 - dist / 130) * 0.25;
             ctx.lineWidth = 1;
             ctx.moveTo(nodes[i].x, nodes[i].y);
             ctx.lineTo(nodes[j].x, nodes[j].y);
@@ -793,7 +841,7 @@
     resize(); initNodes(); renderFrame();
   })();
 
-  /* Dynamic Typewriter Sequence Controller */
+  /* Typewriter Loop */
   (function() {
     const words = ["Feel Great.", "Boost Energy.", "Stay Consistent.", "Repeat."];
     let wordIndex = 0;
@@ -828,7 +876,6 @@
       setTimeout(runTypewriterLoop, speed);
     }
 
-    // Delay typewriter handoff until reveal completes
     setTimeout(() => {
       cursor.classList.add('active');
       setTimeout(() => {
