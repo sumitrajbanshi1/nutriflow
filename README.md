@@ -23,15 +23,6 @@ NutriFlow is a minimalist, responsive web application designed for family meal p
 
 ---
 
-## 🚀 Live Demo
-
-Check out the live website on GitHub Pages:
-`https://YOUR-USERNAME.github.io/YOUR-REPO-NAME/`
-
-*(Replace `YOUR-USERNAME` and `YOUR-REPO-NAME` with your actual GitHub repository details)*
-
----
-
 ## 📁 Project Structure
 
 ```text
