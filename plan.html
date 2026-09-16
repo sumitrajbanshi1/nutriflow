@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>This Week's Plan — NutriFlow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0D120F;
+    --card: #16201B;
+    --card-hover: #1E2B25;
+    --card-border: rgba(255, 255, 255, 0.08);
+    --text: #F7F4EF;
+    --text-dim: #9EAFA3;
+    --breakfast: #E07A5F;
+    --lunch: #81B29A;
+    --dinner: #6A93B0;
+    --today: #F2CC8F;
+    --accent-glow: rgba(242, 204, 143, 0.12);
+  }
+
+  [data-theme="light"] {
+    --bg: #F4F1EA;
+    --card: #FFFFFF;
+    --card-hover: #F8F6F0;
+    --card-border: rgba(0, 0, 0, 0.08);
+    --text: #1C241F;
+    --text-dim: #5C6E62;
+    --today: #D99B26;
+    --accent-glow: rgba(217, 155, 38, 0.15);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height: 100vh; -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  body { padding: 100px 0 0; }
+
+  .topnav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 40;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 32px; background: rgba(13, 18, 15, 0.85);
+    backdrop-filter: blur(16px); border-bottom: 1px solid var(--card-border);
+  }
+  [data-theme="light"] .topnav { background: rgba(244, 241, 234, 0.85); }
+
+  .nav-controls { display: flex; align-items: center; gap: 12px; }
+
+  .theme-toggle {
+    background: var(--card); border: 1px solid var(--card-border);
+    color: var(--text); padding: 8px 14px; border-radius: 20px;
+    font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 6px;
+  }
+
+  .brand {
+    font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.35rem;
+    background: linear-gradient(135deg, var(--text) 30%, var(--today) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  .menu-btn {
+    width: 42px; height: 42px; border-radius: 12px;
+    border: 1px solid var(--card-border); background: var(--card);
+    cursor: pointer; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 5px; padding: 0;
+  }
+  .menu-btn span { display: block; width: 18px; height: 2px; background: var(--text); border-radius: 2px; }
+
+  .nav-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 45;
+  }
+  .nav-overlay.open { opacity: 1; pointer-events: auto; }
+
+  .nav-panel {
+    position: fixed; top: 0; right: 0; height: 100%;
+    width: min(320px, 85vw); background: var(--card);
+    border-left: 1px solid var(--card-border);
+    transform: translateX(100%); transition: transform 0.35s ease;
+    z-index: 50; padding: 100px 32px 32px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .nav-panel.open { transform: translateX(0); }
+  .nav-panel a { font-size: 1.15rem; padding: 12px 0; border-bottom: 1px solid var(--card-border); color: var(--text-dim); }
+  .nav-panel a:hover, .nav-panel a.active { color: var(--text); padding-left: 8px; font-weight: 600; }
+  .nav-panel .nav-note { margin-top: auto; font-size: 0.85rem; color: var(--text-dim); opacity: 0.7; line-height: 1.6; }
+
+  .wrap { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+
+  h1.page-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 2.5rem; margin: 0 0 10px; }
+  .sub { color: var(--text-dim); font-size: 1.05rem; margin: 0 0 24px; font-weight: 300; }
+
+  .action-toolbar { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
+  .tool-btn {
+    background: var(--card); border: 1px solid var(--card-border);
+    color: var(--text); padding: 10px 18px; border-radius: 12px;
+    font-size: 0.88rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px;
+    transition: all 0.2s ease;
+  }
+  .tool-btn:hover { border-color: var(--today); color: var(--today); }
+
+  .progress-card {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 18px; padding: 20px 24px; margin-bottom: 32px;
+  }
+  .progress-head { display: flex; justify-content: space-between; font-size: 0.92rem; margin-bottom: 12px; }
+  .progress-track { height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--today); border-radius: 4px; width: 0%; transition: width 0.4s ease; }
+
+  .day-block {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 20px; margin-bottom: 20px; overflow: hidden;
+  }
+  .day-block.today { border-color: var(--today); box-shadow: 0 0 24px var(--accent-glow); }
+
+  .day-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 24px 14px; background: rgba(255,255,255,0.01);
+  }
+  .day-name { font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.3rem; }
+  .today-tag {
+    font-size: 0.72rem; color: #0D120F; background: var(--today);
+    padding: 4px 10px; border-radius: 12px; font-weight: 700; display: none;
+  }
+  .day-block.today .today-tag { display: inline-block; }
+
+  .meal-row {
+    display: flex; align-items: flex-start; gap: 16px;
+    padding: 16px 24px; border-top: 1px solid var(--card-border);
+  }
+  .meal-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+  .meal-row.breakfast .meal-dot { background: var(--breakfast); }
+  .meal-row.lunch .meal-dot { background: var(--lunch); }
+  .meal-row.dinner .meal-dot { background: var(--dinner); }
+
+  .meal-info { flex: 1; }
+  .meal-label { font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+  .meal-badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 6px; background: rgba(255,255,255,0.05); color: var(--text-dim); margin-left: 6px; }
+  .meal-name { font-size: 1.05rem; font-weight: 600; margin: 4px 0; }
+  .meal-note { font-size: 0.9rem; color: var(--text-dim); margin: 0; font-weight: 300; }
+
+  .check-btn {
+    width: 30px; height: 30px; border-radius: 50%;
+    border: 2px solid var(--card-border); background: transparent;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0;
+  }
+  .check-btn.checked { background: var(--today); border-color: var(--today); }
+  .check-btn svg { width: 14px; height: 14px; stroke: #0D120F; stroke-width: 3; fill: none; stroke-dasharray: 20; stroke-dashoffset: 20; }
+  .check-btn.checked svg { stroke-dashoffset: 0; }
+
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
+    display: flex; align-items: center; justify-content: center; z-index: 100;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease; padding: 20px;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: auto; }
+  .modal-card {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 20px; max-width: 540px; width: 100%; max-height: 80vh;
+    display: flex; flex-direction: column; overflow: hidden; padding: 24px;
+  }
+  .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .modal-head h3 { font-family: 'Fraunces', serif; margin: 0; font-size: 1.4rem; }
+  .modal-body { overflow-y: auto; font-size: 0.95rem; color: var(--text-dim); line-height: 1.6; margin-bottom: 20px; }
+  .modal-body ul { padding-left: 20px; margin: 10px 0; }
+  .close-btn { background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; }
+
+  .site-footer {
+    background: var(--card); border-top: 1px solid var(--card-border);
+    padding: 64px 0 32px; margin-top: 60px;
+  }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+  .footer-col h4 { font-family: 'Fraunces', serif; font-size: 1.1rem; margin: 0 0 16px; }
+  .footer-col p { color: var(--text-dim); font-size: 0.9rem; line-height: 1.6; margin: 0; }
+  .footer-links { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .footer-links a { color: var(--text-dim); font-size: 0.9rem; transition: color 0.2s ease; }
+  .footer-links a:hover { color: var(--today); }
+
+  .footer-bottom {
+    border-top: 1px solid var(--card-border);
+    padding-top: 28px; display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px; font-size: 0.85rem; color: var(--text-dim);
+  }
+
+  .signature { font-family: 'Caveat', cursive; color: var(--today); font-size: 1.3rem; font-weight: 600; }
+
+  @media print {
+    .topnav, .action-toolbar, .theme-toggle, .site-footer { display: none !important; }
+    body { background: #fff !important; color: #000 !important; padding: 0 !important; }
+    .day-block { border: 1px solid #ccc !important; page-break-inside: avoid; margin-bottom: 12px !important; }
+    .meal-name { color: #000 !important; }
+    .meal-note { color: #555 !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="brand" href="index.html">NutriFlow</a>
+  <div class="nav-controls">
+    <button class="theme-toggle" id="themeBtn" aria-label="Toggle Light/Dark Theme">
+      <span id="themeIcon">🌙</span> <span id="themeLabel">Dark</span>
+    </button>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="nav-overlay" id="navOverlay"></div>
+<aside class="nav-panel" id="navPanel">
+  <a href="index.html">Home</a>
+  <a href="plan.html" class="active">This Week's Plan</a>
+  <p class="nav-note">Shared family meal routine · Automatically resets every Monday morning.</p>
+</aside>
+
+<main class="wrap">
+  <header class="page-head">
+    <h1 class="page-title">Weekly Tracker</h1>
+    <p class="sub">Tick off prepped meals for the family. Progress automatically resets every Monday.</p>
+    
+    <div class="action-toolbar">
+      <button class="tool-btn" id="groceryBtn">🛒 Generate Grocery List</button>
+      <button class="tool-btn" onclick="window.print()">🖨️ Print Plan</button>
+      <button class="tool-btn" id="resetBtn">🔄 Reset Checkmarks</button>
+    </div>
+
+    <div class="progress-card">
+      <div class="progress-head">
+        <span>Weekly Completion</span>
+        <strong id="progressLabel">0 / 21</strong>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+  </header>
+
+  <div id="days"></div>
+</main>
+
+<div class="modal-overlay" id="groceryModal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3>Weekly Grocery List</h3>
+      <button class="close-btn" id="closeModal">&times;</button>
+    </div>
+    <div class="modal-body" id="groceryContent">
+      Loading ingredients...
+    </div>
+    <button class="tool-btn" id="copyListBtn" style="justify-content: center; background: var(--today); color: #0D120F; font-weight:600;">Copy to Clipboard</button>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <a class="brand" href="index.html" style="display:inline-block; margin-bottom:12px;">NutriFlow</a>
+        <p>Simplifying all-day whole-food meal planning for healthy families. Designed to auto-reset every week to keep routine effortless.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul class="footer-links">
+          <li><a href="index.html">Home Overview</a></li>
+          <li><a href="plan.html">Weekly Tracker</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Guidelines</h4>
+        <p>No pork or beef items in any meal. Rich in dietary fiber, clean proteins, and unprocessed whole grains.</p>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <div>Weekly family meal system · Auto-resets every Monday</div>
+      <div>
+        &copy; 2026 All rights reserved. Developed by <span class="signature">Sumit Rajbanshi</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function() {
+    const saved = localStorage.getItem('nutriFlowTheme') || 'dark';
+    document.documentElement.setAttribute('data-theme', saved);
+    updateThemeUI(saved);
+
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('nutriFlowTheme', next);
+      updateThemeUI(next);
+    });
+
+    function updateThemeUI(theme) {
+      document.getElementById('themeIcon').textContent = theme === 'dark' ? '🌙' : '☀️';
+      document.getElementById('themeLabel').textContent = theme === 'dark' ? 'Dark' : 'Light';
+    }
+  })();
+
+  (function () {
+    const btn = document.getElementById('menuBtn');
+    const panel = document.getElementById('navPanel');
+    const overlay = document.getElementById('navOverlay');
+    function setOpen(open) {
+      btn.classList.toggle('open', open);
+      panel.classList.toggle('open', open);
+      overlay.classList.toggle('open', open);
+    }
+    btn.addEventListener('click', () => setOpen(!panel.classList.contains('open')));
+    overlay.addEventListener('click', () => setOpen(false));
+  })();
+
+  const PLAN = [
+    { day: "Monday", meals: {
+      breakfast: { name: "Overnight oats + chia", note: "Yogurt, banana slices, walnuts, cinnamon", badge: "High Fiber" },
+      lunch: { name: "Rajma (kidney bean curry)", note: "Brown rice, cucumber salad", badge: "Protein" },
+      dinner: { name: "Vegetable soup", note: "Grilled paneer or egg, salad", badge: "Light" }
+    }},
+    { day: "Tuesday", meals: {
+      breakfast: { name: "Multigrain toast", note: "Avocado, tomato, hung curd dip, boiled egg", badge: "Quick" },
+      lunch: { name: "Grilled chicken", note: "Mixed veg sabzi, 2 multigrain rotis", badge: "High Protein" },
+      dinner: { name: "Moong dal soup", note: "Sautéed greens, 1 roti", badge: "Light" }
+    }},
+    { day: "Wednesday", meals: {
+      breakfast: { name: "Overnight oats + chia", note: "Yogurt, grated apple, almonds, raisins", badge: "High Fiber" },
+      lunch: { name: "Chana dal", note: "Lauki sabzi, brown rice", badge: "Fiber" },
+      dinner: { name: "Grilled fish", note: "Steamed vegetables", badge: "Lean Protein" }
+    }},
+    { day: "Thursday", meals: {
+      breakfast: { name: "Multigrain toast", note: "Avocado, cucumber, hung curd dip", badge: "Quick" },
+      lunch: { name: "Light fish curry", note: "Steamed rice, salad", badge: "Omega-3" },
+      dinner: { name: "Light egg curry", note: "1 roti, salad", badge: "Light" }
+    }},
+    { day: "Friday", meals: {
+      breakfast: { name: "Overnight oats + chia", note: "Yogurt, berries, pumpkin seeds, dates", badge: "High Fiber" },
+      lunch: { name: "Paneer bhurji", note: "Multigrain roti, salad", badge: "Protein" },
+      dinner: { name: "Chicken clear soup", note: "Stir-fried veggies", badge: "Light" }
+    }},
+    { day: "Saturday", meals: {
+      breakfast: { name: "Multigrain toast", note: "Avocado, tomato, lemon", badge: "Quick" },
+      lunch: { name: "Moong dal khichdi", note: "Brown rice, curd, veggies", badge: "Gut Health" },
+      dinner: { name: "Light vegetable khichdi", note: "Curd", badge: "Easy Prep" }
+    }},
+    { day: "Sunday", meals: {
+      breakfast: { name: "Overnight oats + chia", note: "Yogurt, dry fruits, peanut butter", badge: "Energy" },
+      lunch: { name: "Chicken or veg pulao", note: "Brown rice, raita", badge: "Family Meal" },
+      dinner: { name: "Light dal", note: "Sautéed spinach, 1 roti", badge: "Light" }
+    }},
+  ];
+
+  const MEAL_ORDER = ["breakfast", "lunch", "dinner"];
+
+  function getWeekKey(d = new Date()) {
+    const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    const dayNum = date.getUTCDay() || 7;
+    date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+    const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+    return `${date.getUTCFullYear()}-W${Math.ceil((((date - yearStart) / 86400000) + 1) / 7)}`;
+  }
+
+  const STORAGE_KEY = "nutriFlowChecksV1";
+  const weekKey = getWeekKey();
+
+  function loadChecks() {
+    try { return (JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"))[weekKey] || {}; }
+    catch (e) { return {}; }
+  }
+
+  function saveChecks(checks) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ [weekKey]: checks }));
+  }
+
+  let checks = loadChecks();
+  const todayName = new Date().toLocaleDateString("en-US", { weekday: "long" });
+
+  const daysEl = document.getElementById("days");
+  const progressFill = document.getElementById("progressFill");
+  const progressLabel = document.getElementById("progressLabel");
+
+  function keyFor(day, meal) { return `${day}__${meal}`; }
+
+  function render() {
+    daysEl.innerHTML = "";
+    PLAN.forEach(item => {
+      const isToday = item.day === todayName;
+      const block = document.createElement("div");
+      block.className = `day-block${isToday ? " today" : ""}`;
+
+      let rowsHtml = "";
+      MEAL_ORDER.forEach(mealType => {
+        const meal = item.meals[mealType];
+        const k = keyFor(item.day, mealType);
+        const isChecked = !!checks[k];
+        rowsHtml += `
+          <div class="meal-row ${mealType}">
+            <span class="meal-dot"></span>
+            <div class="meal-info">
+              <div>
+                <span class="meal-label">${mealType}</span>
+                <span class="meal-badge">${meal.badge}</span>
+              </div>
+              <p class="meal-name">${meal.name}</p>
+              <p class="meal-note">${meal.note}</p>
+            </div>
+            <button class="check-btn${isChecked ? " checked" : ""}" data-key="${k}">
+              <svg viewBox="0 0 24 24"><polyline points="4,13 9,18 20,6"></polyline></svg>
+            </button>
+          </div>
+        `;
+      });
+
+      block.innerHTML = `
+        <div class="day-header">
+          <span class="day-name">${item.day}</span>
+          <span class="today-tag">TODAY</span>
+        </div>
+        ${rowsHtml}
+      `;
+      daysEl.appendChild(block);
+    });
+
+    daysEl.querySelectorAll(".check-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const k = btn.dataset.key;
+        checks[k] = !checks[k];
+        saveChecks(checks);
+        render();
+      });
+    });
+
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const total = PLAN.length * MEAL_ORDER.length;
+    const done = Object.values(checks).filter(Boolean).length;
+    progressFill.style.width = `${(done / total) * 100}%`;
+    progressLabel.textContent = `${done} / ${total}`;
+  }
+
+  const modal = document.getElementById('groceryModal');
+  document.getElementById('groceryBtn').addEventListener('click', () => {
+    const items = new Set();
+    PLAN.forEach(day => {
+      MEAL_ORDER.forEach(m => {
+        const meal = day.meals[m];
+        meal.name.split('+').forEach(i => items.add(i.trim()));
+        meal.note.split(',').forEach(i => items.add(i.trim()));
+      });
+    });
+
+    const listHtml = `<ul>${Array.from(items).map(i => `<li>${i}</li>`).join('')}</ul>`;
+    document.getElementById('groceryContent').innerHTML = listHtml;
+    modal.classList.add('open');
+  });
+
+  document.getElementById('closeModal').addEventListener('click', () => modal.classList.remove('open'));
+  document.getElementById('copyListBtn').addEventListener('click', () => {
+    const text = Array.from(document.querySelectorAll('#groceryContent li')).map(li => li.textContent).join('\n');
+    navigator.clipboard.writeText(text);
+    alert('Grocery list copied to clipboard!');
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    if (confirm("Reset all meal completions for this week?")) {
+      checks = {};
+      saveChecks(checks);
+      render();
+    }
+  });
+
+  render();
+</script>
+</body>
+</html>
