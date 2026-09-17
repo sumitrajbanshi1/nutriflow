@@ -209,10 +209,11 @@
     opacity: 0; animation: fadeInSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
   }
 
+  /* STABLE HEADING CONTAINER */
   .combined-heading {
     display: flex;
     justify-content: center;
-    align-items: baseline;
+    align-items: center;
     flex-wrap: wrap;
     font-family: 'Fraunces', Georgia, serif;
     font-size: clamp(2rem, 5.5vw, 4.2rem);
@@ -220,6 +221,7 @@
     line-height: 1.25;
     margin: 0 0 20px;
     color: var(--text);
+    min-height: 1.25em; /* Guarantees permanent vertical height */
   }
 
   .word-mask {
@@ -247,14 +249,14 @@
   .accent-wrapper {
     overflow: hidden;
     display: inline-flex;
-    align-items: baseline;
+    align-items: center;
     vertical-align: bottom;
     padding-bottom: 0.1em;
   }
 
   .accent-mask-inner {
     display: inline-flex;
-    align-items: baseline;
+    align-items: center;
     transform: translateY(120%);
     animation: revealFromBottom 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.55s forwards;
   }
@@ -262,11 +264,13 @@
   /* PREVENT SHAKING & LAYOUT SHIFT IN TYPEWRITER */
   .typewriter-accent {
     color: var(--today);
-    min-height: 1.2em;
     display: inline-block;
-    min-width: 8.5ch; /* Holds container space fixed based on longest phrase */
+    min-height: 1.25em;
+    line-height: 1.25;
+    min-width: 9.5ch; /* Holds container space fixed based on longest phrase */
     text-align: left;
     white-space: nowrap;
+    vertical-align: middle;
   }
 
   .cursor {
@@ -275,6 +279,7 @@
     margin-left: 2px;
     font-weight: 400;
     opacity: 0;
+    vertical-align: middle;
   }
 
   .cursor.active {
@@ -412,7 +417,7 @@
     }
 
     .typewriter-accent {
-      min-width: auto; /* Allow auto width on mobile while retaining flex line wrap stability */
+      min-width: auto;
       text-align: center;
     }
 
