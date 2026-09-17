@@ -209,7 +209,7 @@
     opacity: 0; animation: fadeInSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
   }
 
-  /* STABLE HEADING CONTAINER & PREVENT OVERFLOW GLITCHES */
+  /* STABLE HEADING CONTAINER */
   .combined-heading {
     display: flex;
     justify-content: center;
@@ -221,15 +221,14 @@
     line-height: 1.25;
     margin: 0 0 20px;
     color: var(--text);
-    min-height: 1.25em;
     width: 100%;
     max-width: 100%;
   }
 
   .word-mask {
     overflow: hidden;
-    display: inline-block;
-    vertical-align: bottom;
+    display: inline-flex;
+    vertical-align: middle;
     padding-bottom: 0.1em;
     margin-right: 0.25em;
   }
@@ -248,13 +247,14 @@
     100% { transform: translateY(0%); }
   }
 
+  /* DESKTOP LAYOUT (Smooth inline flow, no awkward gaps) */
   .accent-wrapper {
     overflow: hidden;
     display: inline-flex;
     align-items: center;
-    vertical-align: bottom;
-    padding-bottom: 0.1em;
-    max-width: 100%;
+    justify-content: flex-start;
+    vertical-align: middle;
+    height: 1.25em;
   }
 
   .accent-mask-inner {
@@ -262,18 +262,14 @@
     align-items: center;
     transform: translateY(120%);
     animation: revealFromBottom 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.55s forwards;
-    max-width: 100%;
+    height: 100%;
   }
 
-  /* PREVENT SHAKING & LAYOUT SHIFT IN TYPEWRITER */
   .typewriter-accent {
     color: var(--today);
     display: inline-block;
-    min-height: 1.25em;
-    line-height: 1.25;
-    min-width: 11ch; /* Sized to accommodate 'Stay Consistent.' smoothly */
-    text-align: left;
     white-space: nowrap;
+    text-align: left;
     vertical-align: middle;
   }
 
@@ -423,19 +419,26 @@
       padding-top: 20px;
     }
 
-    /* ALLOW HEADING & TYPEWRITER TO FLEX NATIVE ON SMALL SCREENS */
     .combined-heading {
+      font-size: clamp(2rem, 8vw, 2.8rem);
       flex-direction: row;
-      flex-wrap: wrap;
+    }
+
+    .word-mask {
+      margin-right: 0.2em;
+    }
+
+    /* Force typewriter onto a dedicated 2nd line on mobile with zero page-bouncing */
+    .accent-wrapper {
+      flex-basis: 100%;
+      width: 100%;
+      height: 1.4em;
+      margin-top: 4px;
       justify-content: center;
-      min-height: auto;
     }
 
     .typewriter-accent {
-      min-width: 0;
-      width: auto;
       text-align: center;
-      white-space: normal;
     }
 
     .footer-grid {
@@ -548,7 +551,7 @@
     </div>
 
     <div class="hero-actions">
-      <a class="btn-primary" href="plan.html">Explore Weekly Plan &rarr;</a>
+      <a class="btn-primary" href="plan.html">Explore Weekly Plan &rrarr;</a>
       <button class="btn-secondary" id="groceryBtn">📋 Grocery List</button>
     </div>
   </div>
