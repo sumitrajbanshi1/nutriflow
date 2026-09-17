@@ -117,18 +117,15 @@
 
   .days-grid { display: flex; flex-direction: column; gap: 24px; margin-bottom: 60px; }
 
-  /* --- FLIP CARD ENGINE (AUTO HEIGHT ADJUSTING) --- */
+  /* --- ADAPTIVE 3D CARD ENGINE --- */
   .day-card-wrapper {
     perspective: 1200px;
     width: 100%;
-    display: grid;
   }
 
   .day-card-inner {
+    position: relative;
     width: 100%;
-    display: grid;
-    grid-template-rows: 1fr;
-    grid-template-columns: 1fr;
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     transform-style: preserve-3d;
   }
@@ -138,27 +135,47 @@
   }
 
   .day-card-front, .day-card-back {
-    grid-area: 1 / 1 / 2 / 2;
     background: var(--card);
     border: 1px solid var(--card-border);
     border-radius: 20px;
     padding: 24px;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
+  }
+
+  /* Compact height for front face */
+  .day-card-front {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Expanded height on back face */
+  .day-card-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    transform: rotateY(180deg);
+  }
+
+  /* Dynamically adjust container layout when flipped */
+  .day-card-wrapper.flipped .day-card-front {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    visibility: hidden;
+  }
+
+  .day-card-wrapper.flipped .day-card-back {
+    position: relative;
+    visibility: visible;
   }
 
   .day-card-wrapper.is-today .day-card-front,
   .day-card-wrapper.is-today .day-card-back {
     border-color: var(--today);
     box-shadow: 0 4px 20px var(--accent-glow);
-  }
-
-  .day-card-back {
-    transform: rotateY(180deg);
   }
 
   .day-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
@@ -198,8 +215,8 @@
   }
   .meal-row.done .check-btn { background: var(--today); border-color: var(--today); color: #0D120F; font-weight: bold; }
 
-  /* Nutrition Card Back Styles */
-  .nutrition-grid { display: flex; flex-direction: column; gap: 10px; flex: 1; margin-bottom: 12px; }
+  /* Nutrition Back Card Styles */
+  .nutrition-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
   .nutrition-item {
     background: rgba(255, 255, 255, 0.02); border: 1px solid var(--card-border);
     border-radius: 10px; padding: 12px 14px; font-size: 0.85rem;
@@ -474,7 +491,7 @@
 
         cardWrapper.innerHTML = `
           <div class="day-card-inner">
-            <!-- Front of Card -->
+            <!-- Front Face -->
             <div class="day-card-front">
               <div class="day-header">
                 <h2 class="day-name">${d.day} ${isToday ? '<span class="today-badge">Today</span>' : ''}</h2>
@@ -483,7 +500,7 @@
               <div class="meals-list">${mealsHtml}</div>
             </div>
 
-            <!-- Back of Card -->
+            <!-- Back Face -->
             <div class="day-card-back">
               <div class="day-header">
                 <h2 class="day-name">${d.day} Nutrition</h2>
@@ -497,9 +514,8 @@
         grid.appendChild(cardWrapper);
       });
 
-      // Bind check-btn toggle listeners
       document.querySelectorAll('.meal-row').forEach(row => {
-        row.addEventListener('click', (e) => {
+        row.addEventListener('click', () => {
           const day = row.getAttribute('data-day');
           const idx = parseInt(row.getAttribute('data-idx'));
           const savedStates = JSON.parse(localStorage.getItem(`nutriFlowState_${day}`) || "[false, false, false]");
@@ -521,7 +537,7 @@
     renderDays();
   })();
 
-  /* Card Flip Controller Function */
+  /* Card Flip Trigger */
   function toggleFlip(day) {
     const card = document.getElementById(`card-${day}`);
     if (card) {
