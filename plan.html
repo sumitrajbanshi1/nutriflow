@@ -4,9 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>This Week's Plan — NutriFlow</title>
+<link rel="manifest" href="data:application/manifest+json,{%22name%22:%22NutriFlow%22,%22short_name%22:%22NutriFlow%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%230D120F%22,%22theme_color%22:%22%230D120F%22}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #0D120F;
@@ -96,8 +97,12 @@
     z-index: 50; padding: 100px 32px 32px; display: flex; flex-direction: column; gap: 12px;
   }
   .nav-panel.open { transform: translateX(0); }
-  .nav-panel a { font-size: 1.15rem; padding: 12px 0; border-bottom: 1px solid var(--card-border); color: var(--text-dim); }
-  .nav-panel a:hover, .nav-panel a.active { color: var(--text); font-weight: 600; padding-left: 8px; }
+  .nav-panel a, .nav-panel button.nav-link-btn {
+    font-size: 1.15rem; padding: 12px 0; border: none; border-bottom: 1px solid var(--card-border);
+    background: transparent; color: var(--text-dim); text-align: left; cursor: pointer; width: 100%;
+    font-family: inherit; transition: all 0.2s ease;
+  }
+  .nav-panel a:hover, .nav-panel a.active, .nav-panel button.nav-link-btn:hover { color: var(--text); font-weight: 600; padding-left: 8px; }
 
   .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
 
@@ -105,126 +110,66 @@
   .page-title { font-family: 'Fraunces', serif; font-size: clamp(2rem, 5vw, 2.8rem); margin: 0 0 8px; font-weight: 700; }
   .page-subtitle { color: var(--text-dim); font-size: 1.05rem; margin: 0; font-weight: 300; }
 
-  .action-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 32px; }
+  .action-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
   
   .tool-btn {
     background: var(--card); border: 1px solid var(--card-border); color: var(--text);
-    padding: 10px 18px; border-radius: 12px; font-size: 0.9rem; cursor: pointer;
+    padding: 10px 16px; border-radius: 12px; font-size: 0.88rem; cursor: pointer;
     display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s ease;
-    min-height: 44px; touch-action: manipulation;
+    min-height: 42px; touch-action: manipulation;
   }
   .tool-btn:hover { border-color: var(--today); background: var(--card-hover); }
 
+  .filter-bar {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    background: var(--card); border: 1px solid var(--card-border); padding: 12px 18px; border-radius: 16px; margin-bottom: 32px;
+  }
+
+  .search-input {
+    background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); color: var(--text);
+    padding: 8px 14px; border-radius: 10px; font-size: 0.88rem; outline: none; width: 220px;
+  }
+  .search-input:focus { border-color: var(--today); }
+
+  .filter-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip {
+    background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); color: var(--text-dim);
+    padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s ease;
+  }
+  .chip.active, .chip:hover { background: var(--card-hover); border-color: var(--today); color: var(--today); }
+
   .days-grid { display: flex; flex-direction: column; gap: 24px; margin-bottom: 60px; }
 
-  /* --- ADAPTIVE 3D CARD ENGINE --- */
-  .day-card-wrapper {
-    perspective: 1200px;
-    width: 100%;
-  }
-
-  .day-card-inner {
-    position: relative;
-    width: 100%;
-    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    transform-style: preserve-3d;
-  }
-
-  .day-card-wrapper.flipped .day-card-inner {
-    transform: rotateY(180deg);
-  }
+  .day-card-wrapper { perspective: 1200px; width: 100%; }
+  .day-card-inner { position: relative; width: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+  .day-card-wrapper.flipped .day-card-inner { transform: rotateY(180deg); }
 
   .day-card-front, .day-card-back {
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    border-radius: 20px;
-    padding: 24px;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
+    background: var(--card); border: 1px solid var(--card-border); border-radius: 20px;
+    padding: 24px; backface-visibility: hidden; -webkit-backface-visibility: hidden;
   }
 
-  .day-card-front {
-    position: relative;
-    z-index: 2;
-  }
+  .day-card-front { position: relative; z-index: 2; }
+  .day-card-back { position: absolute; top: 0; left: 0; width: 100%; transform: rotateY(180deg); }
 
-  .day-card-back {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    transform: rotateY(180deg);
-  }
-
-  .day-card-wrapper.flipped .day-card-front {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    visibility: hidden;
-  }
-
-  .day-card-wrapper.flipped .day-card-back {
-    position: relative;
-    visibility: visible;
-  }
+  .day-card-wrapper.flipped .day-card-front { position: absolute; top: 0; left: 0; width: 100%; visibility: hidden; }
+  .day-card-wrapper.flipped .day-card-back { position: relative; visibility: visible; }
 
   .day-card-wrapper.is-today .day-card-front,
-  .day-card-wrapper.is-today .day-card-back {
-    border-color: var(--today);
-    box-shadow: 0 4px 20px var(--accent-glow);
-  }
+  .day-card-wrapper.is-today .day-card-back { border-color: var(--today); box-shadow: 0 4px 20px var(--accent-glow); }
 
-  /* --- UNIFORM DAY HEADER LAYOUT --- */
-  .day-header { 
-    display: flex; 
-    align-items: flex-start; 
-    justify-content: space-between; 
-    margin-bottom: 16px; 
-    gap: 12px; 
-  }
+  .day-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; gap: 12px; }
+  .day-title-group { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+  .day-name { font-family: 'Fraunces', serif; font-size: 1.35rem; margin: 0; line-height: 1.2; }
+  .today-badge { font-family: 'Inter', sans-serif; font-size: 0.7rem; background: var(--today); color: #0D120F; padding: 2px 8px; border-radius: 10px; font-weight: 700; text-transform: uppercase; }
 
-  .day-title-group {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-  }
-
-  .day-name { 
-    font-family: 'Fraunces', serif; 
-    font-size: 1.35rem; 
-    margin: 0; 
-    line-height: 1.2;
-  }
-
-  .today-badge { 
-    font-family: 'Inter', sans-serif; 
-    font-size: 0.7rem; 
-    background: var(--today); 
-    color: #0D120F; 
-    padding: 2px 8px; 
-    border-radius: 10px; 
-    font-weight: 700; 
-    text-transform: uppercase; 
-    letter-spacing: 0.03em;
-    display: inline-block;
-  }
+  .progress-container { width: 100%; background: rgba(255,255,255,0.05); height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 16px; }
+  .progress-bar { height: 100%; background: var(--today); width: 0%; transition: width 0.3s ease; }
 
   .flip-btn {
-    background: transparent; 
-    border: 1px solid var(--card-border); 
-    color: var(--text-dim);
-    padding: 6px 12px; 
-    border-radius: 10px; 
-    font-size: 0.8rem; 
-    cursor: pointer;
-    transition: all 0.2s ease; 
-    display: inline-flex; 
-    align-items: center; 
-    gap: 6px;
-    white-space: nowrap;
-    flex-shrink: 0;
+    background: transparent; border: 1px solid var(--card-border); color: var(--text-dim);
+    padding: 6px 12px; border-radius: 10px; font-size: 0.8rem; cursor: pointer;
+    transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; flex-shrink: 0;
   }
   .flip-btn:hover { color: var(--today); border-color: var(--today); background: var(--card-hover); }
 
@@ -233,7 +178,7 @@
   .meal-row {
     display: flex; align-items: center; justify-content: space-between;
     padding: 12px 16px; border-radius: 12px; background: rgba(255,255,255,0.02);
-    border: 1px solid var(--card-border); gap: 12px; transition: background 0.2s ease;
+    border: 1px solid var(--card-border); gap: 12px; transition: background 0.2s ease; cursor: pointer;
   }
   .meal-row:hover { background: var(--card-hover); }
 
@@ -249,12 +194,16 @@
   .check-btn {
     width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--card-border);
     background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center;
-    color: transparent; transition: all 0.2s ease; flex-shrink: 0;
-    min-width: 36px; min-height: 36px; touch-action: manipulation;
+    color: transparent; transition: all 0.2s ease; flex-shrink: 0; min-width: 36px; min-height: 36px; touch-action: manipulation;
   }
   .meal-row.done .check-btn { background: var(--today); border-color: var(--today); color: #0D120F; font-weight: bold; }
 
-  /* Nutrition Back Card Styles */
+  .macro-summary-bar {
+    display: flex; gap: 12px; margin-bottom: 14px; padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.02); border: 1px dashed var(--card-border); border-radius: 10px; font-size: 0.8rem; color: var(--text-dim);
+  }
+  .macro-summary-bar span { color: var(--today); font-weight: 600; }
+
   .nutrition-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
   .nutrition-item {
     background: rgba(255, 255, 255, 0.02); border: 1px solid var(--card-border);
@@ -265,11 +214,25 @@
   .nutri-details { color: var(--text-dim); font-size: 0.82rem; margin-top: 2px; }
   .nutri-tag { background: var(--card-hover); padding: 4px 10px; border-radius: 6px; color: var(--today); font-weight: 600; font-size: 0.78rem; white-space: nowrap; }
 
-  /* --- ADAPTIVE FOOTER --- */
-  .site-footer {
-    background: var(--card); border-top: 1px solid var(--card-border);
-    padding: 56px 0 32px; margin-top: 40px;
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+  .modal-overlay.open { display: flex; }
+  .modal-box { background: var(--card); border: 1px solid var(--card-border); border-radius: 20px; max-width: 500px; width: 100%; padding: 24px; color: var(--text); max-height: 90vh; overflow-y: auto; }
+  .modal-title { font-family: 'Fraunces', serif; font-size: 1.4rem; margin: 0 0 16px; }
+  .swap-list { display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; margin-bottom: 20px; }
+  .swap-option { background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); padding: 12px; border-radius: 10px; cursor: pointer; transition: all 0.2s ease; }
+  .swap-option:hover { background: var(--card-hover); border-color: var(--today); }
+
+  .admin-input, .admin-select {
+    width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--card-border);
+    color: var(--text); padding: 12px; border-radius: 10px; font-size: 0.95rem; margin-bottom: 12px; outline: none;
   }
+  .admin-select option { background: var(--card); color: var(--text); }
+  .admin-input:focus, .admin-select:focus { border-color: var(--today); }
+  .admin-actions { display: flex; flex-direction: column; gap: 12px; }
+
+  .admin-section-title { font-size: 1rem; font-weight: 600; margin: 20px 0 12px; border-top: 1px solid var(--card-border); padding-top: 16px; color: var(--today); }
+
+  .site-footer { background: var(--card); border-top: 1px solid var(--card-border); padding: 56px 0 32px; margin-top: 40px; }
   .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
   .footer-col h4 { font-family: 'Fraunces', serif; font-size: 1.1rem; margin: 0 0 16px; }
   .footer-col p { color: var(--text-dim); font-size: 0.9rem; line-height: 1.6; margin: 0; }
@@ -277,32 +240,20 @@
   .footer-links a { color: var(--text-dim); font-size: 0.9rem; transition: color 0.2s ease; }
   .footer-links a:hover { color: var(--today); }
 
-  .footer-bottom {
-    border-top: 1px solid var(--card-border); padding-top: 24px;
-    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
-    font-size: 0.85rem; color: var(--text-dim);
-  }
+  .footer-bottom { border-top: 1px solid var(--card-border); padding-top: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; font-size: 0.85rem; color: var(--text-dim); }
   .signature { font-family: 'Caveat', cursive; color: var(--today); font-size: 1.3rem; font-weight: 600; }
 
-  /* --- MEDIA QUERIES --- */
   @media (max-width: 768px) {
     .topnav { padding: 12px 16px; }
     .wrap { padding: 0 16px; }
-    
     .footer-grid { grid-template-columns: 1fr; gap: 32px; }
-    .action-toolbar { flex-direction: column; align-items: stretch; }
+    .action-toolbar, .filter-bar { flex-direction: column; align-items: stretch; }
+    .search-input { width: 100%; }
     .tool-btn { justify-content: center; }
   }
 
-  @media (max-width: 480px) {
-    .day-card-front, .day-card-back { padding: 16px; }
-    .meal-row { padding: 10px 12px; }
-    .nutrition-item { flex-direction: column; align-items: flex-start; }
-    .footer-bottom { flex-direction: column; text-align: center; gap: 12px; }
-  }
-
   @media print {
-    .topnav, .action-toolbar, .theme-toggle, .accent-select, .site-footer, .flip-btn { display: none !important; }
+    .topnav, .action-toolbar, .filter-bar, .theme-toggle, .accent-select, .site-footer, .flip-btn { display: none !important; }
     body { background: #fff !important; color: #000 !important; padding-top: 0 !important; }
     .day-card-front { border: 1px solid #ccc !important; box-shadow: none !important; color: #000 !important; page-break-inside: avoid; }
     .meal-row { border: 1px solid #eee !important; color: #000 !important; }
@@ -333,24 +284,124 @@
 <aside class="nav-panel" id="navPanel">
   <a href="index.html">Home</a>
   <a href="plan.html" class="active">This Week's Plan</a>
+  <button class="nav-link-btn" id="openAdminNavBtn">🔒 Admin Panel</button>
   <p class="nav-note">Shared family meal routine · Automatically resets every Monday morning.</p>
 </aside>
 
 <main class="wrap">
   <header class="page-header">
     <h1 class="page-title">Weekly Tracker</h1>
-    <p class="page-subtitle">Track prepped meals or flip cards to inspect portion sizes and key nutrition.</p>
+    <p class="page-subtitle">Track prepped meals, inspect nutrition, generate shopping lists, or swap recipes.</p>
   </header>
 
   <div class="action-toolbar">
     <div style="display:flex; gap:10px; flex-wrap:wrap;">
-      <button class="tool-btn" id="resetBtn">🔄 Reset Week Progress</button>
+      <button class="tool-btn" id="resetBtn">🔄 Reset Progress</button>
+      <button class="tool-btn" id="listBtn">🛒 Grocery List</button>
     </div>
     <button class="tool-btn" onclick="window.print()">🖨️ Print Plan</button>
   </div>
 
+  <div class="filter-bar">
+    <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search meals or ingredients...">
+    <div class="filter-chips">
+      <button class="chip active" data-filter="all">All Items</button>
+      <button class="chip" data-filter="high-protein">High Protein (20g+)</button>
+      <button class="chip" data-filter="quick">Quick Prep</button>
+    </div>
+  </div>
+
   <div class="days-grid" id="daysGrid"></div>
 </main>
+
+<!-- GROCERY LIST MODAL -->
+<div class="modal-overlay" id="groceryModal">
+  <div class="modal-box">
+    <h3 class="modal-title">🛒 Weekly Grocery List</h3>
+    <div class="swap-list" id="groceryListContent"></div>
+    <div style="display:flex; justify-content:space-between;">
+      <button class="tool-btn" id="copyListBtn">📋 Copy List</button>
+      <button class="tool-btn" id="closeGroceryBtn">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- MEAL SWAP MODAL -->
+<div class="modal-overlay" id="swapModal">
+  <div class="modal-box">
+    <h3 class="modal-title">🔄 Swap Meal</h3>
+    <div class="swap-list" id="swapListOptions"></div>
+    <button class="tool-btn" style="width:100%; justify-content:center;" id="closeSwapBtn">Cancel</button>
+  </div>
+</div>
+
+<!-- SWAP AUTH LOCK MODAL -->
+<div class="modal-overlay" id="swapPinModal">
+  <div class="modal-box">
+    <h3 class="modal-title">🔒 Swap Access Required</h3>
+    <p style="color:var(--text-dim); font-size:0.88rem; margin-top:-8px; margin-bottom:16px;">Enter the swap passcode to modify weekly meals.</p>
+    <input type="password" id="swapPinInput" class="admin-input" placeholder="Enter Swap PIN" style="text-align:center;">
+    <div style="display:flex; gap:10px; justify-content:flex-end;">
+      <button class="tool-btn" id="cancelSwapPinBtn">Cancel</button>
+      <button class="tool-btn" id="submitSwapPinBtn" style="border-color:var(--today);">Unlock Swap</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PIN LOCK MODAL -->
+<div class="modal-overlay" id="adminPinModal">
+  <div class="modal-box">
+    <h3 class="modal-title">🔒 Enter Admin Code</h3>
+    <p style="color:var(--text-dim); font-size:0.88rem; margin-top:-8px; margin-bottom:16px;">Protected administrative area.</p>
+    <input type="password" id="adminPinInput" class="admin-input" placeholder="Enter Admin Code" style="text-align:center;">
+    <div style="display:flex; gap:10px; justify-content:flex-end;">
+      <button class="tool-btn" id="cancelAdminPinBtn">Cancel</button>
+      <button class="tool-btn" id="submitAdminPinBtn" style="border-color:var(--today);">Unlock</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN CONTROL PANEL MODAL -->
+<div class="modal-overlay" id="adminPanelModal">
+  <div class="modal-box">
+    <h3 class="modal-title">⚙️ Admin Control Panel</h3>
+    
+    <div class="admin-section-title">🚀 Direct GitHub Sync</div>
+    <input type="text" id="ghUser" class="admin-input" placeholder="GitHub Username">
+    <input type="text" id="ghRepo" class="admin-input" placeholder="Repository Name (e.g. nutriflow)">
+    <input type="password" id="ghToken" class="admin-input" placeholder="Personal Access Token (ghp_...)">
+    <button type="button" id="saveGhConfigBtn" class="tool-btn" style="width:100%; justify-content:center; margin-bottom:12px;">💾 Save GitHub Config</button>
+
+    <div class="admin-section-title">➕ Add Custom Meal & Commit</div>
+    <form id="addMealForm">
+      <select id="newMealCategory" class="admin-select" required>
+        <option value="" disabled selected>Select Category...</option>
+        <option value="Breakfast">🌅 Breakfast</option>
+        <option value="Lunch">🥗 Lunch</option>
+        <option value="Dinner">🌙 Dinner</option>
+      </select>
+      <input type="text" id="newMealName" class="admin-input" placeholder="Meal Name (e.g. Quinoa Salad)" required>
+      <input type="text" id="newMealPortion" class="admin-input" placeholder="Portion (e.g. 1 bowl / 150g)" required>
+      <div style="display:flex; gap:10px;">
+        <input type="number" id="newMealProtein" class="admin-input" placeholder="Protein (g)" min="0" required>
+        <input type="number" id="newMealCalories" class="admin-input" placeholder="Calories (kcal)" min="0" required>
+      </div>
+      <button type="submit" class="tool-btn" id="saveMealSubmitBtn" style="width:100%; justify-content:center; border-color:var(--today); margin-bottom:12px;">➕ Save & Commit to GitHub</button>
+    </form>
+
+    <div class="admin-section-title">📦 Backup & Data Tools</div>
+    <div class="admin-actions">
+      <button class="tool-btn" id="exportBtn" style="justify-content:center;">📥 Export Plan (JSON)</button>
+      <button class="tool-btn" id="importBtn" style="justify-content:center;">📤 Import Plan (JSON)</button>
+      <button class="tool-btn" id="adminResetBtn" style="justify-content:center; color:#E07A5F;">⚠️ Reset All Tracking Data</button>
+      <input type="file" id="importFile" style="display:none" accept=".json">
+    </div>
+
+    <div style="margin-top:20px; text-align:right;">
+      <button class="tool-btn" id="closeAdminPanelBtn">Close</button>
+    </div>
+  </div>
+</div>
 
 <footer class="site-footer">
   <div class="wrap">
@@ -375,7 +426,7 @@
     <div class="footer-bottom">
       <div>Weekly family meal system · Auto-resets every Monday</div>
       <div>
-        &copy; 2026 All rights reserved. Developed by <span class="signature">Sumit Rajbanshi</span>[cite: 2]
+        &copy; 2026 All rights reserved. Developed by <span class="signature">Sumit Rajbanshi</span>
       </div>
     </div>
   </div>
@@ -425,95 +476,85 @@
     btn.addEventListener('click', () => setOpen(!panel.classList.contains('open')));
     overlay.addEventListener('click', () => setOpen(false));
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+    window.closeNavPanel = () => setOpen(false);
   })();
 
-  /* Weekly Plan & Nutrition Renderer */
+  /* Weekly Plan Engine */
   (function() {
-    const WEEK_DATA = [
-      { 
-        day: "Monday", 
-        meals: [
-          { type: "Breakfast", name: "Overnight oats & berries", bClass: "badge-b", portion: "1 bowl (~1 cup)", nutrients: "Soluble fiber, antioxidants", protein: "~12g" },
-          { type: "Lunch", name: "Rajma curry & brown rice", bClass: "badge-l", portion: "1 bowl + 1 cup rice", nutrients: "Complex carbs, iron", protein: "~16g" },
-          { type: "Dinner", name: "Vegetable soup & seeds", bClass: "badge-d", portion: "1 bowl + 2 tbsp seeds", nutrients: "Omega-3, Vitamins A/C", protein: "~8g" }
-        ] 
-      },
-      { 
-        day: "Tuesday", 
-        meals: [
-          { type: "Breakfast", name: "Multigrain avocado toast", bClass: "badge-b", portion: "2 slices + 1/2 avocado", nutrients: "Healthy fats, potassium", protein: "~9g" },
-          { type: "Lunch", name: "Grilled chicken & rotis", bClass: "badge-l", portion: "150g chicken + 2 rotis", nutrients: "Lean protein, B vitamins", protein: "~38g" },
-          { type: "Dinner", name: "Moong dal soup", bClass: "badge-d", portion: "1.5 cups bowl", nutrients: "Folate, gentle digestion", protein: "~14g" }
-        ] 
-      },
-      { 
-        day: "Wednesday", 
-        meals: [
-          { type: "Breakfast", name: "Apple cinnamon oats", bClass: "badge-b", portion: "1 bowl (~1 cup)", nutrients: "Pectin fiber, slow energy", protein: "~10g" },
-          { type: "Lunch", name: "Chana dal & lauki sabzi", bClass: "badge-l", portion: "1 bowl dal + 1 bowl sabzi", nutrients: "High zinc, hydration", protein: "~15g" },
-          { type: "Dinner", name: "Grilled fish & steamed veg", bClass: "badge-d", portion: "150g fish + 1.5 cups veg", nutrients: "Omega-3s, essential minerals", protein: "~32g" }
-        ] 
-      },
-      { 
-        day: "Thursday", 
-        meals: [
-          { type: "Breakfast", name: "Avocado herb toast", bClass: "badge-b", portion: "2 slices + 1/2 avocado", nutrients: "Monounsaturated fats, Vit E", protein: "~9g" },
-          { type: "Lunch", name: "Light fish curry & rice", bClass: "badge-l", portion: "1 bowl curry + 1 cup rice", nutrients: "Iodine, clean energy", protein: "~28g" },
-          { type: "Dinner", name: "Light egg curry", bClass: "badge-d", portion: "2 eggs + 1 cup gravy", nutrients: "Choline, complete protein", protein: "~14g" }
-        ] 
-      },
-      { 
-        day: "Friday", 
-        meals: [
-          { type: "Breakfast", name: "Berry chia oats", bClass: "badge-b", portion: "1 bowl (~1 cup)", nutrients: "High omega-3, fiber", protein: "~11g" },
-          { type: "Lunch", name: "Paneer bhurji & roti", bClass: "badge-l", portion: "100g paneer + 2 rotis", nutrients: "Calcium, healthy fats", protein: "~22g" },
-          { type: "Dinner", name: "Chicken clear soup", bClass: "badge-d", portion: "1.5 cups bowl", nutrients: "Electrolytes, collagen", protein: "~24g" }
-        ] 
-      },
-      { 
-        day: "Saturday", 
-        meals: [
-          { type: "Breakfast", name: "Multigrain toast", bClass: "badge-b", portion: "2 slices with butter/jam", nutrients: "Complex B-vitamins, fiber", protein: "~7g" },
-          { type: "Lunch", name: "Moong dal khichdi", bClass: "badge-l", portion: "1.5 cups bowl", nutrients: "Gut-friendly, complete amino acids", protein: "~13g" },
-          { type: "Dinner", name: "Vegetable khichdi", bClass: "badge-d", portion: "1.5 cups bowl", nutrients: "Micronutrients, light carbs", protein: "~10g" }
-        ] 
-      },
-      { 
-        day: "Sunday", 
-        meals: [
-          { type: "Breakfast", name: "Nut butter oats", bClass: "badge-b", portion: "1 bowl + 1 tbsp butter", nutrients: "Healthy fats, magnesium", protein: "~14g" },
-          { type: "Lunch", name: "Chicken/Veg Pulao", bClass: "badge-l", portion: "1.5 cups bowl", nutrients: "Balanced macro energy", protein: "~20g" },
-          { type: "Dinner", name: "Light dal & spinach", bClass: "badge-d", portion: "1.5 cups bowl", nutrients: "Iron, folate, dietary fiber", protein: "~12g" }
-        ] 
-      }
+    const defaultSwapDatabase = {
+      Breakfast: [
+        { name: "Overnight oats & berries", portion: "1 bowl (~1 cup)", nutrients: "Soluble fiber, antioxidants", protein: 12, calories: 310, tags: ["quick"] },
+        { name: "Multigrain avocado toast", portion: "2 slices + 1/2 avocado", nutrients: "Healthy fats, potassium", protein: 9, calories: 290, tags: ["quick"] },
+        { name: "Apple cinnamon oats", portion: "1 bowl (~1 cup)", nutrients: "Pectin fiber, slow energy", protein: 10, calories: 320, tags: ["quick"] },
+        { name: "Berry chia oats", portion: "1 bowl (~1 cup)", nutrients: "High omega-3, fiber", protein: 11, calories: 300, tags: ["quick"] },
+        { name: "Tofu scrambled wrap", portion: "1 whole wheat wrap", nutrients: "Plant protein, iron", protein: 18, calories: 340, tags: ["high-protein"] }
+      ],
+      Lunch: [
+        { name: "Rajma curry & brown rice", portion: "1 bowl + 1 cup rice", nutrients: "Complex carbs, iron", protein: 16, calories: 420, tags: [] },
+        { name: "Grilled chicken & rotis", portion: "150g chicken + 2 rotis", nutrients: "Lean protein, B vitamins", protein: 38, calories: 480, tags: ["high-protein"] },
+        { name: "Chana dal & lauki sabzi", portion: "1 bowl dal + 1 bowl sabzi", nutrients: "High zinc, hydration", protein: 15, calories: 380, tags: [] },
+        { name: "Light fish curry & rice", portion: "1 bowl curry + 1 cup rice", nutrients: "Iodine, clean energy", protein: 28, calories: 440, tags: ["high-protein"] },
+        { name: "Paneer bhurji & roti", portion: "100g paneer + 2 rotis", nutrients: "Calcium, healthy fats", protein: 22, calories: 450, tags: ["high-protein"] }
+      ],
+      Dinner: [
+        { name: "Vegetable soup & seeds", portion: "1 bowl + 2 tbsp seeds", nutrients: "Omega-3, Vitamins A/C", protein: 8, calories: 220, tags: ["quick"] },
+        { name: "Moong dal soup", portion: "1.5 cups bowl", nutrients: "Folate, gentle digestion", protein: 14, calories: 250, tags: ["quick"] },
+        { name: "Grilled fish & steamed veg", portion: "150g fish + 1.5 cups veg", nutrients: "Omega-3s, essential minerals", protein: 32, calories: 360, tags: ["high-protein"] },
+        { name: "Chicken clear soup", portion: "1.5 cups bowl", nutrients: "Electrolytes, collagen", protein: 24, calories: 280, tags: ["high-protein", "quick"] },
+        { name: "Moong dal khichdi", portion: "1.5 cups bowl", nutrients: "Gut-friendly amino acids", protein: 13, calories: 310, tags: [] }
+      ]
+    };
+
+    let SWAP_DATABASE = JSON.parse(localStorage.getItem('nutriFlowCustomDb')) || defaultSwapDatabase;
+
+    let defaultWeekData = [
+      { day: "Monday", meals: [ { ...SWAP_DATABASE.Breakfast[0], type: "Breakfast", bClass: "badge-b" }, { ...SWAP_DATABASE.Lunch[0], type: "Lunch", bClass: "badge-l" }, { ...SWAP_DATABASE.Dinner[0], type: "Dinner", bClass: "badge-d" } ] },
+      { day: "Tuesday", meals: [ { ...SWAP_DATABASE.Breakfast[1], type: "Breakfast", bClass: "badge-b" }, { ...SWAP_DATABASE.Lunch[1], type: "Lunch", bClass: "badge-l" }, { ...SWAP_DATABASE.Dinner[1], type: "Dinner", bClass: "badge-d" } ] },
+      { day: "Wednesday", meals: [ { ...SWAP_DATABASE.Breakfast[2], type: "Breakfast", bClass: "badge-b" }, { ...SWAP_DATABASE.Lunch[2], type: "Lunch", bClass: "badge-l" }, { ...SWAP_DATABASE.Dinner[2], type: "Dinner", bClass: "badge-d" } ] },
+      { day: "Thursday", meals: [ { ...SWAP_DATABASE.Breakfast[1], type: "Breakfast", bClass: "badge-b" }, { ...SWAP_DATABASE.Lunch[3], type: "Lunch", bClass: "badge-l" }, { ...SWAP_DATABASE.Dinner[1], type: "Dinner", bClass: "badge-d" } ] },
+      { day: "Friday", meals: [ { ...SWAP_DATABASE.Breakfast[3], type: "Breakfast", bClass: "badge-b" }, { ...SWAP_DATABASE.Lunch[4], type: "Lunch", bClass: "badge-l" }, { ...SWAP_DATABASE.Dinner[3], type: "Dinner", bClass: "badge-d" } ] },
+      { day: "Saturday", meals: [ { ...SWAP_DATABASE.Breakfast[0], type: "Breakfast", bClass: "badge-b" }, { ...SWAP_DATABASE.Lunch[0], type: "Lunch", bClass: "badge-l" }, { ...SWAP_DATABASE.Dinner[4], type: "Dinner", bClass: "badge-d" } ] },
+      { day: "Sunday", meals: [ { ...SWAP_DATABASE.Breakfast[2], type: "Breakfast", bClass: "badge-b" }, { ...SWAP_DATABASE.Lunch[1], type: "Lunch", bClass: "badge-l" }, { ...SWAP_DATABASE.Dinner[0], type: "Dinner", bClass: "badge-d" } ] }
     ];
 
+    let currentWeekData = JSON.parse(localStorage.getItem('nutriFlowCustomPlan')) || defaultWeekData;
     const todayName = new Date().toLocaleDateString("en-US", { weekday: "long" });
     const grid = document.getElementById('daysGrid');
-    const resetBtn = document.getElementById('resetBtn');
+    
+    let activeFilter = 'all';
+    let searchQuery = '';
+    let pendingSwap = null;
 
     function renderDays() {
       grid.innerHTML = "";
-      WEEK_DATA.forEach(d => {
+      currentWeekData.forEach(d => {
         const isToday = d.day === todayName;
         const savedStates = JSON.parse(localStorage.getItem(`nutriFlowState_${d.day}`) || "[false, false, false]");
+        const completedCount = savedStates.filter(Boolean).length;
+        const progressPct = Math.round((completedCount / d.meals.length) * 100);
 
-        const cardWrapper = document.createElement('div');
-        cardWrapper.className = `day-card-wrapper ${isToday ? 'is-today' : ''}`;
-        cardWrapper.id = `card-${d.day}`;
-
-        let mealsHtml = "";
-        let nutriHtml = "";
+        let dayProtein = 0, dayCalories = 0;
+        let mealsHtml = "", nutriHtml = "";
 
         d.meals.forEach((m, idx) => {
+          dayProtein += m.protein;
+          dayCalories += m.calories;
+
+          const matchesSearch = m.name.toLowerCase().includes(searchQuery) || m.nutrients.toLowerCase().includes(searchQuery);
+          const matchesFilter = activeFilter === 'all' || 
+            (activeFilter === 'high-protein' && m.protein >= 20) || 
+            (activeFilter === 'quick' && m.tags && m.tags.includes('quick'));
+
+          if (!matchesSearch || !matchesFilter) return;
+
           const done = savedStates[idx];
           mealsHtml += `
             <div class="meal-row ${done ? 'done' : ''}" data-day="${d.day}" data-idx="${idx}">
-              <div class="meal-info">
+              <div class="meal-info" onclick="promptSwapAuth('${d.day}', ${idx})">
                 <span class="meal-badge ${m.bClass}">${m.type}</span>
-                <span class="meal-name">${m.name}</span>
+                <span class="meal-name">${m.name} 🔒</span>
               </div>
-              <button class="check-btn" aria-label="Toggle completed meal">${done ? '✓' : ''}</button>
+              <button class="check-btn" onclick="toggleMealDone(event, '${d.day}', ${idx})">${done ? '✓' : ''}</button>
             </div>
           `;
 
@@ -521,16 +562,21 @@
             <div class="nutrition-item">
               <div>
                 <span class="nutri-title">${m.type}: ${m.name}</span>
-                <div class="nutri-details">Portion: ${m.portion} · ${m.nutrients}</div>
+                <div class="nutri-details">Portion: ${m.portion} · ${m.nutrients || 'Custom Entry'}</div>
               </div>
-              <span class="nutri-tag">${m.protein} Protein</span>
+              <span class="nutri-tag">${m.protein}g Protein · ${m.calories} kcal</span>
             </div>
           `;
         });
 
+        if (!mealsHtml) mealsHtml = `<div style="color:var(--text-dim); font-size:0.85rem; padding:10px;">No meals matching current filter.</div>`;
+
+        const cardWrapper = document.createElement('div');
+        cardWrapper.className = `day-card-wrapper ${isToday ? 'is-today' : ''}`;
+        cardWrapper.id = `card-${d.day}`;
+
         cardWrapper.innerHTML = `
           <div class="day-card-inner">
-            <!-- Front Face -->
             <div class="day-card-front">
               <div class="day-header">
                 <div class="day-title-group">
@@ -539,10 +585,10 @@
                 </div>
                 <button class="flip-btn" onclick="toggleFlip('${d.day}')">🥗 Nutrition Details 🔄</button>
               </div>
+              <div class="progress-container"><div class="progress-bar" style="width: ${progressPct}%"></div></div>
               <div class="meals-list">${mealsHtml}</div>
             </div>
 
-            <!-- Back Face -->
             <div class="day-card-back">
               <div class="day-header">
                 <div class="day-title-group">
@@ -551,43 +597,303 @@
                 </div>
                 <button class="flip-btn" onclick="toggleFlip('${d.day}')">⬅️ Back to Tracker</button>
               </div>
+              <div class="macro-summary-bar">Daily Est: <span>${dayProtein}g Protein</span> · <span>${dayCalories} Calories</span></div>
               <div class="nutrition-grid">${nutriHtml}</div>
             </div>
           </div>
         `;
-
         grid.appendChild(cardWrapper);
-      });
-
-      document.querySelectorAll('.meal-row').forEach(row => {
-        row.addEventListener('click', () => {
-          const day = row.getAttribute('data-day');
-          const idx = parseInt(row.getAttribute('data-idx'));
-          const savedStates = JSON.parse(localStorage.getItem(`nutriFlowState_${day}`) || "[false, false, false]");
-
-          savedStates[idx] = !savedStates[idx];
-          localStorage.setItem(`nutriFlowState_${day}`, JSON.stringify(savedStates));
-          renderDays();
-        });
       });
     }
 
-    resetBtn.addEventListener('click', () => {
+    /* GLOBAL EVENTS & MEAL SWAPS */
+    window.toggleMealDone = function(e, day, idx) {
+      e.stopPropagation();
+      const savedStates = JSON.parse(localStorage.getItem(`nutriFlowState_${day}`) || "[false, false, false]");
+      savedStates[idx] = !savedStates[idx];
+      localStorage.setItem(`nutriFlowState_${day}`, JSON.stringify(savedStates));
+      renderDays();
+    };
+
+    /* PASSCODES SETUP */
+    const ADMIN_CODE = "NF@2026";
+    const SWAP_CODE = "2050";
+
+    const swapPinModal = document.getElementById('swapPinModal');
+    const swapPinInput = document.getElementById('swapPinInput');
+
+    window.promptSwapAuth = function(day, idx) {
+      pendingSwap = { day, idx };
+      swapPinInput.value = "";
+      swapPinModal.classList.add('open');
+      swapPinInput.focus();
+    };
+
+    document.getElementById('cancelSwapPinBtn').onclick = () => {
+      swapPinModal.classList.remove('open');
+      pendingSwap = null;
+    };
+
+    document.getElementById('submitSwapPinBtn').onclick = () => {
+      if (swapPinInput.value === SWAP_CODE) {
+        swapPinModal.classList.remove('open');
+        if (pendingSwap) {
+          openSwapModal(pendingSwap.day, pendingSwap.idx);
+          pendingSwap = null;
+        }
+      } else {
+        alert("Incorrect Swap Code.");
+        swapPinInput.value = "";
+      }
+    };
+
+    function openSwapModal(day, idx) {
+      const meal = currentWeekData.find(d => d.day === day).meals[idx];
+      const options = SWAP_DATABASE[meal.type] || [];
+      const listEl = document.getElementById('swapListOptions');
+      listEl.innerHTML = "";
+
+      options.forEach(opt => {
+        const item = document.createElement('div');
+        item.className = 'swap-option';
+        item.innerHTML = `<strong>${opt.name}</strong><br><small>${opt.portion} · ${opt.protein}g Protein · ${opt.calories} kcal</small>`;
+        item.onclick = () => {
+          currentWeekData.find(d => d.day === day).meals[idx] = { ...opt, type: meal.type, bClass: meal.bClass };
+          localStorage.setItem('nutriFlowCustomPlan', JSON.stringify(currentWeekData));
+          document.getElementById('swapModal').classList.remove('open');
+          renderDays();
+        };
+        listEl.appendChild(item);
+      });
+      document.getElementById('swapModal').classList.add('open');
+    }
+
+    document.getElementById('closeSwapBtn').onclick = () => document.getElementById('swapModal').classList.remove('open');
+
+    /* ADMIN LOCK & CONFIG MANAGEMENT */
+    const openAdminNavBtn = document.getElementById('openAdminNavBtn');
+    const adminPinModal = document.getElementById('adminPinModal');
+    const adminPanelModal = document.getElementById('adminPanelModal');
+    const adminPinInput = document.getElementById('adminPinInput');
+
+    openAdminNavBtn.onclick = () => {
+      window.closeNavPanel();
+      adminPinInput.value = "";
+      adminPinModal.classList.add('open');
+      adminPinInput.focus();
+    };
+
+    document.getElementById('cancelAdminPinBtn').onclick = () => adminPinModal.classList.remove('open');
+
+    document.getElementById('submitAdminPinBtn').onclick = () => {
+      if (adminPinInput.value === ADMIN_CODE) {
+        adminPinModal.classList.remove('open');
+        adminPanelModal.classList.add('open');
+        
+        // Load stored GitHub Config
+        document.getElementById('ghUser').value = localStorage.getItem('nutriFlow_ghUser') || '';
+        document.getElementById('ghRepo').value = localStorage.getItem('nutriFlow_ghRepo') || '';
+        document.getElementById('ghToken').value = localStorage.getItem('nutriFlow_ghToken') || '';
+      } else {
+        alert("Incorrect Admin Code.");
+        adminPinInput.value = "";
+      }
+    };
+
+    document.getElementById('saveGhConfigBtn').onclick = () => {
+      localStorage.setItem('nutriFlow_ghUser', document.getElementById('ghUser').value.trim());
+      localStorage.setItem('nutriFlow_ghRepo', document.getElementById('ghRepo').value.trim());
+      localStorage.setItem('nutriFlow_ghToken', document.getElementById('ghToken').value.trim());
+      alert("GitHub configuration saved locally on this device!");
+    };
+
+    document.getElementById('closeAdminPanelBtn').onclick = () => adminPanelModal.classList.remove('open');
+
+    /* GITHUB COMMIT FUNCTION */
+    async function commitFileToGitHub(newContent) {
+      const user = localStorage.getItem('nutriFlow_ghUser');
+      const repo = localStorage.getItem('nutriFlow_ghRepo');
+      const token = localStorage.getItem('nutriFlow_ghToken');
+
+      if (!user || !repo || !token) {
+        alert("GitHub configuration missing! Please save your User, Repo, and Token above.");
+        return false;
+      }
+
+      const filePath = "plan.html";
+      const apiUrl = `https://api.github.com/repos/${user}/${repo}/contents/${filePath}`;
+
+      try {
+        // 1. Get SHA of existing file
+        const getRes = await fetch(apiUrl, {
+          headers: { "Authorization": `token ${token}`, "Accept": "application/vnd.github.v3+json" }
+        });
+        
+        if (!getRes.ok) throw new Error("Failed to fetch file SHA from GitHub.");
+        const getData = await getRes.json();
+        const sha = getData.sha;
+
+        // 2. Encode Content to UTF-8 Base64
+        const encodedContent = btoa(unescape(encodeURIComponent(newContent)));
+
+        // 3. Commit updated file to GitHub
+        const putRes = await fetch(apiUrl, {
+          method: "PUT",
+          headers: {
+            "Authorization": `token ${token}`,
+            "Content-Type": "application/json",
+            "Accept": "application/vnd.github.v3+json"
+          },
+          body: JSON.stringify({
+            message: "feat: add new custom meal via admin panel",
+            content: encodedContent,
+            sha: sha
+          })
+        });
+
+        if (!putRes.ok) {
+          const errData = await putRes.json();
+          throw new Error(errData.message || "Failed to commit changes to GitHub.");
+        }
+
+        return true;
+      } catch (err) {
+        alert("GitHub Commit Error: " + err.message);
+        return false;
+      }
+    }
+
+    /* ADD CUSTOM MEAL TO DATABASE & COMMIT */
+    document.getElementById('addMealForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const saveBtn = document.getElementById('saveMealSubmitBtn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = "⏳ Committing to GitHub...";
+
+      const cat = document.getElementById('newMealCategory').value;
+      const name = document.getElementById('newMealName').value.trim();
+      const portion = document.getElementById('newMealPortion').value.trim();
+      const protein = parseInt(document.getElementById('newMealProtein').value, 10);
+      const calories = parseInt(document.getElementById('newMealCalories').value, 10);
+
+      const newMeal = {
+        name,
+        portion,
+        nutrients: "Custom Admin Item",
+        protein,
+        calories,
+        tags: protein >= 20 ? ["high-protein"] : []
+      };
+
+      SWAP_DATABASE[cat].push(newMeal);
+      localStorage.setItem('nutriFlowCustomDb', JSON.stringify(SWAP_DATABASE));
+
+      // Build updated source code to push to GitHub
+      let currentHtml = document.documentElement.outerHTML;
+      const dbRegex = /const defaultSwapDatabase = \{[\s\S]*?\};/;
+      const updatedCode = `<!DOCTYPE html>\n<html lang="en">\n` + 
+        currentHtml.replace(dbRegex, `const defaultSwapDatabase = ${JSON.stringify(SWAP_DATABASE, null, 2)};`) + 
+        `\n</html>`;
+
+      const success = await commitFileToGitHub(updatedCode);
+
+      if (success) {
+        alert(`Successfully committed "${name}" to GitHub! Your live page will update in ~1-2 minutes.`);
+        e.target.reset();
+      }
+
+      saveBtn.disabled = false;
+      saveBtn.textContent = "➕ Save & Commit to GitHub";
+    };
+
+    /* EXPORT & IMPORT DATA */
+    document.getElementById('exportBtn').onclick = () => {
+      const exportData = { plan: currentWeekData, customDb: SWAP_DATABASE };
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData));
+      const dlAnchor = document.createElement('a');
+      dlAnchor.setAttribute("href", dataStr);
+      dlAnchor.setAttribute("download", "nutriflow_backup.json");
+      dlAnchor.click();
+    };
+
+    document.getElementById('importBtn').onclick = () => document.getElementById('importFile').click();
+    document.getElementById('importFile').onchange = (e) => {
+      const fileReader = new FileReader();
+      fileReader.onload = (event) => {
+        try {
+          const imported = JSON.parse(event.target.result);
+          if (imported.plan) {
+            currentWeekData = imported.plan;
+            localStorage.setItem('nutriFlowCustomPlan', JSON.stringify(currentWeekData));
+          }
+          if (imported.customDb) {
+            SWAP_DATABASE = imported.customDb;
+            localStorage.setItem('nutriFlowCustomDb', JSON.stringify(SWAP_DATABASE));
+          }
+          renderDays();
+          alert("Meal plan and custom database imported successfully!");
+        } catch(err) { alert("Invalid JSON file format."); }
+      };
+      fileReader.readAsText(e.target.files[0]);
+    };
+
+    document.getElementById('adminResetBtn').onclick = () => {
       if (confirm("Reset tracking progress for all 7 days?")) {
-        WEEK_DATA.forEach(d => localStorage.removeItem(`nutriFlowState_${d.day}`));
+        currentWeekData.forEach(d => localStorage.removeItem(`nutriFlowState_${d.day}`));
+        renderDays();
+        adminPanelModal.classList.remove('open');
+      }
+    };
+
+    /* GROCERY LIST GENERATOR */
+    document.getElementById('listBtn').onclick = () => {
+      const items = [];
+      currentWeekData.forEach(d => d.meals.forEach(m => items.push(`${m.name} (${m.portion})`)));
+      const listEl = document.getElementById('groceryListContent');
+      listEl.innerHTML = items.map(i => `<div style="padding:8px; border-bottom:1px solid var(--card-border); font-size:0.88rem;">🛒 ${i}</div>`).join('');
+      document.getElementById('groceryModal').classList.add('open');
+    };
+
+    document.getElementById('closeGroceryBtn').onclick = () => document.getElementById('groceryModal').classList.remove('open');
+    document.getElementById('copyListBtn').onclick = () => {
+      const items = currentWeekData.flatMap(d => d.meals.map(m => `- ${m.name} (${m.portion})`)).join('\n');
+      navigator.clipboard.writeText("NutriFlow Weekly Grocery List:\n" + items);
+      alert("Grocery list copied to clipboard!");
+    };
+
+    /* FILTERS & SEARCH */
+    document.getElementById('searchInput').oninput = (e) => { searchQuery = e.target.value.toLowerCase(); renderDays(); };
+    document.querySelectorAll('.chip').forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        activeFilter = btn.getAttribute('data-filter');
+        renderDays();
+      };
+    });
+
+    document.getElementById('resetBtn').onclick = () => {
+      if (confirm("Reset tracking progress for all 7 days?")) {
+        currentWeekData.forEach(d => localStorage.removeItem(`nutriFlowState_${d.day}`));
         renderDays();
       }
-    });
+    };
 
     renderDays();
   })();
 
-  /* Card Flip Trigger */
   function toggleFlip(day) {
     const card = document.getElementById(`card-${day}`);
-    if (card) {
-      card.classList.toggle('flipped');
-    }
+    if (card) card.classList.toggle('flipped');
+  }
+
+  /* PWA SERVICE WORKER REGISTRATION */
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      const swCode = `self.addEventListener('fetch', (e) => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));`;
+      const blob = new Blob([swCode], { type: 'application/javascript' });
+      navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
+    });
   }
 </script>
 </body>
