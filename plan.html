@@ -117,15 +117,58 @@
 
   .days-grid { display: flex; flex-direction: column; gap: 24px; margin-bottom: 60px; }
 
-  .day-card {
-    background: var(--card); border: 1px solid var(--card-border); border-radius: 20px;
-    padding: 24px; transition: border-color 0.25s ease;
+  /* --- FLIP CARD ENGINE --- */
+  .day-card-wrapper {
+    perspective: 1000px;
+    width: 100%;
   }
-  .day-card.is-today { border-color: var(--today); box-shadow: 0 4px 20px var(--accent-glow); }
+
+  .day-card-inner {
+    position: relative;
+    width: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+
+  .day-card-wrapper.flipped .day-card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .day-card-front, .day-card-back {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 24px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .day-card-wrapper.is-today .day-card-front,
+  .day-card-wrapper.is-today .day-card-back {
+    border-color: var(--today);
+    box-shadow: 0 4px 20px var(--accent-glow);
+  }
+
+  .day-card-back {
+    position: absolute;
+    inset: 0;
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow-y: auto;
+  }
 
   .day-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
   .day-name { font-family: 'Fraunces', serif; font-size: 1.35rem; margin: 0; display: flex; align-items: center; gap: 10px; }
   .today-badge { font-family: 'Inter', sans-serif; font-size: 0.75rem; background: var(--today); color: #0D120F; padding: 2px 8px; border-radius: 10px; font-weight: 600; text-transform: uppercase; }
+
+  .flip-btn {
+    background: transparent; border: 1px solid var(--card-border); color: var(--text-dim);
+    padding: 6px 12px; border-radius: 10px; font-size: 0.8rem; cursor: pointer;
+    transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .flip-btn:hover { color: var(--today); border-color: var(--today); background: var(--card-hover); }
 
   .meals-list { display: flex; flex-direction: column; gap: 12px; }
 
@@ -153,6 +196,17 @@
   }
   .meal-row.done .check-btn { background: var(--today); border-color: var(--today); color: #0D120F; font-weight: bold; }
 
+  /* Nutrition Card Back Styles */
+  .nutrition-grid { display: flex; flex-direction: column; gap: 10px; flex: 1; margin-bottom: 12px; }
+  .nutrition-item {
+    background: rgba(255, 255, 255, 0.02); border: 1px solid var(--card-border);
+    border-radius: 10px; padding: 10px 14px; font-size: 0.85rem;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+  .nutri-title { font-weight: 600; color: var(--text); }
+  .nutri-details { color: var(--text-dim); font-size: 0.8rem; }
+  .nutri-tag { background: var(--card-hover); padding: 2px 8px; border-radius: 6px; color: var(--today); font-weight: 600; font-size: 0.75rem; }
+
   /* --- ADAPTIVE FOOTER --- */
   .site-footer {
     background: var(--card); border-top: 1px solid var(--card-border);
@@ -177,25 +231,22 @@
     .topnav { padding: 12px 16px; }
     .wrap { padding: 0 16px; }
     
-    .footer-grid {
-      grid-template-columns: 1fr;
-      gap: 32px;
-    }
-
+    .footer-grid { grid-template-columns: 1fr; gap: 32px; }
     .action-toolbar { flex-direction: column; align-items: stretch; }
     .tool-btn { justify-content: center; }
   }
 
   @media (max-width: 480px) {
-    .day-card { padding: 16px; }
+    .day-card-front, .day-card-back { padding: 16px; }
     .meal-row { padding: 10px 12px; }
+    .nutrition-item { flex-direction: column; align-items: flex-start; }
     .footer-bottom { flex-direction: column; text-align: center; gap: 12px; }
   }
 
   @media print {
-    .topnav, .action-toolbar, .theme-toggle, .accent-select, .site-footer { display: none !important; }
+    .topnav, .action-toolbar, .theme-toggle, .accent-select, .site-footer, .flip-btn { display: none !important; }
     body { background: #fff !important; color: #000 !important; padding-top: 0 !important; }
-    .day-card { border: 1px solid #ccc !important; box-shadow: none !important; color: #000 !important; page-break-inside: avoid; }
+    .day-card-front { border: 1px solid #ccc !important; box-shadow: none !important; color: #000 !important; page-break-inside: avoid; }
     .meal-row { border: 1px solid #eee !important; color: #000 !important; }
   }
 </style>
@@ -230,7 +281,7 @@
 <main class="wrap">
   <header class="page-header">
     <h1 class="page-title">Weekly Tracker</h1>
-    <p class="page-subtitle">Track prepped breakfasts, lunches, and dinners for the current week.</p>
+    <p class="page-subtitle">Track prepped meals or flip cards to inspect portion sizes and key nutrition.</p>
   </header>
 
   <div class="action-toolbar">
@@ -318,16 +369,65 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
   })();
 
-  /* Weekly Plan Renderer */
+  /* Weekly Plan & Nutrition Renderer */
   (function() {
     const WEEK_DATA = [
-      { day: "Monday", meals: [{ type: "Breakfast", name: "Overnight oats & berries", bClass: "badge-b" }, { type: "Lunch", name: "Rajma curry & brown rice", bClass: "badge-l" }, { type: "Dinner", name: "Vegetable soup & seeds", bClass: "badge-d" }] },
-      { day: "Tuesday", meals: [{ type: "Breakfast", name: "Multigrain avocado toast", bClass: "badge-b" }, { type: "Lunch", name: "Grilled chicken & rotis", bClass: "badge-l" }, { type: "Dinner", name: "Moong dal soup", bClass: "badge-d" }] },
-      { day: "Wednesday", meals: [{ type: "Breakfast", name: "Apple cinnamon oats", bClass: "badge-b" }, { type: "Lunch", name: "Chana dal & lauki sabzi", bClass: "badge-l" }, { type: "Dinner", name: "Grilled fish & steamed veg", bClass: "badge-d" }] },
-      { day: "Thursday", meals: [{ type: "Breakfast", name: "Avocado herb toast", bClass: "badge-b" }, { type: "Lunch", name: "Light fish curry & rice", bClass: "badge-l" }, { type: "Dinner", name: "Light egg curry", bClass: "badge-d" }] },
-      { day: "Friday", meals: [{ type: "Breakfast", name: "Berry chia oats", bClass: "badge-b" }, { type: "Lunch", name: "Paneer bhurji & roti", bClass: "badge-l" }, { type: "Dinner", name: "Chicken clear soup", bClass: "badge-d" }] },
-      { day: "Saturday", meals: [{ type: "Breakfast", name: "Multigrain toast", bClass: "badge-b" }, { type: "Lunch", name: "Moong dal khichdi", bClass: "badge-l" }, { type: "Dinner", name: "Vegetable khichdi", bClass: "badge-d" }] },
-      { day: "Sunday", meals: [{ type: "Breakfast", name: "Nut butter oats", bClass: "badge-b" }, { type: "Lunch", name: "Chicken/Veg Pulao", bClass: "badge-l" }, { type: "Dinner", name: "Light dal & spinach", bClass: "badge-d" }] }
+      { 
+        day: "Monday", 
+        meals: [
+          { type: "Breakfast", name: "Overnight oats & berries", bClass: "badge-b", portion: "1 bowl (~1 cup)", nutrients: "Soluble fiber, antioxidants", protein: "~12g" },
+          { type: "Lunch", name: "Rajma curry & brown rice", bClass: "badge-l", portion: "1 bowl + 1 cup rice", nutrients: "Complex carbs, iron", protein: "~16g" },
+          { type: "Dinner", name: "Vegetable soup & seeds", bClass: "badge-d", portion: "1 bowl + 2 tbsp seeds", nutrients: "Omega-3, Vitamins A/C", protein: "~8g" }
+        ] 
+      },
+      { 
+        day: "Tuesday", 
+        meals: [
+          { type: "Breakfast", name: "Multigrain avocado toast", bClass: "badge-b", portion: "2 slices + 1/2 avocado", nutrients: "Healthy fats, potassium", protein: "~9g" },
+          { type: "Lunch", name: "Grilled chicken & rotis", bClass: "badge-l", portion: "150g chicken + 2 rotis", nutrients: "Lean protein, B vitamins", protein: "~38g" },
+          { type: "Dinner", name: "Moong dal soup", bClass: "badge-d", portion: "1.5 cups bowl", nutrients: "Folate, gentle digestion", protein: "~14g" }
+        ] 
+      },
+      { 
+        day: "Wednesday", 
+        meals: [
+          { type: "Breakfast", name: "Apple cinnamon oats", bClass: "badge-b", portion: "1 bowl (~1 cup)", nutrients: "Pectin fiber, slow energy", protein: "~10g" },
+          { type: "Lunch", name: "Chana dal & lauki sabzi", bClass: "badge-l", portion: "1 bowl dal + 1 bowl sabzi", nutrients: "High zinc, hydration", protein: "~15g" },
+          { type: "Dinner", name: "Grilled fish & steamed veg", bClass: "badge-d", portion: "150g fish + 1.5 cups veg", nutrients: "Omega-3s, essential minerals", protein: "~32g" }
+        ] 
+      },
+      { 
+        day: "Thursday", 
+        meals: [
+          { type: "Breakfast", name: "Avocado herb toast", bClass: "badge-b", portion: "2 slices + 1/2 avocado", nutrients: "Monounsaturated fats, Vit E", protein: "~9g" },
+          { type: "Lunch", name: "Light fish curry & rice", bClass: "badge-l", portion: "1 bowl curry + 1 cup rice", nutrients: "Iodine, clean energy", protein: "~28g" },
+          { type: "Dinner", name: "Light egg curry", bClass: "badge-d", portion: "2 eggs + 1 cup gravy", nutrients: "Choline, complete protein", protein: "~14g" }
+        ] 
+      },
+      { 
+        day: "Friday", 
+        meals: [
+          { type: "Breakfast", name: "Berry chia oats", bClass: "badge-b", portion: "1 bowl (~1 cup)", nutrients: "High omega-3, fiber", protein: "~11g" },
+          { type: "Lunch", name: "Paneer bhurji & roti", bClass: "badge-l", portion: "100g paneer + 2 rotis", nutrients: "Calcium, healthy fats", protein: "~22g" },
+          { type: "Dinner", name: "Chicken clear soup", bClass: "badge-d", portion: "1.5 cups bowl", nutrients: "Electrolytes, collagen", protein: "~24g" }
+        ] 
+      },
+      { 
+        day: "Saturday", 
+        meals: [
+          { type: "Breakfast", name: "Multigrain toast", bClass: "badge-b", portion: "2 slices with butter/jam", nutrients: "Complex B-vitamins, fiber", protein: "~7g" },
+          { type: "Lunch", name: "Moong dal khichdi", bClass: "badge-l", portion: "1.5 cups bowl", nutrients: "Gut-friendly, complete amino acids", protein: "~13g" },
+          { type: "Dinner", name: "Vegetable khichdi", bClass: "badge-d", portion: "1.5 cups bowl", nutrients: "Micronutrients, light carbs", protein: "~10g" }
+        ] 
+      },
+      { 
+        day: "Sunday", 
+        meals: [
+          { type: "Breakfast", name: "Nut butter oats", bClass: "badge-b", portion: "1 bowl + 1 tbsp butter", nutrients: "Healthy fats, magnesium", protein: "~14g" },
+          { type: "Lunch", name: "Chicken/Veg Pulao", bClass: "badge-l", portion: "1.5 cups bowl", nutrients: "Balanced macro energy", protein: "~20g" },
+          { type: "Dinner", name: "Light dal & spinach", bClass: "badge-d", portion: "1.5 cups bowl", nutrients: "Iron, folate, dietary fiber", protein: "~12g" }
+        ] 
+      }
     ];
 
     const todayName = new Date().toLocaleDateString("en-US", { weekday: "long" });
@@ -340,10 +440,13 @@
         const isToday = d.day === todayName;
         const savedStates = JSON.parse(localStorage.getItem(`nutriFlowState_${d.day}`) || "[false, false, false]");
 
-        const card = document.createElement('div');
-        card.className = `day-card ${isToday ? 'is-today' : ''}`;
+        const cardWrapper = document.createElement('div');
+        cardWrapper.className = `day-card-wrapper ${isToday ? 'is-today' : ''}`;
+        cardWrapper.id = `card-${d.day}`;
 
         let mealsHtml = "";
+        let nutriHtml = "";
+
         d.meals.forEach((m, idx) => {
           const done = savedStates[idx];
           mealsHtml += `
@@ -355,16 +458,41 @@
               <button class="check-btn" aria-label="Toggle completed meal">${done ? '✓' : ''}</button>
             </div>
           `;
+
+          nutriHtml += `
+            <div class="nutrition-item">
+              <div>
+                <span class="nutri-title">${m.type}: ${m.name}</span>
+                <div class="nutri-details">Portion: ${m.portion} · ${m.nutrients}</div>
+              </div>
+              <span class="nutri-tag">${m.protein} Protein</span>
+            </div>
+          `;
         });
 
-        card.innerHTML = `
-          <div class="day-header">
-            <h2 class="day-name">${d.day} ${isToday ? '<span class="today-badge">Today</span>' : ''}</h2>
+        cardWrapper.innerHTML = `
+          <div class="day-card-inner">
+            <!-- Front of Card -->
+            <div class="day-card-front">
+              <div class="day-header">
+                <h2 class="day-name">${d.day} ${isToday ? '<span class="today-badge">Today</span>' : ''}</h2>
+                <button class="flip-btn" onclick="toggleFlip('${d.day}')">🥗 Nutrition Details 🔄</button>
+              </div>
+              <div class="meals-list">${mealsHtml}</div>
+            </div>
+
+            <!-- Back of Card -->
+            <div class="day-card-back">
+              <div class="day-header">
+                <h2 class="day-name">${d.day} Overview</h2>
+                <button class="flip-btn" onclick="toggleFlip('${d.day}')">⬅️ Back to Meals</button>
+              </div>
+              <div class="nutrition-grid">${nutriHtml}</div>
+            </div>
           </div>
-          <div class="meals-list">${mealsHtml}</div>
         `;
 
-        grid.appendChild(card);
+        grid.appendChild(cardWrapper);
       });
 
       // Bind check-btn toggle listeners
@@ -390,6 +518,14 @@
 
     renderDays();
   })();
+
+  /* Card Flip Controller Function */
+  function toggleFlip(day) {
+    const card = document.getElementById(`card-${day}`);
+    if (card) {
+      card.classList.toggle('flipped');
+    }
+  }
 </script>
 </body>
 </html>
