@@ -172,7 +172,6 @@
     font-weight: 500;
   }
 
-  /* FIXED HERO LAYOUT FOR MOBILE CLEARANCE */
   .hero {
     position: relative; 
     min-height: calc(100vh - 70px);
@@ -181,7 +180,7 @@
     justify-content: center;
     overflow: hidden; 
     text-align: center;
-    padding-top: 80px; /* Ensures clear space below fixed navbar */
+    padding-top: 80px;
   }
 
   #nodeCanvas {
@@ -247,22 +246,27 @@
 
   .accent-wrapper {
     overflow: hidden;
-    display: inline-block;
+    display: inline-flex;
+    align-items: baseline;
     vertical-align: bottom;
     padding-bottom: 0.1em;
   }
 
   .accent-mask-inner {
     display: inline-flex;
-    align-items: center;
+    align-items: baseline;
     transform: translateY(120%);
     animation: revealFromBottom 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.55s forwards;
   }
 
+  /* PREVENT SHAKING & LAYOUT SHIFT IN TYPEWRITER */
   .typewriter-accent {
     color: var(--today);
-    min-height: 1em;
+    min-height: 1.2em;
     display: inline-block;
+    min-width: 8.5ch; /* Holds container space fixed based on longest phrase */
+    text-align: left;
+    white-space: nowrap;
   }
 
   .cursor {
@@ -400,11 +404,16 @@
     .wrap { padding: 0 16px; }
     
     .hero {
-      padding-top: 90px; /* Ensures clear separation from navbar */
+      padding-top: 90px;
     }
 
     .hero-content {
       padding-top: 20px;
+    }
+
+    .typewriter-accent {
+      min-width: auto; /* Allow auto width on mobile while retaining flex line wrap stability */
+      text-align: center;
     }
 
     .footer-grid {
