@@ -209,7 +209,6 @@
     opacity: 0; animation: fadeInSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
   }
 
-  /* STABLE HEADING CONTAINER */
   .combined-heading {
     display: flex;
     justify-content: center;
@@ -247,7 +246,6 @@
     100% { transform: translateY(0%); }
   }
 
-  /* DESKTOP LAYOUT (Smooth inline flow, no awkward gaps) */
   .accent-wrapper {
     overflow: hidden;
     display: inline-flex;
@@ -355,7 +353,6 @@
   .principle h3 { font-family: 'Fraunces', serif; font-size: 1.25rem; margin: 0 0 12px; }
   .principle p { font-size: 0.95rem; color: var(--text-dim); line-height: 1.6; margin: 0; }
 
-  /* FOOTER */
   .site-footer {
     position: relative; z-index: 2;
     background: var(--card); border-top: 1px solid var(--card-border);
@@ -376,7 +373,6 @@
 
   .signature { font-family: 'Caveat', cursive; color: var(--today); font-size: 1.3rem; font-weight: 600; }
 
-  /* MODAL */
   .modal-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.75);
     backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center;
@@ -402,7 +398,6 @@
   .modal-body ul { padding-left: 20px; margin: 8px 0 20px; color: var(--text); }
   .modal-footer { padding: 16px 24px; border-top: 1px solid var(--card-border); text-align: right; }
 
-  /* MOBILE RESPONSIVE FIXES */
   @media (max-width: 860px) {
     .principles { grid-template-columns: 1fr; }
   }
@@ -428,7 +423,6 @@
       margin-right: 0.2em;
     }
 
-    /* Force typewriter onto a dedicated 2nd line on mobile with zero page-bouncing */
     .accent-wrapper {
       flex-basis: 100%;
       width: 100%;
@@ -510,6 +504,7 @@
 <aside class="nav-panel" id="navPanel">
   <a href="index.html" class="active">Home</a>
   <a href="plan.html">This Week's Plan</a>
+  <a href="analytics.html">Analytics</a>
   <p class="nav-note">Shared family meal routine · Automatically resets every Monday morning.</p>
 </aside>
 
@@ -603,6 +598,7 @@
         <ul class="footer-links">
           <li><a href="index.html">Home Overview</a></li>
           <li><a href="plan.html">Weekly Tracker</a></li>
+          <li><a href="analytics.html">Analytics</a></li>
         </ul>
       </div>
       <div class="footer-col">
