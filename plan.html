@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<html lang="en" data-theme="dark" data-accent="emerald" __gcrremoteframetoken="c9b24105e017b1f07967c58d74d7eef5"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>This Week's Plan — NutriFlow</title>
 <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22NutriFlow%22,%22short_name%22:%22NutriFlow%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%230D120F%22,%22theme_color%22:%22%230D120F%22}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&amp;family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #0D120F;
@@ -265,7 +265,7 @@
 <nav class="topnav">
   <a class="brand" href="index.html">NutriFlow</a>
   <div class="nav-controls">
-    <select class="accent-select" id="accentBtn" aria-label="Select Theme Accent">
+    <select class="accent-select" id="accentBtn" aria-label="Select Theme Accent" __gcruniqueid="7">
       <option value="gold">✨ Gold</option>
       <option value="emerald">🌿 Emerald</option>
       <option value="amber">🍊 Amber</option>
@@ -303,7 +303,7 @@
   </div>
 
   <div class="filter-bar">
-    <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search meals or ingredients...">
+    <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search meals or ingredients..." __gcruniqueid="8">
     <div class="filter-chips">
       <button class="chip active" data-filter="all">All Items</button>
       <button class="chip" data-filter="high-protein">High Protein (20g+)</button>
@@ -311,7 +311,525 @@
     </div>
   </div>
 
-  <div class="days-grid" id="daysGrid"></div>
+  <div class="days-grid" id="daysGrid"><div class="day-card-wrapper " id="card-Monday">
+          <div class="day-card-inner">
+            <div class="day-card-front">
+              <div class="day-header">
+                <div class="day-title-group">
+                  <h2 class="day-name">Monday</h2>
+                  
+                </div>
+                <button class="flip-btn" onclick="toggleFlip('Monday')">🥗 Nutrition Details 🔄</button>
+              </div>
+              <div class="progress-container"><div class="progress-bar" style="width: 0%"></div></div>
+              <div class="meals-list">
+            <div class="meal-row " data-day="Monday" data-idx="0">
+              <div class="meal-info" onclick="promptSwapAuth('Monday', 0)">
+                <span class="meal-badge badge-b">Breakfast</span>
+                <span class="meal-name">Overnight oats &amp; berries 🔒</span>
+              </div>
+              <button class="check-btn" onclick="toggleMealDone(event, 'Monday', 0)"></button>
+            </div>
+          
+            <div class="meal-row " data-day="Monday" data-idx="1">
+              <div class="meal-info" onclick="promptSwapAuth('Monday', 1)">
+                <span class="meal-badge badge-l">Lunch</span>
+                <span class="meal-name">Rajma curry &amp; brown rice 🔒</span>
+              </div>
+              <button class="check-btn" onclick="toggleMealDone(event, 'Monday', 1)"></button>
+            </div>
+          
+            <div class="meal-row " data-day="Monday" data-idx="2">
+              <div class="meal-info" onclick="promptSwapAuth('Monday', 2)">
+                <span class="meal-badge badge-d">Dinner</span>
+                <span class="meal-name">Vegetable soup &amp; seeds 🔒</span>
+              </div>
+              <button class="check-btn" onclick="toggleMealDone(event, 'Monday', 2)"></button>
+            </div>
+          </div>
+            </div>
+
+            <div class="day-card-back">
+              <div class="day-header">
+                <div class="day-title-group">
+                  <h2 class="day-name">Monday Nutrition</h2>
+                  
+                </div>
+                <button class="flip-btn" onclick="toggleFlip('Monday')">⬅️ Back to Tracker</button>
+              </div>
+              <div class="macro-summary-bar">Daily Est: <span>36g Protein</span> · <span>950 Calories</span></div>
+              <div class="nutrition-grid">
+            <div class="nutrition-item">
+              <div>
+                <span class="nutri-title">Breakfast: Overnight oats &amp; berries</span>
+                <div class="nutri-details">Portion: 1 bowl (~1 cup) · Soluble fiber, antioxidants</div>
+              </div>
+              <span class="nutri-tag">12g Protein · 310 kcal</span>
+            </div>
+          
+            <div class="nutrition-item">
+              <div>
+                <span class="nutri-title">Lunch: Rajma curry &amp; brown rice</span>
+                <div class="nutri-details">Portion: 1 bowl + 1 cup rice · Complex carbs, iron</div>
+              </div>
+              <span class="nutri-tag">16g Protein · 420 kcal</span>
+            </div>
+          
+            <div class="nutrition-item">
+              <div>
+                <span class="nutri-title">Dinner: Vegetable soup &amp; seeds</span>
+                <div class="nutri-details">Portion: 1 bowl + 2 tbsp seeds · Omega-3, Vitamins A/C</div>
+              </div>
+              <span class="nutri-tag">8g Protein · 220 kcal</span>
+            </div>
+          </div>
+            </div>
+          </div>
+        </div><div class="day-card-wrapper " id="card-Tuesday">
+          <div class="day-card-inner">
+            <div class="day-card-front">
+              <div class="day-header">
+                <div class="day-title-group">
+                  <h2 class="day-name">Tuesday</h2>
+                  
+                </div>
+                <button class="flip-btn" onclick="toggleFlip('Tuesday')">🥗 Nutrition Details 🔄</button>
+              </div>
+              <div class="progress-container"><div class="progress-bar" style="width: 0%"></div></div>
+              <div class="meals-list">
+            <div class="meal-row " data-day="Tuesday" data-idx="0">
+              <div class="meal-info" onclick="promptSwapAuth('Tuesday', 0)">
+                <span class="meal-badge badge-b">Breakfast</span>
+                <span class="meal-name">Multigrain avocado toast 🔒</span>
+              </div>
+              <button class="check-btn" onclick="toggleMealDone(event, 'Tuesday', 0)"></button>
+            </div>
+          
+            <div class="meal-row " data-day="Tuesday" data-idx="1">
+              <div class="meal-info" onclick="promptSwapAuth('Tuesday', 1)">
+                <span class="meal-badge badge-l">Lunch</span>
+                <span class="meal-name">Grilled chicken &amp; rotis 🔒</span>
+              </div>
+              <button class="check-btn" onclick="toggleMealDone(event, 'Tuesday', 1)"></button>
+            </div>
+          
+            <div class="meal-row " data-day="Tuesday" data-idx="2">
+              <div class="meal-info" onclick="promptSwapAuth('Tuesday', 2)">
+                <span class="meal-badge badge-d">Dinner</span>
+                <span class="meal-name">Moong dal soup 🔒</span>
+              </div>
+              <button class="check-btn" onclick="toggleMealDone(event, 'Tuesday', 2)"></button>
+            </div>
+          </div>
+            </div>
+
+            <div class="day-card-back">
+              <div class="day-header">
+                <div class="day-title-group">
+                  <h2 class="day-name">Tuesday Nutrition</h2>
+                  
+                </div>
+                <button class="flip-btn" onclick="toggleFlip('Tuesday')">⬅️ Back to Tracker</button>
+              </div>
+              <div class="macro-summary-bar">Daily Est: <span>61g Protein</span> · <span>1020 Calories</span></div>
+              <div class="nutrition-grid">
+            <div class="nutrition-item">
+              <div>
+                <span class="nutri-title">Breakfast: Multigrain avocado toast</span>
+                <div class="nutri-details">Portion: 2 slices + 1/2 avocado · Healthy fats, potassium</div>
+              </div>
+              <span class="nutri-tag">9g Protein · 290 kcal</span>
+            </div>
+          
+            <div class="nutrition-item">
+              <div>
+                <span class="nutri-title">Lunch: Grilled chicken &amp; rotis</span>
+                <div class="nutri-details">Portion: 150g chicken + 2 rotis · Lean protein, B vitamins</div>
+              </div>
+              <span class="nutri-tag">38g Protein · 480 kcal</span>
+            </div>
+          
+            <div class="nutrition-item">
+              <div>
+                <span class="nutri-title">Dinner: Moong dal soup</span>
+                <div class="nutri-details">Portion: 1.5 cups bowl · Folate, gentle digestion</div>
+              </div>
+              <span class="nutri-tag">14g Protein · 250 kcal</span>
+            </div>
+          </div>
+            </div>
+          </div>
+        </div><div class="day-card-wrapper " id="card-Wednesday">
+          <div class="day-card-inner">
+            <div class="day-card-front">
+              <div class="day-header">
+                <div class="day-title-group">
+                  <h2 class="day-name">Wednesday</h2>
+                  
+                </div>
+                <button class="flip-btn" onclick="toggleFlip('Wednesday')">🥗 Nutrition Details 🔄</button>
+              </div>
+              <div class="progress-container"><div class="progress-bar" style="width: 0%"></div></div>
+              <div class="meals-list">
+            <div class="meal-row " data-day="Wednesday" data-idx="0">
+              <div class="meal-info" onclick="promptSwapAuth('Wednesday', 0)">
+                <span class="meal-badge badge-b">Breakfast</span>
+                <span class="meal-name">Apple cinnamon oats 🔒</span>
+              </div>
+              <button class="check-btn" onclick="toggleMealDone(event, 'Wednesday', 0)"></button>
+            </div>
+          
+            <div class="meal-row " data-day="Wednesday" data-idx="1">
+              <div class="meal-info" onclick="promptSwapAuth('Wednesday', 1)">
+                <span class="meal-badge badge-l">Lunch</span>
+                <span class="meal-name">Chana dal &amp; lauki sabzi 🔒</span>
+              </div>
+              <button class="check-btn" onclick="toggleMealDone(event, 'Wednesday', 1)"></button>
+            </div>
+          
+            <div class="meal-row " data-day="Wednesday" data-idx="2">
+              <div class="meal-info" onclick="promptSwapAuth('Wednesday', 2)">
+                <span class="meal-badge badge-d">Dinner</span>
+                <span class="meal-name">Grilled fish &amp; steamed veg 🔒</span>
+              </div>
+              <button class="check-btn" onclick="toggleMealDone(event, 'Wednesday', 2)"></button>
+            </div>
+          </div>
+            </div>
+
+            <div class="day-card-back">
+              <div class="day-header">
+                <div class="day-title-group">
+                  <h2 class="day-name">Wednesday Nutrition</h2>
+                  
+                </div>
+                <button class="flip-btn" onclick="toggleFlip('Wednesday')">⬅️ Back to Tracker</button>
+              </div>
+              <div class="macro-summary-bar">Daily Est: <span>57g Protein</span> · <span>1060 Calories</span></div>
+              <div class="nutrition-grid">
+            <div class="nutrition-item">
+              <div>
+                <span class="nutri-title">Breakfast: Apple cinnamon oats</span>
+                <div class="nutri-details">Portion: 1 bowl (~1 cup) · Pectin fiber, slow energy</div>
+              </div>
+              <span class="nutri-tag">10g Protein · 320 kcal</span>
+            </div>
+          
+            <div class="nutrition-item">
+              <div>
+                <span class="nutri-title">Lunch: Chana dal &amp; lauki sabzi</span>
+                <div class="nutri-details">Portion: 1 bowl dal + 1 bowl sabzi · High zinc, hydration</div>
+              </div>
+              <span class="nutri-tag">15g Protein · 380 kcal</span>
+            </div>
+          
+            <div class="nutrition-item">
+              <div>
+                <span class="nutri-title">Dinner: Grilled fish &amp; steamed veg</span>
+                <div class="nutri-details">Portion: 150g fish + 1.5 cups veg · Omega-3s, essential minerals</div>
+              </div>
+              <span class="nutri-tag">32g Protein · 360 kcal</span>
+            </div>
+          </div>
+            </div>
+          </div>
+        </div><div class="day-card-wrapper is-today" id="card-Thursday">
+          <div class="day-card-inner">
+            <div class="day-card-front">
+              <div class="day-header">
+                <div class="day-title-group">
+                  <h2 class="day-name">Thursday</h2>
+                  <span class="today-badge">Today</span>
+                </div>
+                <button class="flip-btn" onclick="toggleFlip('Thursday')">🥗 Nutrition Details 🔄</button>
+              </div>
+              <div class="progress-container"><div class="progress-bar" style="width: 0%"></div></div>
+              <div class="meals-list">
+            <div class="meal-row " data-day="Thursday" data-idx="0">
+              <div class="meal-info" onclick="promptSwapAuth('Thursday', 0)">
+                <span class="meal-badge badge-b">Breakfast</span>
+                <span class="meal-name">Multigrain avocado toast 🔒</span>
+              </div>
+              <button class="check-btn" onclick="toggleMealDone(event, 'Thursday', 0)"></button>
+            </div>
+          
+            <div class="meal-row " data-day="Thursday" data-idx="1">
+              <div class="meal-info" onclick="promptSwapAuth('Thursday', 1)">
+                <span class="meal-badge badge-l">Lunch</span>
+                <span class="meal-name">Light fish curry &amp; rice 🔒</span>
+              </div>
+              <button class="check-btn" onclick="toggleMealDone(event, 'Thursday', 1)"></button>
+            </div>
+          
+            <div class="meal-row " data-day="Thursday" data-idx="2">
+              <div class="meal-info" onclick="promptSwapAuth('Thursday', 2)">
+                <span class="meal-badge badge-d">Dinner</span>
+                <span class="meal-name">Moong dal soup 🔒</span>
+              </div>
+              <button class="check-btn" onclick="toggleMealDone(event, 'Thursday', 2)"></button>
+            </div>
+          </div>
+            </div>
+
+            <div class="day-card-back">
+              <div class="day-header">
+                <div class="day-title-group">
+                  <h2 class="day-name">Thursday Nutrition</h2>
+                  <span class="today-badge">Today</span>
+                </div>
+                <button class="flip-btn" onclick="toggleFlip('Thursday')">⬅️ Back to Tracker</button>
+              </div>
+              <div class="macro-summary-bar">Daily Est: <span>51g Protein</span> · <span>980 Calories</span></div>
+              <div class="nutrition-grid">
+            <div class="nutrition-item">
+              <div>
+                <span class="nutri-title">Breakfast: Multigrain avocado toast</span>
+                <div class="nutri-details">Portion: 2 slices + 1/2 avocado · Healthy fats, potassium</div>
+              </div>
+              <span class="nutri-tag">9g Protein · 290 kcal</span>
+            </div>
+          
+            <div class="nutrition-item">
+              <div>
+                <span class="nutri-title">Lunch: Light fish curry &amp; rice</span>
+                <div class="nutri-details">Portion: 1 bowl curry + 1 cup rice · Iodine, clean energy</div>
+              </div>
+              <span class="nutri-tag">28g Protein · 440 kcal</span>
+            </div>
+          
+            <div class="nutrition-item">
+              <div>
+                <span class="nutri-title">Dinner: Moong dal soup</span>
+                <div class="nutri-details">Portion: 1.5 cups bowl · Folate, gentle digestion</div>
+              </div>
+              <span class="nutri-tag">14g Protein · 250 kcal</span>
+            </div>
+          </div>
+            </div>
+          </div>
+        </div><div class="day-card-wrapper " id="card-Friday">
+          <div class="day-card-inner">
+            <div class="day-card-front">
+              <div class="day-header">
+                <div class="day-title-group">
+                  <h2 class="day-name">Friday</h2>
+                  
+                </div>
+                <button class="flip-btn" onclick="toggleFlip('Friday')">🥗 Nutrition Details 🔄</button>
+              </div>
+              <div class="progress-container"><div class="progress-bar" style="width: 0%"></div></div>
+              <div class="meals-list">
+            <div class="meal-row " data-day="Friday" data-idx="0">
+              <div class="meal-info" onclick="promptSwapAuth('Friday', 0)">
+                <span class="meal-badge badge-b">Breakfast</span>
+                <span class="meal-name">Berry chia oats 🔒</span>
+              </div>
+              <button class="check-btn" onclick="toggleMealDone(event, 'Friday', 0)"></button>
+            </div>
+          
+            <div class="meal-row " data-day="Friday" data-idx="1">
+              <div class="meal-info" onclick="promptSwapAuth('Friday', 1)">
+                <span class="meal-badge badge-l">Lunch</span>
+                <span class="meal-name">Paneer bhurji &amp; roti 🔒</span>
+              </div>
+              <button class="check-btn" onclick="toggleMealDone(event, 'Friday', 1)"></button>
+            </div>
+          
+            <div class="meal-row " data-day="Friday" data-idx="2">
+              <div class="meal-info" onclick="promptSwapAuth('Friday', 2)">
+                <span class="meal-badge badge-d">Dinner</span>
+                <span class="meal-name">Chicken clear soup 🔒</span>
+              </div>
+              <button class="check-btn" onclick="toggleMealDone(event, 'Friday', 2)"></button>
+            </div>
+          </div>
+            </div>
+
+            <div class="day-card-back">
+              <div class="day-header">
+                <div class="day-title-group">
+                  <h2 class="day-name">Friday Nutrition</h2>
+                  
+                </div>
+                <button class="flip-btn" onclick="toggleFlip('Friday')">⬅️ Back to Tracker</button>
+              </div>
+              <div class="macro-summary-bar">Daily Est: <span>57g Protein</span> · <span>1030 Calories</span></div>
+              <div class="nutrition-grid">
+            <div class="nutrition-item">
+              <div>
+                <span class="nutri-title">Breakfast: Berry chia oats</span>
+                <div class="nutri-details">Portion: 1 bowl (~1 cup) · High omega-3, fiber</div>
+              </div>
+              <span class="nutri-tag">11g Protein · 300 kcal</span>
+            </div>
+          
+            <div class="nutrition-item">
+              <div>
+                <span class="nutri-title">Lunch: Paneer bhurji &amp; roti</span>
+                <div class="nutri-details">Portion: 100g paneer + 2 rotis · Calcium, healthy fats</div>
+              </div>
+              <span class="nutri-tag">22g Protein · 450 kcal</span>
+            </div>
+          
+            <div class="nutrition-item">
+              <div>
+                <span class="nutri-title">Dinner: Chicken clear soup</span>
+                <div class="nutri-details">Portion: 1.5 cups bowl · Electrolytes, collagen</div>
+              </div>
+              <span class="nutri-tag">24g Protein · 280 kcal</span>
+            </div>
+          </div>
+            </div>
+          </div>
+        </div><div class="day-card-wrapper " id="card-Saturday">
+          <div class="day-card-inner">
+            <div class="day-card-front">
+              <div class="day-header">
+                <div class="day-title-group">
+                  <h2 class="day-name">Saturday</h2>
+                  
+                </div>
+                <button class="flip-btn" onclick="toggleFlip('Saturday')">🥗 Nutrition Details 🔄</button>
+              </div>
+              <div class="progress-container"><div class="progress-bar" style="width: 0%"></div></div>
+              <div class="meals-list">
+            <div class="meal-row " data-day="Saturday" data-idx="0">
+              <div class="meal-info" onclick="promptSwapAuth('Saturday', 0)">
+                <span class="meal-badge badge-b">Breakfast</span>
+                <span class="meal-name">Overnight oats &amp; berries 🔒</span>
+              </div>
+              <button class="check-btn" onclick="toggleMealDone(event, 'Saturday', 0)"></button>
+            </div>
+          
+            <div class="meal-row " data-day="Saturday" data-idx="1">
+              <div class="meal-info" onclick="promptSwapAuth('Saturday', 1)">
+                <span class="meal-badge badge-l">Lunch</span>
+                <span class="meal-name">Rajma curry &amp; brown rice 🔒</span>
+              </div>
+              <button class="check-btn" onclick="toggleMealDone(event, 'Saturday', 1)"></button>
+            </div>
+          
+            <div class="meal-row " data-day="Saturday" data-idx="2">
+              <div class="meal-info" onclick="promptSwapAuth('Saturday', 2)">
+                <span class="meal-badge badge-d">Dinner</span>
+                <span class="meal-name">Moong dal khichdi 🔒</span>
+              </div>
+              <button class="check-btn" onclick="toggleMealDone(event, 'Saturday', 2)"></button>
+            </div>
+          </div>
+            </div>
+
+            <div class="day-card-back">
+              <div class="day-header">
+                <div class="day-title-group">
+                  <h2 class="day-name">Saturday Nutrition</h2>
+                  
+                </div>
+                <button class="flip-btn" onclick="toggleFlip('Saturday')">⬅️ Back to Tracker</button>
+              </div>
+              <div class="macro-summary-bar">Daily Est: <span>41g Protein</span> · <span>1040 Calories</span></div>
+              <div class="nutrition-grid">
+            <div class="nutrition-item">
+              <div>
+                <span class="nutri-title">Breakfast: Overnight oats &amp; berries</span>
+                <div class="nutri-details">Portion: 1 bowl (~1 cup) · Soluble fiber, antioxidants</div>
+              </div>
+              <span class="nutri-tag">12g Protein · 310 kcal</span>
+            </div>
+          
+            <div class="nutrition-item">
+              <div>
+                <span class="nutri-title">Lunch: Rajma curry &amp; brown rice</span>
+                <div class="nutri-details">Portion: 1 bowl + 1 cup rice · Complex carbs, iron</div>
+              </div>
+              <span class="nutri-tag">16g Protein · 420 kcal</span>
+            </div>
+          
+            <div class="nutrition-item">
+              <div>
+                <span class="nutri-title">Dinner: Moong dal khichdi</span>
+                <div class="nutri-details">Portion: 1.5 cups bowl · Gut-friendly amino acids</div>
+              </div>
+              <span class="nutri-tag">13g Protein · 310 kcal</span>
+            </div>
+          </div>
+            </div>
+          </div>
+        </div><div class="day-card-wrapper " id="card-Sunday">
+          <div class="day-card-inner">
+            <div class="day-card-front">
+              <div class="day-header">
+                <div class="day-title-group">
+                  <h2 class="day-name">Sunday</h2>
+                  
+                </div>
+                <button class="flip-btn" onclick="toggleFlip('Sunday')">🥗 Nutrition Details 🔄</button>
+              </div>
+              <div class="progress-container"><div class="progress-bar" style="width: 0%"></div></div>
+              <div class="meals-list">
+            <div class="meal-row " data-day="Sunday" data-idx="0">
+              <div class="meal-info" onclick="promptSwapAuth('Sunday', 0)">
+                <span class="meal-badge badge-b">Breakfast</span>
+                <span class="meal-name">Apple cinnamon oats 🔒</span>
+              </div>
+              <button class="check-btn" onclick="toggleMealDone(event, 'Sunday', 0)"></button>
+            </div>
+          
+            <div class="meal-row " data-day="Sunday" data-idx="1">
+              <div class="meal-info" onclick="promptSwapAuth('Sunday', 1)">
+                <span class="meal-badge badge-l">Lunch</span>
+                <span class="meal-name">Grilled chicken &amp; rotis 🔒</span>
+              </div>
+              <button class="check-btn" onclick="toggleMealDone(event, 'Sunday', 1)"></button>
+            </div>
+          
+            <div class="meal-row " data-day="Sunday" data-idx="2">
+              <div class="meal-info" onclick="promptSwapAuth('Sunday', 2)">
+                <span class="meal-badge badge-d">Dinner</span>
+                <span class="meal-name">Vegetable soup &amp; seeds 🔒</span>
+              </div>
+              <button class="check-btn" onclick="toggleMealDone(event, 'Sunday', 2)"></button>
+            </div>
+          </div>
+            </div>
+
+            <div class="day-card-back">
+              <div class="day-header">
+                <div class="day-title-group">
+                  <h2 class="day-name">Sunday Nutrition</h2>
+                  
+                </div>
+                <button class="flip-btn" onclick="toggleFlip('Sunday')">⬅️ Back to Tracker</button>
+              </div>
+              <div class="macro-summary-bar">Daily Est: <span>56g Protein</span> · <span>1020 Calories</span></div>
+              <div class="nutrition-grid">
+            <div class="nutrition-item">
+              <div>
+                <span class="nutri-title">Breakfast: Apple cinnamon oats</span>
+                <div class="nutri-details">Portion: 1 bowl (~1 cup) · Pectin fiber, slow energy</div>
+              </div>
+              <span class="nutri-tag">10g Protein · 320 kcal</span>
+            </div>
+          
+            <div class="nutrition-item">
+              <div>
+                <span class="nutri-title">Lunch: Grilled chicken &amp; rotis</span>
+                <div class="nutri-details">Portion: 150g chicken + 2 rotis · Lean protein, B vitamins</div>
+              </div>
+              <span class="nutri-tag">38g Protein · 480 kcal</span>
+            </div>
+          
+            <div class="nutrition-item">
+              <div>
+                <span class="nutri-title">Dinner: Vegetable soup &amp; seeds</span>
+                <div class="nutri-details">Portion: 1 bowl + 2 tbsp seeds · Omega-3, Vitamins A/C</div>
+              </div>
+              <span class="nutri-tag">8g Protein · 220 kcal</span>
+            </div>
+          </div>
+            </div>
+          </div>
+        </div></div>
 </main>
 
 <!-- GROCERY LIST MODAL -->
@@ -340,7 +858,7 @@
   <div class="modal-box">
     <h3 class="modal-title">🔒 Swap Access Required</h3>
     <p style="color:var(--text-dim); font-size:0.88rem; margin-top:-8px; margin-bottom:16px;">Enter the swap passcode to modify weekly meals.</p>
-    <input type="password" id="swapPinInput" class="admin-input" placeholder="Enter Swap PIN" style="text-align:center;">
+    <input type="password" id="swapPinInput" class="admin-input" placeholder="Enter Swap PIN" style="text-align:center;" __gcruniqueid="9">
     <div style="display:flex; gap:10px; justify-content:flex-end;">
       <button class="tool-btn" id="cancelSwapPinBtn">Cancel</button>
       <button class="tool-btn" id="submitSwapPinBtn" style="border-color:var(--today);">Unlock Swap</button>
@@ -353,7 +871,7 @@
   <div class="modal-box">
     <h3 class="modal-title">🔒 Enter Admin Code</h3>
     <p style="color:var(--text-dim); font-size:0.88rem; margin-top:-8px; margin-bottom:16px;">Protected administrative area.</p>
-    <input type="password" id="adminPinInput" class="admin-input" placeholder="Enter Admin Code" style="text-align:center;">
+    <input type="password" id="adminPinInput" class="admin-input" placeholder="Enter Admin Code" style="text-align:center;" __gcruniqueid="10">
     <div style="display:flex; gap:10px; justify-content:flex-end;">
       <button class="tool-btn" id="cancelAdminPinBtn">Cancel</button>
       <button class="tool-btn" id="submitAdminPinBtn" style="border-color:var(--today);">Unlock</button>
@@ -362,34 +880,34 @@
 </div>
 
 <!-- ADMIN CONTROL PANEL MODAL -->
-<div class="modal-overlay" id="adminPanelModal">
+<div class="modal-overlay open" id="adminPanelModal">
   <div class="modal-box">
     <h3 class="modal-title">⚙️ Admin Control Panel</h3>
     
     <div class="admin-section-title">🚀 Direct GitHub Sync</div>
-    <input type="text" id="ghUser" class="admin-input" placeholder="GitHub Username">
-    <input type="text" id="ghRepo" class="admin-input" placeholder="Repository Name (e.g. nutriflow)">
-    <input type="password" id="ghToken" class="admin-input" placeholder="Personal Access Token (ghp_...)">
+    <input type="text" id="ghUser" class="admin-input" placeholder="GitHub Username" __gcruniqueid="11">
+    <input type="text" id="ghRepo" class="admin-input" placeholder="Repository Name (e.g. nutriflow)" __gcruniqueid="12">
+    <input type="password" id="ghToken" class="admin-input" placeholder="Personal Access Token (ghp_...)" __gcruniqueid="13">
     <button type="button" id="saveGhConfigBtn" class="tool-btn" style="width:100%; justify-content:center; margin-bottom:12px;">💾 Save GitHub Config</button>
 
-    <div class="admin-section-title">➕ Add Custom Meal & Commit</div>
-    <form id="addMealForm">
-      <select id="newMealCategory" class="admin-select" required>
-        <option value="" disabled selected>Select Category...</option>
+    <div class="admin-section-title">➕ Add Custom Meal &amp; Commit</div>
+    <form id="addMealForm" __gcruniqueid="1">
+      <select id="newMealCategory" class="admin-select" required="" __gcruniqueid="2">
+        <option value="" disabled="" selected="">Select Category...</option>
         <option value="Breakfast">🌅 Breakfast</option>
         <option value="Lunch">🥗 Lunch</option>
         <option value="Dinner">🌙 Dinner</option>
       </select>
-      <input type="text" id="newMealName" class="admin-input" placeholder="Meal Name (e.g. Quinoa Salad)" required>
-      <input type="text" id="newMealPortion" class="admin-input" placeholder="Portion (e.g. 1 bowl / 150g)" required>
+      <input type="text" id="newMealName" class="admin-input" placeholder="Meal Name (e.g. Quinoa Salad)" required="" __gcruniqueid="3">
+      <input type="text" id="newMealPortion" class="admin-input" placeholder="Portion (e.g. 1 bowl / 150g)" required="" __gcruniqueid="4">
       <div style="display:flex; gap:10px;">
-        <input type="number" id="newMealProtein" class="admin-input" placeholder="Protein (g)" min="0" required>
-        <input type="number" id="newMealCalories" class="admin-input" placeholder="Calories (kcal)" min="0" required>
+        <input type="number" id="newMealProtein" class="admin-input" placeholder="Protein (g)" min="0" required="" __gcruniqueid="5">
+        <input type="number" id="newMealCalories" class="admin-input" placeholder="Calories (kcal)" min="0" required="" __gcruniqueid="6">
       </div>
-      <button type="submit" class="tool-btn" id="saveMealSubmitBtn" style="width:100%; justify-content:center; border-color:var(--today); margin-bottom:12px;">➕ Save & Commit to GitHub</button>
+      <button type="submit" class="tool-btn" id="saveMealSubmitBtn" style="width:100%; justify-content:center; border-color:var(--today); margin-bottom:12px;" disabled="">⏳ Committing to GitHub...</button>
     </form>
 
-    <div class="admin-section-title">📦 Backup & Data Tools</div>
+    <div class="admin-section-title">📦 Backup &amp; Data Tools</div>
     <div class="admin-actions">
       <button class="tool-btn" id="exportBtn" style="justify-content:center;">📥 Export Plan (JSON)</button>
       <button class="tool-btn" id="importBtn" style="justify-content:center;">📤 Import Plan (JSON)</button>
@@ -426,7 +944,7 @@
     <div class="footer-bottom">
       <div>Weekly family meal system · Auto-resets every Monday</div>
       <div>
-        &copy; 2026 All rights reserved. Developed by <span class="signature">Sumit Rajbanshi</span>
+        © 2026 All rights reserved. Developed by <span class="signature">Sumit Rajbanshi</span>
       </div>
     </div>
   </div>
@@ -482,28 +1000,196 @@
   /* Weekly Plan Engine */
   (function() {
     const defaultSwapDatabase = {
-      Breakfast: [
-        { name: "Overnight oats & berries", portion: "1 bowl (~1 cup)", nutrients: "Soluble fiber, antioxidants", protein: 12, calories: 310, tags: ["quick"] },
-        { name: "Multigrain avocado toast", portion: "2 slices + 1/2 avocado", nutrients: "Healthy fats, potassium", protein: 9, calories: 290, tags: ["quick"] },
-        { name: "Apple cinnamon oats", portion: "1 bowl (~1 cup)", nutrients: "Pectin fiber, slow energy", protein: 10, calories: 320, tags: ["quick"] },
-        { name: "Berry chia oats", portion: "1 bowl (~1 cup)", nutrients: "High omega-3, fiber", protein: 11, calories: 300, tags: ["quick"] },
-        { name: "Tofu scrambled wrap", portion: "1 whole wheat wrap", nutrients: "Plant protein, iron", protein: 18, calories: 340, tags: ["high-protein"] }
-      ],
-      Lunch: [
-        { name: "Rajma curry & brown rice", portion: "1 bowl + 1 cup rice", nutrients: "Complex carbs, iron", protein: 16, calories: 420, tags: [] },
-        { name: "Grilled chicken & rotis", portion: "150g chicken + 2 rotis", nutrients: "Lean protein, B vitamins", protein: 38, calories: 480, tags: ["high-protein"] },
-        { name: "Chana dal & lauki sabzi", portion: "1 bowl dal + 1 bowl sabzi", nutrients: "High zinc, hydration", protein: 15, calories: 380, tags: [] },
-        { name: "Light fish curry & rice", portion: "1 bowl curry + 1 cup rice", nutrients: "Iodine, clean energy", protein: 28, calories: 440, tags: ["high-protein"] },
-        { name: "Paneer bhurji & roti", portion: "100g paneer + 2 rotis", nutrients: "Calcium, healthy fats", protein: 22, calories: 450, tags: ["high-protein"] }
-      ],
-      Dinner: [
-        { name: "Vegetable soup & seeds", portion: "1 bowl + 2 tbsp seeds", nutrients: "Omega-3, Vitamins A/C", protein: 8, calories: 220, tags: ["quick"] },
-        { name: "Moong dal soup", portion: "1.5 cups bowl", nutrients: "Folate, gentle digestion", protein: 14, calories: 250, tags: ["quick"] },
-        { name: "Grilled fish & steamed veg", portion: "150g fish + 1.5 cups veg", nutrients: "Omega-3s, essential minerals", protein: 32, calories: 360, tags: ["high-protein"] },
-        { name: "Chicken clear soup", portion: "1.5 cups bowl", nutrients: "Electrolytes, collagen", protein: 24, calories: 280, tags: ["high-protein", "quick"] },
-        { name: "Moong dal khichdi", portion: "1.5 cups bowl", nutrients: "Gut-friendly amino acids", protein: 13, calories: 310, tags: [] }
+  "Breakfast": [
+    {
+      "name": "Overnight oats & berries",
+      "portion": "1 bowl (~1 cup)",
+      "nutrients": "Soluble fiber, antioxidants",
+      "protein": 12,
+      "calories": 310,
+      "tags": [
+        "quick"
       ]
-    };
+    },
+    {
+      "name": "Multigrain avocado toast",
+      "portion": "2 slices + 1/2 avocado",
+      "nutrients": "Healthy fats, potassium",
+      "protein": 9,
+      "calories": 290,
+      "tags": [
+        "quick"
+      ]
+    },
+    {
+      "name": "Apple cinnamon oats",
+      "portion": "1 bowl (~1 cup)",
+      "nutrients": "Pectin fiber, slow energy",
+      "protein": 10,
+      "calories": 320,
+      "tags": [
+        "quick"
+      ]
+    },
+    {
+      "name": "Berry chia oats",
+      "portion": "1 bowl (~1 cup)",
+      "nutrients": "High omega-3, fiber",
+      "protein": 11,
+      "calories": 300,
+      "tags": [
+        "quick"
+      ]
+    },
+    {
+      "name": "Tofu scrambled wrap",
+      "portion": "1 whole wheat wrap",
+      "nutrients": "Plant protein, iron",
+      "protein": 18,
+      "calories": 340,
+      "tags": [
+        "high-protein"
+      ]
+    },
+    {
+      "name": "Test2 meal",
+      "portion": "1 bowl",
+      "nutrients": "Custom Admin Item",
+      "protein": 20,
+      "calories": 30,
+      "tags": [
+        "high-protein"
+      ]
+    },
+    {
+      "name": "Test2 meal",
+      "portion": "1 bowl",
+      "nutrients": "Custom Admin Item",
+      "protein": 20,
+      "calories": 30,
+      "tags": [
+        "high-protein"
+      ]
+    },
+    {
+      "name": "Test3",
+      "portion": "1 Bowl",
+      "nutrients": "Custom Admin Item",
+      "protein": 20,
+      "calories": 10,
+      "tags": [
+        "high-protein"
+      ]
+    }
+  ],
+  "Lunch": [
+    {
+      "name": "Rajma curry & brown rice",
+      "portion": "1 bowl + 1 cup rice",
+      "nutrients": "Complex carbs, iron",
+      "protein": 16,
+      "calories": 420,
+      "tags": []
+    },
+    {
+      "name": "Grilled chicken & rotis",
+      "portion": "150g chicken + 2 rotis",
+      "nutrients": "Lean protein, B vitamins",
+      "protein": 38,
+      "calories": 480,
+      "tags": [
+        "high-protein"
+      ]
+    },
+    {
+      "name": "Chana dal & lauki sabzi",
+      "portion": "1 bowl dal + 1 bowl sabzi",
+      "nutrients": "High zinc, hydration",
+      "protein": 15,
+      "calories": 380,
+      "tags": []
+    },
+    {
+      "name": "Light fish curry & rice",
+      "portion": "1 bowl curry + 1 cup rice",
+      "nutrients": "Iodine, clean energy",
+      "protein": 28,
+      "calories": 440,
+      "tags": [
+        "high-protein"
+      ]
+    },
+    {
+      "name": "Paneer bhurji & roti",
+      "portion": "100g paneer + 2 rotis",
+      "nutrients": "Calcium, healthy fats",
+      "protein": 22,
+      "calories": 450,
+      "tags": [
+        "high-protein"
+      ]
+    },
+    {
+      "name": "Test bowl",
+      "portion": "1 bowl",
+      "nutrients": "Custom Admin Item",
+      "protein": 10,
+      "calories": 20,
+      "tags": []
+    }
+  ],
+  "Dinner": [
+    {
+      "name": "Vegetable soup & seeds",
+      "portion": "1 bowl + 2 tbsp seeds",
+      "nutrients": "Omega-3, Vitamins A/C",
+      "protein": 8,
+      "calories": 220,
+      "tags": [
+        "quick"
+      ]
+    },
+    {
+      "name": "Moong dal soup",
+      "portion": "1.5 cups bowl",
+      "nutrients": "Folate, gentle digestion",
+      "protein": 14,
+      "calories": 250,
+      "tags": [
+        "quick"
+      ]
+    },
+    {
+      "name": "Grilled fish & steamed veg",
+      "portion": "150g fish + 1.5 cups veg",
+      "nutrients": "Omega-3s, essential minerals",
+      "protein": 32,
+      "calories": 360,
+      "tags": [
+        "high-protein"
+      ]
+    },
+    {
+      "name": "Chicken clear soup",
+      "portion": "1.5 cups bowl",
+      "nutrients": "Electrolytes, collagen",
+      "protein": 24,
+      "calories": 280,
+      "tags": [
+        "high-protein",
+        "quick"
+      ]
+    },
+    {
+      "name": "Moong dal khichdi",
+      "portion": "1.5 cups bowl",
+      "nutrients": "Gut-friendly amino acids",
+      "protein": 13,
+      "calories": 310,
+      "tags": []
+    }
+  ]
+};
 
     let SWAP_DATABASE = JSON.parse(localStorage.getItem('nutriFlowCustomDb')) || defaultSwapDatabase;
 
@@ -896,5 +1582,7 @@
     });
   }
 </script>
-</body>
+
+
+</body></html>
 </html>
