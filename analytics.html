@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analytics — NutriFlow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0D120F;
+    --card: #16201B;
+    --card-hover: #1E2B25;
+    --card-border: rgba(255, 255, 255, 0.08);
+    --text: #F7F4EF;
+    --text-dim: #9EAFA3;
+    --today: #F2CC8F;
+    --accent-glow: rgba(242, 204, 143, 0.12);
+  }
+
+  [data-accent="emerald"] { --today: #52B788; --accent-glow: rgba(82, 183, 136, 0.12); }
+  [data-accent="amber"] { --today: #E76F51; --accent-glow: rgba(231, 111, 81, 0.12); }
+  [data-accent="teal"] { --today: #2A9D8F; --accent-glow: rgba(42, 157, 143, 0.12); }
+
+  [data-theme="light"] {
+    --bg: #F4F1EA;
+    --card: #FFFFFF;
+    --card-hover: #F8F6F0;
+    --card-border: rgba(0, 0, 0, 0.08);
+    --text: #1C241F;
+    --text-dim: #5C6E62;
+    --today: #D99B26;
+    --accent-glow: rgba(217, 155, 38, 0.15);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg); color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height: 100vh; -webkit-font-smoothing: antialiased;
+    overflow-x: hidden; width: 100%;
+    padding-top: 90px; transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  .topnav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 40;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 24px; background: rgba(13, 18, 15, 0.85);
+    backdrop-filter: blur(16px); border-bottom: 1px solid var(--card-border);
+    width: 100%; box-sizing: border-box;
+  }
+  [data-theme="light"] .topnav { background: rgba(244, 241, 234, 0.88); }
+
+  .brand {
+    font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.35rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--text) 30%, var(--today) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  .nav-controls { display: flex; align-items: center; gap: 8px; }
+
+  .theme-toggle, .accent-select {
+    background: var(--card); border: 1px solid var(--card-border);
+    color: var(--text); padding: 8px 12px; border-radius: 20px;
+    font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 6px;
+    transition: all 0.2s ease; min-height: 40px; touch-action: manipulation;
+  }
+
+  .accent-select { padding: 6px 10px; outline: none; }
+  .accent-select option { background: var(--card); color: var(--text); }
+
+  .menu-btn {
+    width: 42px; height: 42px; border-radius: 12px;
+    border: 1px solid var(--card-border); background: var(--card);
+    cursor: pointer; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 5px; padding: 0;
+  }
+  .menu-btn span { display: block; width: 18px; height: 2px; background: var(--text); border-radius: 2px; transition: transform 0.25s ease, opacity 0.25s ease; }
+  .menu-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .menu-btn.open span:nth-child(2) { opacity: 0; }
+  .menu-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .nav-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 45; }
+  .nav-overlay.open { opacity: 1; pointer-events: auto; }
+
+  .nav-panel {
+    position: fixed; top: 0; right: 0; height: 100%;
+    width: min(320px, 85vw); background: var(--card); border-left: 1px solid var(--card-border);
+    transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 50; padding: 100px 24px 32px; display: flex; flex-direction: column; gap: 12px;
+  }
+  .nav-panel.open { transform: translateX(0); }
+  .nav-panel a {
+    font-size: 1.15rem; padding: 12px 0; border: none; border-bottom: 1px solid var(--card-border);
+    background: transparent; color: var(--text-dim); text-align: left; cursor: pointer; width: 100%;
+    font-family: inherit; transition: all 0.2s ease;
+  }
+  .nav-panel a:hover, .nav-panel a.active { color: var(--text); font-weight: 600; padding-left: 8px; }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; width: 100%; box-sizing: border-box; }
+
+  .page-header { margin: 24px 0 20px; }
+  .page-title { font-family: 'Fraunces', serif; font-size: clamp(1.8rem, 5vw, 2.8rem); margin: 0 0 8px; font-weight: 700; }
+  .page-subtitle { color: var(--text-dim); font-size: 1rem; margin: 0; font-weight: 300; }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .stat-card {
+    background: var(--card); border: 1px solid var(--card-border); border-radius: 16px;
+    padding: 20px; display: flex; flex-direction: column; gap: 8px;
+  }
+  .stat-label { font-size: 0.85rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-value { font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 700; color: var(--today); }
+
+  .site-footer { background: var(--card); border-top: 1px solid var(--card-border); padding: 40px 0 24px; margin-top: 40px; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; margin-bottom: 32px; }
+  .footer-col h4 { font-family: 'Fraunces', serif; font-size: 1.1rem; margin: 0 0 16px; }
+  .footer-col p { color: var(--text-dim); font-size: 0.9rem; line-height: 1.6; margin: 0; }
+  .footer-links { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+  .footer-links a { color: var(--text-dim); font-size: 0.9rem; transition: color 0.2s ease; }
+  .footer-links a:hover { color: var(--today); }
+
+  .footer-bottom { border-top: 1px solid var(--card-border); padding-top: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 0.85rem; color: var(--text-dim); }
+  .signature { font-family: 'Caveat', cursive; color: var(--today); font-size: 1.3rem; font-weight: 600; }
+
+  @media (max-width: 768px) {
+    .topnav { padding: 12px 16px; }
+    .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="brand" href="index.html">NutriFlow</a>
+  <div class="nav-controls">
+    <select class="accent-select" id="accentBtn" aria-label="Select Theme Accent">
+      <option value="gold">✨ Gold</option>
+      <option value="emerald">🌿 Emerald</option>
+      <option value="amber">🍊 Amber</option>
+      <option value="teal">🌊 Teal</option>
+    </select>
+    <button class="theme-toggle" id="themeBtn" aria-label="Toggle Light/Dark Theme">
+      <span id="themeIcon">🌙</span> <span id="themeLabel">Dark</span>
+    </button>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="nav-overlay" id="navOverlay"></div>
+<aside class="nav-panel" id="navPanel">
+  <a href="index.html">Home</a>
+  <a href="plan.html">This Week's Plan</a>
+  <a href="analytics.html" class="active">Analytics</a>
+  <p class="nav-note" style="color:var(--text-dim); font-size:0.85rem; margin-top: auto;">Shared family meal routine · Automatically resets every Monday morning.</p>
+</aside>
+
+<main class="wrap">
+  <header class="page-header">
+    <h1 class="page-title">Weekly Analytics</h1>
+    <p class="page-subtitle">Track your weekly nutrition progress and meal consistency.</p>
+  </header>
+
+  <section class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-label">Completion Rate</span>
+      <span class="stat-value" id="completionRate">0%</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Avg Daily Protein</span>
+      <span class="stat-value" id="avgProtein">0g</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Avg Daily Calories</span>
+      <span class="stat-value" id="avgCalories">0 kcal</span>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <a class="brand" href="index.html" style="display:inline-block; margin-bottom:12px;">NutriFlow</a>
+        <p>Simplifying all-day whole-food meal planning for healthy families. Designed to auto-reset every week to keep routine effortless.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul class="footer-links">
+          <li><a href="index.html">Home Overview</a></li>
+          <li><a href="plan.html">Weekly Tracker</a></li>
+          <li><a href="analytics.html">Analytics</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Guidelines</h4>
+        <p>No pork or beef items in any meal. Rich in dietary fiber, clean proteins, and unprocessed whole grains.</p>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <div>Weekly family meal system · Auto-resets every Monday</div>
+      <div>
+        &copy; 2026 All rights reserved. Developed by <span class="signature">Sumit Rajbanshi</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* Theme Controller */
+  (function() {
+    const savedTheme = localStorage.getItem('nutriFlowTheme') || 'dark';
+    const savedAccent = localStorage.getItem('nutriFlowAccent') || 'gold';
+    
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    document.documentElement.setAttribute('data-accent', savedAccent);
+    document.getElementById('accentBtn').value = savedAccent;
+    updateThemeUI(savedTheme);
+
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('nutriFlowTheme', next);
+      updateThemeUI(next);
+    });
+
+    document.getElementById('accentBtn').addEventListener('change', (e) => {
+      const accent = e.target.value;
+      document.documentElement.setAttribute('data-accent', accent);
+      localStorage.setItem('nutriFlowAccent', accent);
+    });
+
+    function updateThemeUI(theme) {
+      document.getElementById('themeIcon').textContent = theme === 'dark' ? '🌙' : '☀️';
+      document.getElementById('themeLabel').textContent = theme === 'dark' ? 'Dark' : 'Light';
+    }
+  })();
+
+  /* Mobile Nav Controller */
+  (function () {
+    const btn = document.getElementById('menuBtn');
+    const panel = document.getElementById('navPanel');
+    const overlay = document.getElementById('navOverlay');
+    function setOpen(open) {
+      btn.classList.toggle('open', open);
+      panel.classList.toggle('open', open);
+      overlay.classList.toggle('open', open);
+    }
+    btn.addEventListener('click', () => setOpen(!panel.classList.contains('open')));
+    overlay.addEventListener('click', () => setOpen(false));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+  })();
+
+  /* Analytics Engine */
+  (function() {
+    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    let totalMeals = 21;
+    let completedMeals = 0;
+
+    days.forEach(day => {
+      const savedStates = JSON.parse(localStorage.getItem(`nutriFlowState_${day}`) || "[false, false, false]");
+      completedMeals += savedStates.filter(Boolean).length;
+    });
+
+    const rate = Math.round((completedMeals / totalMeals) * 100);
+    document.getElementById('completionRate').textContent = `${rate}%`;
+    document.getElementById('avgProtein').textContent = `~135g`;
+    document.getElementById('avgCalories').textContent = `~2,050 kcal`;
+  })();
+</script>
+</body>
+</html>
