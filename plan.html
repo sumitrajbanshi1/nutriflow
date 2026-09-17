@@ -117,15 +117,18 @@
 
   .days-grid { display: flex; flex-direction: column; gap: 24px; margin-bottom: 60px; }
 
-  /* --- FLIP CARD ENGINE --- */
+  /* --- FLIP CARD ENGINE (AUTO HEIGHT ADJUSTING) --- */
   .day-card-wrapper {
-    perspective: 1000px;
+    perspective: 1200px;
     width: 100%;
+    display: grid;
   }
 
   .day-card-inner {
-    position: relative;
     width: 100%;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     transform-style: preserve-3d;
   }
@@ -135,12 +138,17 @@
   }
 
   .day-card-front, .day-card-back {
+    grid-area: 1 / 1 / 2 / 2;
     background: var(--card);
     border: 1px solid var(--card-border);
     border-radius: 20px;
     padding: 24px;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
   }
 
   .day-card-wrapper.is-today .day-card-front,
@@ -150,13 +158,7 @@
   }
 
   .day-card-back {
-    position: absolute;
-    inset: 0;
     transform: rotateY(180deg);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    overflow-y: auto;
   }
 
   .day-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
@@ -200,12 +202,12 @@
   .nutrition-grid { display: flex; flex-direction: column; gap: 10px; flex: 1; margin-bottom: 12px; }
   .nutrition-item {
     background: rgba(255, 255, 255, 0.02); border: 1px solid var(--card-border);
-    border-radius: 10px; padding: 10px 14px; font-size: 0.85rem;
+    border-radius: 10px; padding: 12px 14px; font-size: 0.85rem;
     display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
   }
   .nutri-title { font-weight: 600; color: var(--text); }
-  .nutri-details { color: var(--text-dim); font-size: 0.8rem; }
-  .nutri-tag { background: var(--card-hover); padding: 2px 8px; border-radius: 6px; color: var(--today); font-weight: 600; font-size: 0.75rem; }
+  .nutri-details { color: var(--text-dim); font-size: 0.82rem; margin-top: 2px; }
+  .nutri-tag { background: var(--card-hover); padding: 4px 10px; border-radius: 6px; color: var(--today); font-weight: 600; font-size: 0.78rem; white-space: nowrap; }
 
   /* --- ADAPTIVE FOOTER --- */
   .site-footer {
@@ -317,7 +319,7 @@
     <div class="footer-bottom">
       <div>Weekly family meal system · Auto-resets every Monday</div>
       <div>
-        &copy; 2026 All rights reserved. Developed by <span class="signature">Sumit Rajbanshi</span>
+        &copy; 2026 All rights reserved. Developed by <span class="signature">Sumit Rajbanshi</span>[cite: 2]
       </div>
     </div>
   </div>
@@ -484,8 +486,8 @@
             <!-- Back of Card -->
             <div class="day-card-back">
               <div class="day-header">
-                <h2 class="day-name">${d.day} Overview</h2>
-                <button class="flip-btn" onclick="toggleFlip('${d.day}')">⬅️ Back to Meals</button>
+                <h2 class="day-name">${d.day} Nutrition</h2>
+                <button class="flip-btn" onclick="toggleFlip('${d.day}')">⬅️ Back to Tracker</button>
               </div>
               <div class="nutrition-grid">${nutriHtml}</div>
             </div>
