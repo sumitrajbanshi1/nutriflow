@@ -10,16 +10,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0D120F;
-    --card: #16201B;
-    --card-hover: #1E2B25;
-    --card-border: rgba(255, 255, 255, 0.08);
+    --bg: #0b100d;
+    --card: #131c17;
+    --card-hover: #19251f;
+    --card-inner: #0f1712;
+    --card-border: rgba(255, 255, 255, 0.07);
     --text: #F7F4EF;
-    --text-dim: #9EAFA3;
+    --text-dim: #8b9e91;
     --breakfast: #E07A5F;
     --lunch: #81B29A;
     --dinner: #6A93B0;
     --today: #F2CC8F;
+    --water: #4EA8DE;
     --accent-glow: rgba(242, 204, 143, 0.12);
   }
 
@@ -31,6 +33,7 @@
     --bg: #F4F1EA;
     --card: #FFFFFF;
     --card-hover: #F8F6F0;
+    --card-inner: #F0EDE5;
     --card-border: rgba(0, 0, 0, 0.08);
     --text: #1C241F;
     --text-dim: #5C6E62;
@@ -51,11 +54,11 @@
 
   a { color: inherit; text-decoration: none; }
 
-  /* UPDATED MOBILE-FRIENDLY NAV BAR */
+  /* NAV BAR */
   .topnav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 40;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 16px; background: rgba(13, 18, 15, 0.85);
+    padding: 12px 16px; background: rgba(11, 16, 13, 0.88);
     backdrop-filter: blur(16px); border-bottom: 1px solid var(--card-border);
     width: 100%; box-sizing: border-box; flex-wrap: wrap; gap: 8px;
   }
@@ -115,12 +118,13 @@
   }
   .nav-panel a:hover, .nav-panel a.active, .nav-panel button.nav-link-btn:hover { color: var(--text); font-weight: 600; padding-left: 8px; }
 
-  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; width: 100%; box-sizing: border-box; }
+  .wrap { max-width: 1140px; margin: 0 auto; padding: 0 16px; width: 100%; box-sizing: border-box; }
 
   .page-header { margin: 24px 0 20px; }
-  .page-title { font-family: 'Fraunces', serif; font-size: clamp(1.8rem, 5vw, 2.8rem); margin: 0 0 8px; font-weight: 700; }
+  .page-title { font-family: 'Fraunces', serif; font-size: clamp(2rem, 5vw, 3rem); margin: 0 0 8px; font-weight: 700; letter-spacing: -0.02em; }
   .page-subtitle { color: var(--text-dim); font-size: 1rem; margin: 0; font-weight: 300; }
 
+  /* TOOLBAR & HYDRATION WIDGET */
   .action-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
   
   .tool-btn {
@@ -131,14 +135,36 @@
   }
   .tool-btn:hover { border-color: var(--today); background: var(--card-hover); }
 
+  .hydration-tracker {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--card); border: 1px solid var(--card-border);
+    padding: 6px 14px; border-radius: 14px; min-height: 42px;
+  }
+  .hydration-info { display: flex; flex-direction: column; gap: 2px; }
+  .hydration-title { font-size: 0.72rem; font-weight: 700; color: var(--water); text-transform: uppercase; letter-spacing: 0.05em; }
+  .hydration-counter { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+  
+  .hydration-progress-bg { width: 60px; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+  .hydration-progress-fill { height: 100%; background: var(--water); width: 0%; transition: width 0.3s ease; }
+
+  .hydration-btn-group { display: flex; gap: 4px; }
+  .hydro-btn {
+    background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: var(--text);
+    width: 26px; height: 26px; border-radius: 8px; font-size: 0.85rem; font-weight: bold;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0;
+    transition: all 0.2s ease;
+  }
+  .hydro-btn:hover { background: var(--water); color: #000; border-color: var(--water); }
+
+  /* FILTER BAR */
   .filter-bar {
     display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
-    background: var(--card); border: 1px solid var(--card-border); padding: 12px 16px; border-radius: 16px; margin-bottom: 24px;
+    background: var(--card); border: 1px solid var(--card-border); padding: 12px 16px; border-radius: 16px; margin-bottom: 28px;
   }
 
   .search-input {
     background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); color: var(--text);
-    padding: 8px 14px; border-radius: 10px; font-size: 0.88rem; outline: none; width: 100%; max-width: 220px;
+    padding: 8px 14px; border-radius: 10px; font-size: 0.88rem; outline: none; width: 100%; max-width: 240px;
   }
   .search-input:focus { border-color: var(--today); }
 
@@ -149,15 +175,23 @@
   }
   .chip.active, .chip:hover { background: var(--card-hover); border-color: var(--today); color: var(--today); }
 
-  .days-grid { display: flex; flex-direction: column; gap: 20px; margin-bottom: 40px; width: 100%; }
+  /* GRID LAYOUT */
+  .days-grid { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 20px; 
+    margin-bottom: 40px; 
+    width: 100%; 
+  }
 
   .day-card-wrapper { perspective: 1200px; width: 100%; }
   .day-card-inner { position: relative; width: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
   .day-card-wrapper.flipped .day-card-inner { transform: rotateY(180deg); }
 
   .day-card-front, .day-card-back {
-    background: var(--card); border: 1px solid var(--card-border); border-radius: 20px;
-    padding: 20px; backface-visibility: hidden; -webkit-backface-visibility: hidden; width: 100%; box-sizing: border-box;
+    background: var(--card); border: 1px solid var(--card-border); border-radius: 16px;
+    padding: 18px; backface-visibility: hidden; -webkit-backface-visibility: hidden; width: 100%; box-sizing: border-box;
+    display: flex; flex-direction: column; justify-content: space-between; min-height: 480px;
   }
 
   .day-card-front { position: relative; z-index: 2; }
@@ -169,45 +203,63 @@
   .day-card-wrapper.is-today .day-card-front,
   .day-card-wrapper.is-today .day-card-back { border-color: var(--today); box-shadow: 0 4px 20px var(--accent-glow); }
 
-  .day-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; gap: 12px; }
-  .day-title-group { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
-  .day-name { font-family: 'Fraunces', serif; font-size: 1.35rem; margin: 0; line-height: 1.2; }
-  .today-badge { font-family: 'Inter', sans-serif; font-size: 0.7rem; background: var(--today); color: #0D120F; padding: 2px 8px; border-radius: 10px; font-weight: 700; text-transform: uppercase; }
+  .day-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .day-name { font-family: 'Fraunces', serif; font-size: 1.45rem; margin: 0; font-weight: 700; line-height: 1.2; }
+  .planned-badge { 
+    font-size: 0.72rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border);
+    color: var(--text-dim); padding: 3px 10px; border-radius: 12px; font-weight: 500; 
+  }
+  .today-badge { font-family: 'Inter', sans-serif; font-size: 0.7rem; background: var(--today); color: #0D120F; padding: 2px 8px; border-radius: 10px; font-weight: 700; text-transform: uppercase; margin-left: 6px; }
 
-  .progress-container { width: 100%; background: rgba(255,255,255,0.05); height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 16px; }
+  .progress-container { width: 100%; background: rgba(255,255,255,0.05); height: 4px; border-radius: 2px; overflow: hidden; margin-bottom: 14px; }
   .progress-bar { height: 100%; background: var(--today); width: 0%; transition: width 0.3s ease; }
 
-  .flip-btn {
-    background: transparent; border: 1px solid var(--card-border); color: var(--text-dim);
-    padding: 6px 12px; border-radius: 10px; font-size: 0.8rem; cursor: pointer;
-    transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; flex-shrink: 0;
-  }
-  .flip-btn:hover { color: var(--today); border-color: var(--today); background: var(--card-hover); }
-
-  .meals-list { display: flex; flex-direction: column; gap: 10px; }
+  .meals-list { display: flex; flex-direction: column; gap: 12px; flex: 1; }
 
   .meal-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.02);
-    border: 1px solid var(--card-border); gap: 10px; transition: background 0.2s ease; cursor: pointer;
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: 12px 14px; border-radius: 12px; background: var(--card-inner);
+    border: 1px solid var(--card-border); gap: 8px; transition: all 0.2s ease; cursor: pointer;
   }
-  .meal-row:hover { background: var(--card-hover); }
+  .meal-row:hover { background: var(--card-hover); border-color: rgba(255, 255, 255, 0.15); }
 
-  .meal-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
-  .meal-badge { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; padding: 4px 8px; border-radius: 8px; flex-shrink: 0; }
-  .badge-b { background: rgba(224, 122, 95, 0.15); color: var(--breakfast); }
-  .badge-l { background: rgba(129, 178, 154, 0.15); color: var(--lunch); }
-  .badge-d { background: rgba(106, 147, 176, 0.15); color: var(--dinner); }
-
-  .meal-name { font-size: 0.92rem; line-height: 1.3; word-break: break-word; }
-  .meal-row.done .meal-name { text-decoration: line-through; opacity: 0.5; }
-
+  .meal-row-header { display: flex; align-items: flex-start; gap: 10px; width: 100%; }
+  
   .check-btn {
-    width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--card-border);
+    width: 16px; height: 16px; border-radius: 3px; border: 1.5px solid var(--text-dim);
     background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center;
-    color: transparent; transition: all 0.2s ease; flex-shrink: 0; min-width: 32px; min-height: 32px; touch-action: manipulation;
+    color: transparent; transition: all 0.2s ease; flex-shrink: 0; margin-top: 2px; padding: 0;
+    touch-action: manipulation; font-size: 10px;
   }
   .meal-row.done .check-btn { background: var(--today); border-color: var(--today); color: #0D120F; font-weight: bold; }
+
+  .meal-content { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+  
+  .meal-type-label {
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 2px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  
+  .batch-tag {
+    font-size: 0.65rem; color: #a4c2f4; border: 1px solid rgba(164, 194, 244, 0.4);
+    padding: 1px 6px; border-radius: 8px; text-transform: none; letter-spacing: 0;
+  }
+
+  .meal-name { font-size: 0.92rem; font-weight: 600; line-height: 1.3; color: var(--text); word-break: break-word; }
+  .meal-row.done .meal-name { text-decoration: line-through; opacity: 0.5; }
+
+  .meal-stats { display: flex; align-items: center; gap: 12px; margin-top: 6px; font-size: 0.78rem; color: var(--text-dim); }
+  .stat-item { display: flex; align-items: center; gap: 4px; }
+
+  .card-footer-actions {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--card-border);
+  }
+  .pill-btn {
+    background: rgba(255,255,255,0.04); border: 1px solid var(--card-border); color: var(--text);
+    padding: 6px 14px; border-radius: 20px; font-size: 0.78rem; cursor: pointer;
+    transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px; font-weight: 500;
+  }
+  .pill-btn:hover { background: var(--card-hover); border-color: var(--today); color: var(--today); }
 
   .macro-summary-bar {
     display: flex; gap: 12px; margin-bottom: 14px; padding: 10px 14px;
@@ -215,21 +267,68 @@
   }
   .macro-summary-bar span { color: var(--today); font-weight: 600; }
 
-  .nutrition-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+  .nutrition-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; flex: 1; }
   .nutrition-item {
     background: rgba(255, 255, 255, 0.02); border: 1px solid var(--card-border);
-    border-radius: 10px; padding: 12px; font-size: 0.85rem;
+    border-radius: 10px; padding: 10px 12px; font-size: 0.82rem;
     display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
   }
   .nutri-title { font-weight: 600; color: var(--text); }
-  .nutri-details { color: var(--text-dim); font-size: 0.82rem; margin-top: 2px; }
-  .nutri-tag { background: var(--card-hover); padding: 4px 10px; border-radius: 6px; color: var(--today); font-weight: 600; font-size: 0.78rem; white-space: nowrap; }
+  .nutri-details { color: var(--text-dim); font-size: 0.78rem; margin-top: 2px; }
+  .nutri-tag { background: var(--card-hover); padding: 4px 8px; border-radius: 6px; color: var(--today); font-weight: 600; font-size: 0.75rem; white-space: nowrap; }
 
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
   .modal-overlay.open { display: flex; }
-  .modal-box { background: var(--card); border: 1px solid var(--card-border); border-radius: 20px; max-width: 480px; width: 100%; padding: 20px; color: var(--text); max-height: 90vh; overflow-y: auto; box-sizing: border-box; }
-  .modal-title { font-family: 'Fraunces', serif; font-size: 1.3rem; margin: 0 0 16px; }
+  .modal-box { position: relative; background: var(--card); border: 1px solid var(--card-border); border-radius: 20px; max-width: 600px; width: 100%; padding: 20px; color: var(--text); max-height: 85vh; overflow-y: auto; box-sizing: border-box; display: flex; flex-direction: column; }
+  .modal-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-shrink: 0; }
+  .modal-title { font-family: 'Fraunces', serif; font-size: 1.3rem; margin: 0; }
   
+  .close-top-btn {
+    background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: var(--text);
+    width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; padding: 0;
+  }
+  .close-top-btn:hover { background: var(--card-hover); border-color: var(--today); color: var(--today); }
+
+  /* ACCORDION DROPDOWN STYLES */
+  details.category-accordion {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  details.category-accordion summary {
+    padding: 12px 16px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--today);
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+  }
+  details.category-accordion summary::-webkit-details-marker { display: none; }
+  details.category-accordion summary::after { content: "▼"; font-size: 0.75rem; transition: transform 0.2s ease; }
+  details.category-accordion[open] summary::after { transform: rotate(180deg); }
+  .accordion-content { 
+    padding: 12px; 
+    border-top: 1px solid var(--card-border); 
+    display: flex; 
+    flex-direction: column; 
+    gap: 8px;
+    max-height: 280px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* VAULT STYLES */
+  .db-item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid var(--card-border); font-size: 0.85rem; flex-wrap: wrap; gap: 8px; }
+  .db-item-info { flex: 1; min-width: 200px; }
+  .db-item-actions { display: flex; gap: 6px; }
+
   details.admin-group {
     background: rgba(255,255,255,0.02);
     border: 1px solid var(--card-border);
@@ -254,9 +353,59 @@
   details.admin-group[open] summary::after { transform: rotate(180deg); }
   .admin-group-content { padding: 14px; border-top: 1px solid var(--card-border); }
 
-  .swap-list { display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; margin-bottom: 20px; }
-  .swap-option { background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); padding: 12px; border-radius: 10px; cursor: pointer; transition: all 0.2s ease; }
+  /* SWAP MODAL & CONTAINER SCROLLING UPDATES */
+  .swap-list { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 10px; 
+    flex: 1 1 auto;
+    overflow-y: auto; 
+    min-height: 0;
+    margin-bottom: 16px; 
+    padding-right: 6px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .swap-list::-webkit-scrollbar,
+  .accordion-content::-webkit-scrollbar,
+  .modal-box::-webkit-scrollbar {
+    width: 6px;
+  }
+  .swap-list::-webkit-scrollbar-track,
+  .accordion-content::-webkit-scrollbar-track,
+  .modal-box::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 4px;
+  }
+  .swap-list::-webkit-scrollbar-thumb,
+  .accordion-content::-webkit-scrollbar-thumb,
+  .modal-box::-webkit-scrollbar-thumb {
+    background: var(--text-dim);
+    border-radius: 4px;
+  }
+  .swap-list::-webkit-scrollbar-thumb:hover,
+  .accordion-content::-webkit-scrollbar-thumb:hover,
+  .modal-box::-webkit-scrollbar-thumb:hover {
+    background: var(--text);
+  }
+  
+  .swap-option {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--card-border);
+    padding: 8px 10px; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-shrink: 0; font-size: 0.85rem;
+  }
   .swap-option:hover { background: var(--card-hover); border-color: var(--today); }
+  .swap-option.active-choice {
+    border-color: var(--today);
+    background: var(--card-hover);
+    box-shadow: 0 0 10px var(--accent-glow);
+  }
+  .current-badge {
+    font-size: 0.7rem; background: var(--today); color: #0D120F;
+    padding: 2px 8px; border-radius: 10px; font-weight: 700; text-transform: uppercase;
+  }
 
   .admin-input, .admin-select {
     width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--card-border);
@@ -277,12 +426,17 @@
   .footer-bottom { border-top: 1px solid var(--card-border); padding-top: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 0.85rem; color: var(--text-dim); }
   .signature { font-family: 'Caveat', cursive; color: var(--today); font-size: 1.3rem; font-weight: 600; }
 
-  /* RESPONSIVE MEDIA QUERIES */
+  @media (max-width: 1024px) {
+    .days-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
   @media (max-width: 768px) {
+    .days-grid { grid-template-columns: 1fr; }
     .footer-grid { grid-template-columns: 1fr; gap: 24px; }
     .action-toolbar, .filter-bar { flex-direction: column; align-items: stretch; }
     .search-input { max-width: 100%; width: 100%; }
     .tool-btn { justify-content: center; }
+    .hydration-tracker { justify-content: space-between; width: 100%; }
   }
 
   @media (max-width: 600px) {
@@ -294,7 +448,7 @@
   }
 
   @media print {
-    .topnav, .action-toolbar, .filter-bar, .theme-toggle, .accent-select, .site-footer, .flip-btn { display: none !important; }
+    .topnav, .action-toolbar, .filter-bar, .theme-toggle, .accent-select, .site-footer, .pill-btn, .hydration-tracker { display: none !important; }
     body { background: #fff !important; color: #000 !important; padding-top: 0 !important; }
     .day-card-front { border: 1px solid #ccc !important; box-shadow: none !important; color: #000 !important; page-break-inside: avoid; }
     .meal-row { border: 1px solid #eee !important; color: #000 !important; }
@@ -329,21 +483,39 @@
   <a href="index.html">Home</a>
   <a href="plan.html" class="active">This Week's Plan</a>
   <a href="analytics.html">Analytics</a>
-  <button class="nav-link-btn" id="openAdminNavBtn">🔒 Admin Panel</button>
+  <button class="nav-link-btn" id="openDbManagerNavBtn">📖 Meal Vault 🔒</button>
+  <button class="nav-link-btn" id="openAdminNavBtn">⚙️ Admin Panel 🔒</button>
   <p class="nav-note" style="color:var(--text-dim); font-size:0.85rem; margin-top: auto;">Shared family meal routine · Automatically resets every Monday morning.</p>
 </aside>
 
 <main class="wrap">
   <header class="page-header">
-    <h1 class="page-title">Weekly Tracker</h1>
-    <p class="page-subtitle">Track prepped meals, inspect nutrition, generate shopping lists, or swap recipes.</p>
+    <h1 class="page-title">Weekly Meal Schedule</h1>
+    <p class="page-subtitle">Whole-food family routine — non-beef, non-pork, high fiber & clean protein.</p>
   </header>
 
+  <!-- ACTION TOOLBAR -->
   <div class="action-toolbar">
-    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
       <button class="tool-btn" id="resetBtn">🔄 Reset Progress</button>
       <button class="tool-btn" id="listBtn">🛒 Grocery List</button>
     </div>
+
+    <!-- HYDRATION TRACKER -->
+    <div class="hydration-tracker">
+      <div class="hydration-info">
+        <div class="hydration-title">💧 Hydration</div>
+        <div class="hydration-counter" id="hydroText">0 / 8 Glasses</div>
+      </div>
+      <div class="hydration-progress-bg">
+        <div class="hydration-progress-fill" id="hydroFill"></div>
+      </div>
+      <div class="hydration-btn-group">
+        <button class="hydro-btn" id="hydroMinusBtn" aria-label="Decrease Water">-</button>
+        <button class="hydro-btn" id="hydroPlusBtn" aria-label="Increase Water">+</button>
+      </div>
+    </div>
+
     <button class="tool-btn" onclick="window.print()">🖨️ Print Plan</button>
   </div>
 
@@ -359,10 +531,117 @@
   <div class="days-grid" id="daysGrid"></div>
 </main>
 
+<!-- MEAL VAULT PASSCODE ACCESS MODAL -->
+<div class="modal-overlay" id="dbPinModal">
+  <div class="modal-box">
+    <div class="modal-header-row">
+      <h3 class="modal-title">🔒 Meal Vault Access</h3>
+      <button class="close-top-btn" id="closeDbPinTopBtn">✕</button>
+    </div>
+    <p style="color:var(--text-dim); font-size:0.88rem; margin-top:-8px; margin-bottom:16px;">Enter access code to open the Meal Vault.</p>
+    <form id="dbPinForm" onsubmit="return false;">
+      <input type="password" id="dbPinInput" class="admin-input" placeholder="Enter Access Code" style="text-align:center;" autocomplete="current-password">
+      <div style="display:flex; gap:10px; justify-content:flex-end;">
+        <button type="button" class="tool-btn" id="cancelDbPinBtn">Cancel</button>
+        <button type="submit" class="tool-btn" id="submitDbPinBtn" style="border-color:var(--today);">Unlock Vault</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- CENTRAL MEAL VAULT MODAL -->
+<div class="modal-overlay" id="dbManagerModal">
+  <div class="modal-box">
+    <div class="modal-header-row">
+      <h3 class="modal-title">📖 Meal Vault</h3>
+      <button class="close-top-btn" id="closeDbManagerTopBtn">✕</button>
+    </div>
+    <p style="color:var(--text-dim); font-size:0.85rem; margin-top:-8px; margin-bottom:16px;">
+      Central repository for all breakfast, lunch, and dinner options with full attributes.
+    </p>
+
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
+      <button class="tool-btn" id="dbRefreshBtn" style="border-color:var(--today);">🔄 Refresh View</button>
+      <button class="tool-btn" id="dbCopyBtn">📋 Copy Catalog</button>
+      <button class="tool-btn" id="dbPrintBtn">🖨️ Print Catalog</button>
+      <button class="tool-btn" id="dbExportBtn">📥 Export JSON</button>
+      <button class="tool-btn" id="dbImportBtn">📤 Import JSON</button>
+      <input type="file" id="dbImportFile" style="display:none" accept=".json">
+    </div>
+
+    <details class="admin-group">
+      <summary>➕ Add New Meal to Vault</summary>
+      <div class="admin-group-content">
+        <form id="dbAddMealForm">
+          <select id="dbCategory" class="admin-select" required>
+            <option value="" disabled selected>Select Category...</option>
+            <option value="Breakfast">🌅 Breakfast</option>
+            <option value="Lunch">🥗 Lunch</option>
+            <option value="Dinner">🌙 Dinner</option>
+          </select>
+          <input type="text" id="dbName" class="admin-input" placeholder="Meal Name (e.g. Quinoa Salad)" required>
+          <input type="text" id="dbPortion" class="admin-input" placeholder="Portion (e.g. 1 bowl / 150g)" required>
+          <input type="text" id="dbNutrients" class="admin-input" placeholder="Key Nutrients (e.g. High fiber, Vitamin C)">
+          <div style="display:flex; gap:10px;">
+            <input type="number" id="dbProtein" class="admin-input" placeholder="Protein (g)" min="0" required>
+            <input type="number" id="dbCalories" class="admin-input" placeholder="Calories (kcal)" min="0" required>
+          </div>
+          <button type="submit" class="tool-btn" style="width:100%; justify-content:center; border-color:var(--today);">➕ Add Meal Option</button>
+        </form>
+      </div>
+    </details>
+
+    <div id="dbCategoriesContainer"></div>
+
+    <div style="display:flex; justify-content:flex-end; margin-top:16px;">
+      <button class="tool-btn" id="closeDbManagerBtn">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- DYNAMIC VAULT EDIT MODAL -->
+<div class="modal-overlay" id="editVaultModal">
+  <div class="modal-box">
+    <div class="modal-header-row">
+      <h3 class="modal-title">✏️ Edit Vault Meal</h3>
+      <button class="close-top-btn" id="closeEditVaultTopBtn">✕</button>
+    </div>
+    <form id="editVaultForm" onsubmit="return false;">
+      <label style="font-size:0.8rem; color:var(--text-dim); display:block; margin-bottom:4px;">Meal Name</label>
+      <input type="text" id="editVaultName" class="admin-input" required>
+      
+      <label style="font-size:0.8rem; color:var(--text-dim); display:block; margin-bottom:4px;">Portion</label>
+      <input type="text" id="editVaultPortion" class="admin-input" required>
+
+      <label style="font-size:0.8rem; color:var(--text-dim); display:block; margin-bottom:4px;">Key Nutrients</label>
+      <input type="text" id="editVaultNutrients" class="admin-input">
+
+      <div style="display:flex; gap:10px;">
+        <div style="flex:1;">
+          <label style="font-size:0.8rem; color:var(--text-dim); display:block; margin-bottom:4px;">Protein (g)</label>
+          <input type="number" id="editVaultProtein" class="admin-input" min="0" required>
+        </div>
+        <div style="flex:1;">
+          <label style="font-size:0.8rem; color:var(--text-dim); display:block; margin-bottom:4px;">Calories (kcal)</label>
+          <input type="number" id="editVaultCalories" class="admin-input" min="0" required>
+        </div>
+      </div>
+      
+      <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:10px;">
+        <button type="button" class="tool-btn" id="cancelEditVaultBtn">Cancel</button>
+        <button type="submit" class="tool-btn" style="border-color:var(--today);">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- GROCERY LIST MODAL -->
 <div class="modal-overlay" id="groceryModal">
   <div class="modal-box">
-    <h3 class="modal-title">🛒 Weekly Grocery List</h3>
+    <div class="modal-header-row">
+      <h3 class="modal-title">🛒 Weekly Grocery List</h3>
+      <button class="close-top-btn" id="closeGroceryTopBtn">✕</button>
+    </div>
     <div class="swap-list" id="groceryListContent"></div>
     <div style="display:flex; justify-content:space-between;">
       <button class="tool-btn" id="copyListBtn">📋 Copy List</button>
@@ -374,22 +653,47 @@
 <!-- MEAL SWAP MODAL -->
 <div class="modal-overlay" id="swapModal">
   <div class="modal-box">
-    <h3 class="modal-title">🔄 Swap Meal</h3>
+    <div class="modal-header-row">
+      <h3 class="modal-title">🔄 Swap Meal</h3>
+      <button class="close-top-btn" id="closeSwapTopBtn">✕</button>
+    </div>
+    <p id="swapCurrentMealHeader" style="color:var(--today); font-weight:600; font-size:0.9rem; margin-top:-8px; margin-bottom:12px; flex-shrink: 0;"></p>
     <div class="swap-list" id="swapListOptions"></div>
-    <button class="tool-btn" style="width:100%; justify-content:center;" id="closeSwapBtn">Cancel</button>
+    <button class="tool-btn" style="width:100%; justify-content:center; flex-shrink: 0;" id="closeSwapBtn">Close</button>
   </div>
 </div>
 
 <!-- SWAP AUTH LOCK MODAL -->
 <div class="modal-overlay" id="swapPinModal">
   <div class="modal-box">
-    <h3 class="modal-title">🔒 Swap Access Required</h3>
-    <p style="color:var(--text-dim); font-size:0.88rem; margin-top:-8px; margin-bottom:16px;">Enter the swap passcode once to unlock editing for all days.</p>
+    <div class="modal-header-row">
+      <h3 class="modal-title">🔒 Access Code Required</h3>
+      <button class="close-top-btn" id="closeSwapPinTopBtn">✕</button>
+    </div>
+    <p style="color:var(--text-dim); font-size:0.88rem; margin-top:-8px; margin-bottom:16px;">Enter passcode to enable meal swaps.</p>
     <form id="swapPinForm" onsubmit="return false;">
-      <input type="password" id="swapPinInput" class="admin-input" placeholder="Enter Swap PIN" style="text-align:center;" autocomplete="current-password">
+      <input type="password" id="swapPinInput" class="admin-input" placeholder="Enter PIN Code" style="text-align:center;" autocomplete="current-password">
       <div style="display:flex; gap:10px; justify-content:flex-end;">
         <button type="button" class="tool-btn" id="cancelSwapPinBtn">Cancel</button>
-        <button type="submit" class="tool-btn" id="submitSwapPinBtn" style="border-color:var(--today);">Unlock Editing</button>
+        <button type="submit" class="tool-btn" id="submitSwapPinBtn" style="border-color:var(--today);">Unlock & Swap</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- DELETE LOCK VERIFICATION MODAL -->
+<div class="modal-overlay" id="deletePinModal">
+  <div class="modal-box">
+    <div class="modal-header-row">
+      <h3 class="modal-title">🔒 Confirm Deletion</h3>
+      <button class="close-top-btn" id="closeDeletePinTopBtn">✕</button>
+    </div>
+    <p style="color:var(--text-dim); font-size:0.88rem; margin-top:-8px; margin-bottom:16px;">Enter access code to confirm deletion from vault.</p>
+    <form id="deletePinForm" onsubmit="return false;">
+      <input type="password" id="deletePinInput" class="admin-input" placeholder="Enter Access Code" style="text-align:center;" autocomplete="current-password">
+      <div style="display:flex; gap:10px; justify-content:flex-end;">
+        <button type="button" class="tool-btn" id="cancelDeletePinBtn">Cancel</button>
+        <button type="submit" class="tool-btn" id="submitDeletePinBtn" style="border-color:#E07A5F;">Delete Item</button>
       </div>
     </form>
   </div>
@@ -398,7 +702,10 @@
 <!-- ADMIN PIN LOCK MODAL -->
 <div class="modal-overlay" id="adminPinModal">
   <div class="modal-box">
-    <h3 class="modal-title">🔒 Enter Admin Code</h3>
+    <div class="modal-header-row">
+      <h3 class="modal-title">🔒 Enter Admin Code</h3>
+      <button class="close-top-btn" id="closeAdminPinTopBtn">✕</button>
+    </div>
     <p style="color:var(--text-dim); font-size:0.88rem; margin-top:-8px; margin-bottom:16px;">Protected administrative area.</p>
     <form id="adminPinForm" onsubmit="return false;">
       <input type="password" id="adminPinInput" class="admin-input" placeholder="Enter Admin Code" style="text-align:center;" autocomplete="current-password">
@@ -413,7 +720,10 @@
 <!-- ADMIN CONTROL PANEL MODAL -->
 <div class="modal-overlay" id="adminPanelModal">
   <div class="modal-box">
-    <h3 class="modal-title">⚙️ Admin Control Panel</h3>
+    <div class="modal-header-row">
+      <h3 class="modal-title">⚙️ Admin Control Panel</h3>
+      <button class="close-top-btn" id="closeAdminPanelTopBtn">✕</button>
+    </div>
     
     <details class="admin-group">
       <summary>🚀 Direct GitHub Sync</summary>
@@ -541,6 +851,35 @@
     window.closeNavPanel = () => setOpen(false);
   })();
 
+  /* HYDRATION TRACKER LOGIC */
+  (function() {
+    const TARGET = 8;
+    let currentWater = parseInt(localStorage.getItem('nutriFlowWaterCount') || '0', 10);
+    const hydroText = document.getElementById('hydroText');
+    const hydroFill = document.getElementById('hydroFill');
+
+    function updateHydroUI() {
+      hydroText.textContent = `${currentWater} / ${TARGET} Glasses`;
+      const pct = Math.min(100, Math.round((currentWater / TARGET) * 100));
+      hydroFill.style.width = `${pct}%`;
+      localStorage.setItem('nutriFlowWaterCount', currentWater.toString());
+    }
+
+    document.getElementById('hydroPlusBtn').addEventListener('click', () => {
+      currentWater++;
+      updateHydroUI();
+    });
+
+    document.getElementById('hydroMinusBtn').addEventListener('click', () => {
+      if (currentWater > 0) {
+        currentWater--;
+        updateHydroUI();
+      }
+    });
+
+    updateHydroUI();
+  })();
+
   /* Weekly Plan Engine */
   (function() {
     const defaultSwapDatabase = {
@@ -586,12 +925,24 @@
     let activeFilter = 'all';
     let searchQuery = '';
     let pendingSwap = null;
+    let pendingDelete = null;
+    let pendingEdit = null;
     let isSwapUnlocked = false;
+
+    function saveDatabase() {
+      localStorage.setItem('nutriFlowCustomDb', JSON.stringify(SWAP_DATABASE));
+    }
 
     function updateLockUI() {
       document.getElementById('masterLockIcon').textContent = isSwapUnlocked ? '🔓' : '🔒';
       document.getElementById('masterLockLabel').textContent = isSwapUnlocked ? 'Unlocked' : 'Locked';
       document.getElementById('masterLockBtn').style.borderColor = isSwapUnlocked ? 'var(--today)' : 'var(--card-border)';
+    }
+
+    function lockSwapState() {
+      isSwapUnlocked = false;
+      updateLockUI();
+      renderDays();
     }
 
     function renderDays() {
@@ -611,7 +962,7 @@
           dayProtein += m.protein;
           dayCalories += m.calories;
 
-          const matchesSearch = m.name.toLowerCase().includes(searchQuery) || m.nutrients.toLowerCase().includes(searchQuery);
+          const matchesSearch = m.name.toLowerCase().includes(searchQuery) || (m.nutrients && m.nutrients.toLowerCase().includes(searchQuery));
           const matchesFilter = activeFilter === 'all' || 
             (activeFilter === 'high-protein' && m.protein >= 20) || 
             (activeFilter === 'quick' && m.tags && m.tags.includes('quick'));
@@ -619,13 +970,24 @@
           if (!matchesSearch || !matchesFilter) return;
 
           const done = savedStates[idx];
+          const isBatch = idx === 1;
+
           mealsHtml += `
-            <div class="meal-row ${done ? 'done' : ''}" data-day="${d.day}" data-idx="${idx}">
-              <div class="meal-info" onclick="promptSwapAuth('${d.day}', ${idx})">
-                <span class="meal-badge ${m.bClass}">${m.type}</span>
-                <span class="meal-name">${m.name} ${isSwapUnlocked ? '🔓' : '🔒'}</span>
+            <div class="meal-row ${done ? 'done' : ''}" data-day="${d.day}" data-idx="${idx}" onclick="toggleMealDone(event, '${d.day}', ${idx})">
+              <div class="meal-row-header">
+                <button class="check-btn">${done ? '✓' : ''}</button>
+                <div class="meal-content">
+                  <div class="meal-type-label">
+                    <span>${m.type}</span>
+                    ${isBatch ? '<span class="batch-tag">📝 Batch</span>' : ''}
+                  </div>
+                  <div class="meal-name">${m.name}</div>
+                  <div class="meal-stats">
+                    <span class="stat-item">🔥 ${m.calories} kcal</span>
+                    <span class="stat-item">💪 ${m.protein}g</span>
+                  </div>
+                </div>
               </div>
-              <button class="check-btn" onclick="toggleMealDone(event, '${d.day}', ${idx})">${done ? '✓' : ''}</button>
             </div>
           `;
 
@@ -649,27 +1011,38 @@
         cardWrapper.innerHTML = `
           <div class="day-card-inner">
             <div class="day-card-front">
-              <div class="day-header">
-                <div class="day-title-group">
-                  <h2 class="day-name">${d.day}</h2>
-                  ${isToday ? '<span class="today-badge">Today</span>' : ''}
+              <div>
+                <div class="day-header">
+                  <div style="display:flex; align-items:center;">
+                    <h2 class="day-name">${d.day}</h2>
+                    ${isToday ? '<span class="today-badge">Today</span>' : ''}
+                  </div>
+                  <span class="planned-badge">Planned</span>
                 </div>
-                <button class="flip-btn" onclick="toggleFlip('${d.day}')">🥗 Nutrition Details 🔄</button>
+                <div class="progress-container"><div class="progress-bar" style="width: ${progressPct}%"></div></div>
+                <div class="meals-list">${mealsHtml}</div>
               </div>
-              <div class="progress-container"><div class="progress-bar" style="width: ${progressPct}%"></div></div>
-              <div class="meals-list">${mealsHtml}</div>
+              <div class="card-footer-actions">
+                <button class="pill-btn" onclick="toggleFlip('${d.day}')">📊 Insight</button>
+                <button class="pill-btn" onclick="promptSwapAuth('${d.day}', 0)">${isSwapUnlocked ? '🔓' : '🔒'} Swap</button>
+              </div>
             </div>
 
             <div class="day-card-back">
-              <div class="day-header">
-                <div class="day-title-group">
-                  <h2 class="day-name">${d.day} Nutrition</h2>
-                  ${isToday ? '<span class="today-badge">Today</span>' : ''}
+              <div>
+                <div class="day-header">
+                  <div style="display:flex; align-items:center;">
+                    <h2 class="day-name">${d.day}</h2>
+                    ${isToday ? '<span class="today-badge">Today</span>' : ''}
+                  </div>
+                  <span class="planned-badge">Nutrition</span>
                 </div>
-                <button class="flip-btn" onclick="toggleFlip('${d.day}')">⬅️ Back to Tracker</button>
+                <div class="macro-summary-bar">Daily Est: <span>${dayProtein}g Protein</span> · <span>${dayCalories} Calories</span></div>
+                <div class="nutrition-grid">${nutriHtml}</div>
               </div>
-              <div class="macro-summary-bar">Daily Est: <span>${dayProtein}g Protein</span> · <span>${dayCalories} Calories</span></div>
-              <div class="nutrition-grid">${nutriHtml}</div>
+              <div class="card-footer-actions">
+                <button class="pill-btn" style="width:100%; justify-content:center;" onclick="toggleFlip('${d.day}')">⬅️ Back to Card</button>
+              </div>
             </div>
           </div>
         `;
@@ -677,7 +1050,244 @@
       });
     }
 
-    /* GLOBAL EVENTS & MEAL SWAPS */
+    /* MEAL VAULT MANAGEMENT */
+    const openDbManagerNavBtn = document.getElementById('openDbManagerNavBtn');
+    const dbPinModal = document.getElementById('dbPinModal');
+    const dbPinInput = document.getElementById('dbPinInput');
+    const dbManagerModal = document.getElementById('dbManagerModal');
+    const dbContainer = document.getElementById('dbCategoriesContainer');
+
+    openDbManagerNavBtn.onclick = () => {
+      window.closeNavPanel();
+      dbPinInput.value = "";
+      dbPinModal.classList.add('open');
+      dbPinInput.focus();
+    };
+
+    document.getElementById('cancelDbPinBtn').onclick = () => dbPinModal.classList.remove('open');
+    document.getElementById('closeDbPinTopBtn').onclick = () => dbPinModal.classList.remove('open');
+
+    function handleDbPinSubmit() {
+      if (dbPinInput.value === "2050") {
+        dbPinModal.classList.remove('open');
+        renderDbManager();
+        dbManagerModal.classList.add('open');
+      } else {
+        alert("Incorrect Access Code.");
+        dbPinInput.value = "";
+      }
+    }
+
+    document.getElementById('dbPinForm').onsubmit = (e) => {
+      e.preventDefault();
+      handleDbPinSubmit();
+    };
+
+    function renderDbManager() {
+      dbContainer.innerHTML = '';
+      const categories = ['Breakfast', 'Lunch', 'Dinner'];
+
+      categories.forEach(cat => {
+        const catDetails = document.createElement('details');
+        catDetails.className = 'category-accordion';
+        catDetails.open = false;
+
+        let itemsHtml = (SWAP_DATABASE[cat] || []).map((item, index) => `
+          <div class="db-item-row">
+            <div class="db-item-info">
+              <strong>${item.name}</strong> (${item.portion})<br>
+              <small style="color:var(--text-dim);">🔥 ${item.calories} kcal | 💪 ${item.protein}g protein ${item.nutrients ? ' | ' + item.nutrients : ''}</small>
+            </div>
+            <div class="db-item-actions">
+              <button class="tool-btn" style="padding:4px 8px; font-size:0.75rem;" onclick="editDbItem('${cat}', ${index})">✏️ Edit</button>
+              <button class="tool-btn" style="padding:4px 8px; font-size:0.75rem; color:#E07A5F;" onclick="promptDeleteDbItem('${cat}', ${index})">🗑️ Delete</button>
+            </div>
+          </div>
+        `).join('');
+
+        if (!itemsHtml) itemsHtml = `<div style="font-size:0.85rem; color:var(--text-dim);">No meals registered in this category.</div>`;
+
+        catDetails.innerHTML = `
+          <summary>
+            <span>${cat === 'Breakfast' ? '🌅' : cat === 'Lunch' ? '🥗' : '🌙'} ${cat} Options</span>
+            <span style="font-size:0.8rem; color:var(--text-dim); font-weight:normal;">${(SWAP_DATABASE[cat] || []).length} items</span>
+          </summary>
+          <div class="accordion-content">
+            ${itemsHtml}
+          </div>
+        `;
+        dbContainer.appendChild(catDetails);
+      });
+    }
+
+    document.getElementById('dbRefreshBtn').onclick = () => {
+      renderDbManager();
+      renderDays();
+    };
+
+    document.getElementById('closeDbManagerBtn').onclick = () => dbManagerModal.classList.remove('open');
+    document.getElementById('closeDbManagerTopBtn').onclick = () => dbManagerModal.classList.remove('open');
+
+    document.getElementById('dbAddMealForm').onsubmit = (e) => {
+      e.preventDefault();
+      const cat = document.getElementById('dbCategory').value;
+      const name = document.getElementById('dbName').value.trim();
+      const portion = document.getElementById('dbPortion').value.trim();
+      const nutrients = document.getElementById('dbNutrients').value.trim();
+      const protein = parseInt(document.getElementById('dbProtein').value, 10);
+      const calories = parseInt(document.getElementById('dbCalories').value, 10);
+
+      const newItem = {
+        name, portion, nutrients, protein, calories,
+        tags: protein >= 20 ? ["high-protein"] : []
+      };
+
+      if (!SWAP_DATABASE[cat]) SWAP_DATABASE[cat] = [];
+      SWAP_DATABASE[cat].push(newItem);
+      saveDatabase();
+      renderDbManager();
+      renderDays();
+      e.target.reset();
+      alert(`Added "${name}" to ${cat} database!`);
+    };
+
+    /* DYNAMIC STYLISH VAULT EDIT MODAL */
+    const editVaultModal = document.getElementById('editVaultModal');
+    const editVaultForm = document.getElementById('editVaultForm');
+
+    window.editDbItem = function(cat, index) {
+      const item = SWAP_DATABASE[cat][index];
+      pendingEdit = { cat, index };
+      
+      document.getElementById('editVaultName').value = item.name || '';
+      document.getElementById('editVaultPortion').value = item.portion || '';
+      document.getElementById('editVaultNutrients').value = item.nutrients || '';
+      document.getElementById('editVaultProtein').value = item.protein || 0;
+      document.getElementById('editVaultCalories').value = item.calories || 0;
+
+      editVaultModal.classList.add('open');
+    };
+
+    const closeEditVaultModal = () => {
+      editVaultModal.classList.remove('open');
+      pendingEdit = null;
+    };
+
+    document.getElementById('cancelEditVaultBtn').onclick = closeEditVaultModal;
+    document.getElementById('closeEditVaultTopBtn').onclick = closeEditVaultModal;
+
+    editVaultForm.onsubmit = (e) => {
+      e.preventDefault();
+      if (!pendingEdit) return;
+
+      const { cat, index } = pendingEdit;
+      const name = document.getElementById('editVaultName').value.trim();
+      const portion = document.getElementById('editVaultPortion').value.trim();
+      const nutrients = document.getElementById('editVaultNutrients').value.trim();
+      const protein = parseInt(document.getElementById('editVaultProtein').value, 10);
+      const calories = parseInt(document.getElementById('editVaultCalories').value, 10);
+
+      SWAP_DATABASE[cat][index] = {
+        name,
+        portion,
+        nutrients,
+        protein,
+        calories,
+        tags: protein >= 20 ? ["high-protein"] : []
+      };
+
+      saveDatabase();
+      renderDbManager();
+      renderDays();
+      closeEditVaultModal();
+    };
+
+    /* LOCKED DELETION IN MEAL VAULT */
+    const deletePinModal = document.getElementById('deletePinModal');
+    const deletePinInput = document.getElementById('deletePinInput');
+
+    window.promptDeleteDbItem = function(cat, index) {
+      pendingDelete = { cat, index };
+      deletePinInput.value = "";
+      deletePinModal.classList.add('open');
+      deletePinInput.focus();
+    };
+
+    document.getElementById('cancelDeletePinBtn').onclick = () => {
+      deletePinModal.classList.remove('open');
+      pendingDelete = null;
+    };
+    document.getElementById('closeDeletePinTopBtn').onclick = () => {
+      deletePinModal.classList.remove('open');
+      pendingDelete = null;
+    };
+
+    function handleDeletePinSubmit() {
+      if (deletePinInput.value === "2050") {
+        deletePinModal.classList.remove('open');
+        if (pendingDelete) {
+          const { cat, index } = pendingDelete;
+          SWAP_DATABASE[cat].splice(index, 1);
+          saveDatabase();
+          renderDbManager();
+          renderDays();
+          pendingDelete = null;
+        }
+      } else {
+        alert("Incorrect Access Code.");
+        deletePinInput.value = "";
+      }
+    }
+
+    document.getElementById('deletePinForm').onsubmit = (e) => {
+      e.preventDefault();
+      handleDeletePinSubmit();
+    };
+
+    document.getElementById('dbCopyBtn').onclick = () => {
+      let text = "NutriFlow Meal Vault Catalog:\n\n";
+      ['Breakfast', 'Lunch', 'Dinner'].forEach(cat => {
+        text += `=== ${cat.toUpperCase()} ===\n`;
+        (SWAP_DATABASE[cat] || []).forEach(m => {
+          text += `- ${m.name} (${m.portion}) | Protein: ${m.protein}g | Calories: ${m.calories} kcal | Nutrients: ${m.nutrients || 'N/A'}\n`;
+        });
+        text += "\n";
+      });
+      navigator.clipboard.writeText(text);
+      alert("Complete Meal Vault catalog copied to clipboard!");
+    };
+
+    document.getElementById('dbPrintBtn').onclick = () => window.print();
+
+    document.getElementById('dbExportBtn').onclick = () => {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(SWAP_DATABASE, null, 2));
+      const dlAnchor = document.createElement('a');
+      dlAnchor.setAttribute("href", dataStr);
+      dlAnchor.setAttribute("download", "nutriflow_meal_vault.json");
+      dlAnchor.click();
+    };
+
+    document.getElementById('dbImportBtn').onclick = () => document.getElementById('dbImportFile').click();
+    document.getElementById('dbImportFile').onchange = (e) => {
+      const fileReader = new FileReader();
+      fileReader.onload = (event) => {
+        try {
+          const imported = JSON.parse(event.target.result);
+          if (imported.Breakfast && imported.Lunch && imported.Dinner) {
+            SWAP_DATABASE = imported;
+            saveDatabase();
+            renderDbManager();
+            renderDays();
+            alert("Meal Vault imported successfully!");
+          } else {
+            alert("Invalid vault file. Must contain Breakfast, Lunch, and Dinner categories.");
+          }
+        } catch(err) { alert("Error parsing JSON file."); }
+      };
+      fileReader.readAsText(e.target.files[0]);
+    };
+
+    /* GLOBAL EVENTS & MEAL COMPLETION */
     window.toggleMealDone = function(e, day, idx) {
       e.stopPropagation();
       const savedStates = JSON.parse(localStorage.getItem(`nutriFlowState_${day}`) || "[false, false, false]");
@@ -686,7 +1296,7 @@
       renderDays();
     };
 
-    /* PASSCODES SETUP */
+    /* PASSCODES SETUP & MASTER LOCK TOGGLE */
     const ADMIN_CODE = "NF@2026";
     const SWAP_CODE = "2050";
 
@@ -695,8 +1305,7 @@
 
     document.getElementById('masterLockBtn').onclick = () => {
       if (isSwapUnlocked) {
-        isSwapUnlocked = false;
-        renderDays();
+        lockSwapState();
       } else {
         pendingSwap = null;
         swapPinInput.value = "";
@@ -720,11 +1329,16 @@
       swapPinModal.classList.remove('open');
       pendingSwap = null;
     };
+    document.getElementById('closeSwapPinTopBtn').onclick = () => {
+      swapPinModal.classList.remove('open');
+      pendingSwap = null;
+    };
 
     function handleSwapPinSubmit() {
       if (swapPinInput.value === SWAP_CODE) {
         isSwapUnlocked = true;
         swapPinModal.classList.remove('open');
+        updateLockUI();
         renderDays();
 
         if (pendingSwap) {
@@ -732,7 +1346,7 @@
           pendingSwap = null;
         }
       } else {
-        alert("Incorrect Swap Code.");
+        alert("Incorrect Access Code.");
         swapPinInput.value = "";
       }
     }
@@ -742,28 +1356,65 @@
       handleSwapPinSubmit();
     };
 
+    /* CATEGORIZED ACCORDION SWAP MODAL (CLOSED BY DEFAULT & COMPACT STYLING) */
     function openSwapModal(day, idx) {
-      const meal = currentWeekData.find(d => d.day === day).meals[idx];
-      const options = SWAP_DATABASE[meal.type] || [];
+      const dayObj = currentWeekData.find(d => d.day === day);
+      const currentMeal = dayObj.meals[idx];
+      document.getElementById('swapCurrentMealHeader').textContent = `Currently Swapping: ${day} ${currentMeal.type} ("${currentMeal.name}")`;
+
       const listEl = document.getElementById('swapListOptions');
       listEl.innerHTML = "";
 
-      options.forEach(opt => {
-        const item = document.createElement('div');
-        item.className = 'swap-option';
-        item.innerHTML = `<strong>${opt.name}</strong><br><small>${opt.portion} · ${opt.protein}g Protein · ${opt.calories} kcal</small>`;
-        item.onclick = () => {
-          currentWeekData.find(d => d.day === day).meals[idx] = { ...opt, type: meal.type, bClass: meal.bClass };
-          localStorage.setItem('nutriFlowCustomPlan', JSON.stringify(currentWeekData));
-          document.getElementById('swapModal').classList.remove('open');
-          renderDays();
-        };
-        listEl.appendChild(item);
+      const categories = ['Breakfast', 'Lunch', 'Dinner'];
+
+      categories.forEach(cat => {
+        const catDetails = document.createElement('details');
+        catDetails.className = 'category-accordion';
+        catDetails.open = false; // Set to false so it remains closed when first opened
+
+        const summary = document.createElement('summary');
+        summary.innerHTML = `<span>${cat === 'Breakfast' ? '🌅' : cat === 'Lunch' ? '🥗' : '🌙'} ${cat}</span> <span style="font-size:0.75rem; color:var(--text-dim);">${(SWAP_DATABASE[cat] || []).length} choices</span>`;
+        catDetails.appendChild(summary);
+
+        const content = document.createElement('div');
+        content.className = 'accordion-content';
+
+        const options = SWAP_DATABASE[cat] || [];
+        options.forEach(opt => {
+          const isSelected = (opt.name === currentMeal.name);
+          const item = document.createElement('div');
+          item.className = `swap-option ${isSelected ? 'active-choice' : ''}`;
+          
+          item.innerHTML = `
+            <div>
+              <strong>${opt.name}</strong> ${isSelected ? '<span class="current-badge">Current Choice</span>' : ''}<br>
+              <small style="color:var(--text-dim); font-size: 0.75rem;">${opt.portion} · ${opt.protein}g Protein · ${opt.calories} kcal</small>
+            </div>
+            ${isSelected ? '<span style="color:var(--today);">✓</span>' : ''}
+          `;
+
+          item.onclick = () => {
+            currentWeekData.find(d => d.day === day).meals[idx] = { ...opt, type: currentMeal.type, bClass: currentMeal.bClass };
+            localStorage.setItem('nutriFlowCustomPlan', JSON.stringify(currentWeekData));
+            document.getElementById('swapModal').classList.remove('open');
+            renderDays();
+          };
+          content.appendChild(item);
+        });
+
+        catDetails.appendChild(content);
+        listEl.appendChild(catDetails);
       });
+
       document.getElementById('swapModal').classList.add('open');
     }
 
-    document.getElementById('closeSwapBtn').onclick = () => document.getElementById('swapModal').classList.remove('open');
+    const closeSwapModalOnly = () => {
+      document.getElementById('swapModal').classList.remove('open');
+    };
+
+    document.getElementById('closeSwapBtn').onclick = closeSwapModalOnly;
+    document.getElementById('closeSwapTopBtn').onclick = closeSwapModalOnly;
 
     /* ADMIN LOCK & CONFIG MANAGEMENT */
     const openAdminNavBtn = document.getElementById('openAdminNavBtn');
@@ -779,6 +1430,7 @@
     };
 
     document.getElementById('cancelAdminPinBtn').onclick = () => adminPinModal.classList.remove('open');
+    document.getElementById('closeAdminPinTopBtn').onclick = () => adminPinModal.classList.remove('open');
 
     function handleAdminPinSubmit() {
       if (adminPinInput.value === ADMIN_CODE) {
@@ -807,6 +1459,7 @@
     };
 
     document.getElementById('closeAdminPanelBtn').onclick = () => adminPanelModal.classList.remove('open');
+    document.getElementById('closeAdminPanelTopBtn').onclick = () => adminPanelModal.classList.remove('open');
 
     /* GITHUB COMMIT FUNCTION */
     async function commitFileToGitHub(newContent) {
@@ -882,7 +1535,7 @@
       };
 
       SWAP_DATABASE[cat].push(newMeal);
-      localStorage.setItem('nutriFlowCustomDb', JSON.stringify(SWAP_DATABASE));
+      saveDatabase();
 
       const cloneDoc = document.documentElement.cloneNode(true);
       cloneDoc.querySelectorAll('.open').forEach(el => el.classList.remove('open'));
@@ -927,7 +1580,7 @@
           }
           if (imported.customDb) {
             SWAP_DATABASE = imported.customDb;
-            localStorage.setItem('nutriFlowCustomDb', JSON.stringify(SWAP_DATABASE));
+            saveDatabase();
           }
           renderDays();
           alert("Meal plan and custom database imported successfully!");
@@ -939,8 +1592,8 @@
     document.getElementById('adminResetBtn').onclick = () => {
       if (confirm("Reset tracking progress for all 7 days?")) {
         currentWeekData.forEach(d => localStorage.removeItem(`nutriFlowState_${d.day}`));
-        renderDays();
-        adminPanelModal.classList.remove('open');
+        localStorage.removeItem('nutriFlowWaterCount');
+        location.reload();
       }
     };
 
@@ -954,6 +1607,8 @@
     };
 
     document.getElementById('closeGroceryBtn').onclick = () => document.getElementById('groceryModal').classList.remove('open');
+    document.getElementById('closeGroceryTopBtn').onclick = () => document.getElementById('groceryModal').classList.remove('open');
+    
     document.getElementById('copyListBtn').onclick = () => {
       const items = currentWeekData.flatMap(d => d.meals.map(m => `- ${m.name} (${m.portion})`)).join('\n');
       navigator.clipboard.writeText("NutriFlow Weekly Grocery List:\n" + items);
@@ -974,7 +1629,8 @@
     document.getElementById('resetBtn').onclick = () => {
       if (confirm("Reset tracking progress for all 7 days?")) {
         currentWeekData.forEach(d => localStorage.removeItem(`nutriFlowState_${d.day}`));
-        renderDays();
+        localStorage.removeItem('nutriFlowWaterCount');
+        location.reload();
       }
     };
 
