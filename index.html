@@ -19,20 +19,20 @@
     --lunch: #81B29A;
     --dinner: #6A93B0;
     --today: #F2CC8F;
-    --accent-glow: rgba(242, 204, 143, 0.15);
+    --accent-glow: rgba(242, 204, 143, 0.25);
   }
 
   [data-accent="emerald"] {
     --today: #52B788;
-    --accent-glow: rgba(82, 183, 136, 0.15);
+    --accent-glow: rgba(82, 183, 136, 0.25);
   }
   [data-accent="amber"] {
     --today: #E76F51;
-    --accent-glow: rgba(231, 111, 81, 0.15);
+    --accent-glow: rgba(231, 111, 81, 0.25);
   }
   [data-accent="teal"] {
     --today: #2A9D8F;
-    --accent-glow: rgba(42, 157, 143, 0.15);
+    --accent-glow: rgba(42, 157, 143, 0.25);
   }
 
   [data-theme="light"] {
@@ -42,7 +42,7 @@
     --card-border: rgba(0, 0, 0, 0.08);
     --text: #1C241F;
     --text-dim: #5C6E62;
-    --accent-glow: rgba(217, 155, 38, 0.15);
+    --accent-glow: rgba(217, 155, 38, 0.2);
   }
 
   * { box-sizing: border-box; }
@@ -86,10 +86,7 @@
   }
   .theme-toggle:hover, .accent-select:hover, .btn-secondary:hover { border-color: var(--today); }
 
-  .accent-select {
-    padding: 6px 10px;
-    outline: none;
-  }
+  .accent-select { padding: 6px 10px; outline: none; }
   .accent-select option { background: var(--card); color: var(--text); }
 
   .brand {
@@ -163,7 +160,10 @@
     min-height: 48px;
     touch-action: manipulation;
   }
-  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(242, 204, 143, 0.3); }
+  .btn-primary:hover { 
+    transform: translateY(-3px); 
+    box-shadow: 0 0 30px var(--today), 0 8px 32px var(--accent-glow); 
+  }
 
   .btn-secondary {
     padding: 16px 28px;
@@ -207,6 +207,7 @@
     color: var(--today); font-size: 0.85rem; font-weight: 500;
     margin-bottom: 20px; letter-spacing: 0.03em; text-transform: uppercase;
     opacity: 0; animation: fadeInSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+    box-shadow: 0 0 15px var(--accent-glow);
   }
 
   .combined-heading {
@@ -269,6 +270,7 @@
     white-space: nowrap;
     text-align: left;
     vertical-align: middle;
+    text-shadow: 0 0 20px var(--accent-glow);
   }
 
   .cursor {
@@ -301,10 +303,14 @@
     background: var(--card); border: 1px solid var(--card-border);
     border-radius: 20px; padding: 24px; margin-bottom: 32px;
     display: flex; flex-direction: column; gap: 16px; text-align: left;
-    max-width: 640px; width: 100%; box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    max-width: 640px; width: 100%; box-shadow: 0 12px 40px rgba(0,0,0,0.25), 0 0 25px var(--accent-glow);
     backdrop-filter: blur(8px);
     opacity: 0; animation: fadeInSlideUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 1.0s forwards;
     pointer-events: auto;
+    transition: box-shadow 0.3s ease;
+  }
+  .today-preview-box:hover {
+    box-shadow: 0 15px 45px rgba(0,0,0,0.35), 0 0 35px var(--accent-glow);
   }
 
   .today-card-header {
@@ -324,34 +330,160 @@
   .today-checklist { display: flex; flex-direction: column; gap: 10px; }
   .meal-item-row { 
     display: flex; align-items: center; gap: 12px; font-size: 0.95rem; line-height: 1.4; color: var(--text);
-    padding: 8px 12px; border-radius: 10px; background: rgba(255,255,255,0.02); transition: background 0.2s ease;
+    padding: 8px 12px; border-radius: 10px; background: rgba(255,255,255,0.02); transition: background 0.2s ease, transform 0.2s ease;
     width: 100%; min-width: 0;
   }
-  .meal-item-row:hover { background: var(--card-hover); }
+  .meal-item-row:hover { background: var(--card-hover); transform: translateX(4px); }
   .meal-item-row.completed span { text-decoration: line-through; opacity: 0.5; }
   .meal-item-row input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--today); cursor: pointer; flex-shrink: 0; }
   .meal-item-row span { flex: 1; min-width: 0; word-break: break-word; overflow-wrap: break-word; }
 
+  /* Looping Dynamic Cards Grid Styles */
   .principles {
-    position: relative; z-index: 2; padding: 40px 0 80px;
+    position: relative; z-index: 2; padding: 40px 0 0;
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
   }
 
-  .principle {
-    background: var(--card); border: 1px solid var(--card-border);
-    border-radius: 20px; padding: 32px 28px;
+  .principle-card {
+    background: transparent;
+    border: none;
+    perspective: 1000px;
+    height: 250px;
+    cursor: pointer;
     opacity: 0; transform: translateY(30px);
-    transition: transform 0.4s ease, border-color 0.3s ease, opacity 0.4s ease, background 0.3s ease;
+    transition: transform 0.4s ease, opacity 0.4s ease;
   }
-  .principle.reveal { opacity: 1; transform: translateY(0); }
-  .principle:hover {
-    transform: translateY(-4px); border-color: var(--today);
+  .principle-card.reveal { opacity: 1; transform: translateY(0); }
+
+  .principle-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: left;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+
+  .principle-card.flipped .principle-inner {
+    transform: rotateY(180deg);
+  }
+
+  .principle-front, .principle-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 20px;
+    padding: 32px 28px;
+    border: 1px solid var(--card-border);
+    background: var(--card);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.4s ease;
+  }
+
+  .principle-front {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .principle-card:hover .principle-front {
+    border-color: var(--today);
+    box-shadow: 0 0 25px var(--accent-glow), 0 12px 40px rgba(0,0,0,0.25);
     background: radial-gradient(120% 120% at 50% 0%, var(--accent-glow) 0%, var(--card) 100%);
   }
 
-  .principle .icon { font-size: 1.5rem; margin-bottom: 16px; color: var(--today); }
-  .principle h3 { font-family: 'Fraunces', serif; font-size: 1.25rem; margin: 0 0 12px; }
-  .principle p { font-size: 0.95rem; color: var(--text-dim); line-height: 1.6; margin: 0; }
+  .principle-back {
+    background: var(--card-hover);
+    border-color: var(--today);
+    box-shadow: 0 0 25px var(--accent-glow), 0 12px 40px rgba(0,0,0,0.25);
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .icon { font-size: 1.5rem; margin-bottom: 16px; color: var(--today); }
+  h3 { font-family: 'Fraunces', serif; font-size: 1.25rem; margin: 0 0 12px; }
+  p { font-size: 0.95rem; color: var(--text-dim); line-height: 1.6; margin: 0; }
+  
+  .flip-hint {
+    font-size: 0.75rem;
+    color: var(--today);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: auto;
+    font-weight: 500;
+  }
+
+  /* Transition helper for card content loop with slower fade duration */
+  .fade-content {
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-content.animating {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  /* Looping Insights Ticker */
+  .insights-ticker {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-top: 24px;
+    margin-bottom: 80px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2), 0 0 20px var(--accent-glow);
+    opacity: 0; transform: translateY(30px);
+    transition: transform 0.4s ease, opacity 0.4s ease, box-shadow 0.3s ease;
+  }
+  .insights-ticker:hover {
+    box-shadow: 0 12px 40px rgba(0,0,0,0.3), 0 0 30px var(--accent-glow);
+  }
+  .insights-ticker.reveal { opacity: 1; transform: translateY(0); }
+
+  .ticker-badge {
+    background: var(--accent-glow);
+    color: var(--today);
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+  }
+
+  .ticker-viewport {
+    position: relative;
+    height: 1.5em;
+    overflow: hidden;
+    flex: 1;
+  }
+
+  .ticker-track {
+    position: absolute;
+    width: 100%;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .ticker-item {
+    height: 1.5em;
+    line-height: 1.5em;
+    font-size: 0.95rem;
+    color: var(--text-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .ticker-item strong { color: var(--text); }
 
   .site-footer {
     position: relative; z-index: 2;
@@ -384,7 +516,7 @@
   .modal-card {
     background: var(--card); border: 1px solid var(--card-border);
     border-radius: 24px; max-width: 500px; width: 100%; max-height: 85vh;
-    display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 40px var(--accent-glow);
   }
 
   .modal-header {
@@ -400,83 +532,29 @@
 
   @media (max-width: 860px) {
     .principles { grid-template-columns: 1fr; }
+    .principle-card { height: 230px; }
   }
 
   @media (max-width: 768px) {
     .topnav { padding: 12px 16px; }
     .wrap { padding: 0 16px; }
-    
-    .hero {
-      padding-top: 90px;
-    }
-
-    .hero-content {
-      padding-top: 20px;
-    }
-
-    .combined-heading {
-      font-size: clamp(2rem, 8vw, 2.8rem);
-      flex-direction: row;
-    }
-
-    .word-mask {
-      margin-right: 0.2em;
-    }
-
-    .accent-wrapper {
-      flex-basis: 100%;
-      width: 100%;
-      height: 1.4em;
-      margin-top: 4px;
-      justify-content: center;
-    }
-
-    .typewriter-accent {
-      text-align: center;
-    }
-
-    .footer-grid {
-      grid-template-columns: 1fr;
-      gap: 32px;
-    }
-
-    .hero-actions {
-      width: 100%;
-      flex-direction: column;
-    }
-
-    .btn-primary, .btn-secondary {
-      width: 100%;
-    }
-
-    .today-card-header {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .brand { font-size: 1.2rem; }
-    .today-preview-box { padding: 16px; }
-    .footer-bottom {
-      flex-direction: column;
-      text-align: center;
-      gap: 12px;
-    }
-    .modal-card { max-height: 90vh; border-radius: 18px; }
+    .hero { padding-top: 90px; }
+    .hero-content { padding-top: 20px; }
+    .combined-heading { font-size: clamp(2rem, 8vw, 2.8rem); flex-direction: row; }
+    .word-mask { margin-right: 0.2em; }
+    .accent-wrapper { flex-basis: 100%; width: 100%; height: 1.4em; margin-top: 4px; justify-content: center; }
+    .typewriter-accent { text-align: center; }
+    .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+    .hero-actions { width: 100%; flex-direction: column; }
+    .btn-primary, .btn-secondary { width: 100%; }
+    .today-card-header { flex-direction: column; align-items: flex-start; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .word-mask span, .accent-mask-inner, .badge-tag, .hero p, .today-preview-box, .principle {
+    .word-mask span, .accent-mask-inner, .badge-tag, .hero p, .today-preview-box, .principle-card, .insights-ticker {
       transform: none !important; animation: none !important; opacity: 1 !important;
     }
     .cursor { display: none !important; }
-  }
-
-  @media print {
-    .topnav, #nodeCanvas, .hero-actions, .dietary-toggle, .theme-toggle, .accent-select, .site-footer { display: none !important; }
-    body { background: #fff !important; color: #000 !important; }
-    .today-preview-box, .principle { border: 1px solid #ccc !important; box-shadow: none !important; color: #000 !important; }
   }
 </style>
 </head>
@@ -511,21 +589,21 @@
 <section class="hero">
   <canvas id="nodeCanvas"></canvas>
   <div class="hero-content wrap">
-    <div class="badge-tag">🌱 Complete Weekly Nutrition</div>
+    <div class="badge-tag">🌱 Family Nutrition</div>
     
     <h1 class="combined-heading">
       <div class="word-mask"><span>Eat</span></div>
-      <div class="word-mask"><span>Well,</span></div>
+      <div class="word-mask"><span>Smart,</span></div>
       
       <div class="accent-wrapper">
         <div class="accent-mask-inner">
-          <span class="typewriter-accent" id="typeText">Feel Great.</span>
+          <span class="typewriter-accent" id="typeText">Live Better.</span>
           <span class="cursor" id="cursor">|</span>
         </div>
       </div>
     </h1>
     
-    <p>A balanced, whole-food meal rotation for the entire household. Effortlessly monitor prepped breakfasts, lunches, and dinners, track nutrition goals, and keep eating healthy.</p>
+    <p>A balanced, whole-food meal rotation for the household. Track prepped meals, stay healthy, and simplify your daily routine.</p>
 
     <div class="today-preview-box">
       <div class="today-card-header">
@@ -553,23 +631,79 @@
 </section>
 
 <div class="wrap">
-  <section class="principles">
-    <div class="principle">
-      <div class="icon">🥗</div>
-      <h3>Fibre & Protein</h3>
-      <p>Carefully balanced across all daily meals to maintain steady energy levels and prevent late-day cravings.</p>
+  <!-- Looping Dynamic Cards Grid -->
+  <section class="principles" id="principlesGrid">
+    <!-- Card 1 -->
+    <div class="principle-card" tabindex="0" role="button" aria-label="Toggle card insights" data-card-index="0">
+      <div class="principle-inner">
+        <div class="principle-front">
+          <div class="icon card-icon">🥗</div>
+          <h3 class="card-title">Fibre & Protein</h3>
+          <p class="card-desc">Balanced across meals to maintain steady energy and curb cravings.</p>
+          <div class="flip-hint">Click for Insights ↺</div>
+        </div>
+        <div class="principle-back">
+          <div>
+            <div class="icon" style="margin-bottom:8px;">💡</div>
+            <h3 class="tip-title" style="font-size:1.1rem; margin-bottom:6px;">Quick Tip</h3>
+            <p class="tip-desc" style="font-size:0.85rem;">Slows digestion to keep your blood glucose steady all day long.</p>
+          </div>
+          <div class="flip-hint" style="color:var(--text-dim);">↺ Click to flip back</div>
+        </div>
+      </div>
     </div>
-    <div class="principle">
-      <div class="icon">🌾</div>
-      <h3>Complex Grains</h3>
-      <p>Wholesome brown rice, oats, and multigrain choices swapped in place of refined white flour choices.</p>
+
+    <!-- Card 2 -->
+    <div class="principle-card" tabindex="0" role="button" aria-label="Toggle card insights" data-card-index="1">
+      <div class="principle-inner">
+        <div class="principle-front">
+          <div class="icon card-icon">🌾</div>
+          <h3 class="card-title">Complex Grains</h3>
+          <p class="card-desc">Wholesome oats and brown rice instead of refined white carbs.</p>
+          <div class="flip-hint">Click for Insights ↺</div>
+        </div>
+        <div class="principle-back">
+          <div>
+            <div class="icon" style="margin-bottom:8px;">💡</div>
+            <h3 class="tip-title" style="font-size:1.1rem; margin-bottom:6px;">Quick Tip</h3>
+            <p class="tip-desc" style="font-size:0.85rem;">Retains B-complex vitamins to support daytime focus and energy.</p>
+          </div>
+          <div class="flip-hint" style="color:var(--text-dim);">↺ Click to flip back</div>
+        </div>
+      </div>
     </div>
-    <div class="principle">
-      <div class="icon">🥣</div>
-      <h3>Balanced Dinners</h3>
-      <p>Nutrient-rich soups, grilled lean proteins, and light curries designed to ease night digestion.</p>
+
+    <!-- Card 3 -->
+    <div class="principle-card" tabindex="0" role="button" aria-label="Toggle card insights" data-card-index="2">
+      <div class="principle-inner">
+        <div class="principle-front">
+          <div class="icon card-icon">🥣</div>
+          <h3 class="card-title">Light Dinners</h3>
+          <p class="card-desc">Nutrient-rich soups and lean proteins designed to ease digestion.</p>
+          <div class="flip-hint">Click for Insights ↺</div>
+        </div>
+        <div class="principle-back">
+          <div>
+            <div class="icon" style="margin-bottom:8px;">💡</div>
+            <h3 class="tip-title" style="font-size:1.1rem; margin-bottom:6px;">Quick Tip</h3>
+            <p class="tip-desc" style="font-size:0.85rem;">Reduces nighttime metabolic load to improve your deep REM sleep.</p>
+          </div>
+          <div class="flip-hint" style="color:var(--text-dim);">↺ Click to flip back</div>
+        </div>
+      </div>
     </div>
   </section>
+
+  <div class="insights-ticker" id="insightsTicker">
+    <div class="ticker-badge">💡 Tip</div>
+    <div class="ticker-viewport">
+      <div class="ticker-track" id="tickerTrack">
+        <div class="ticker-item"><strong>Hydration:</strong> Warm water with lemon before lunch boosts your digestion.</div>
+        <div class="ticker-item"><strong>Protein:</strong> Combining legumes with grains creates complete plant proteins.</div>
+        <div class="ticker-item"><strong>Recovery:</strong> Light evening meals promote better sleep cycles and cellular repair.</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="modal-overlay" id="groceryModal">
@@ -578,10 +712,9 @@
       <h3>Weekly Grocery Sheet</h3>
       <button class="close-modal" id="closeModal">&times;</button>
     </div>
-    <div class="modal-body" id="groceryContent">
-    </div>
+    <div class="modal-body" id="groceryContent"></div>
     <div class="modal-footer">
-      <button class="btn-primary" onclick="window.print()" style="padding: 10px 20px; font-size:0.9rem;">🖨️ Print Grocery List</button>
+      <button class="btn-primary" onclick="window.print()" style="padding: 10px 20px; font-size:0.9rem;">🖨️ Print List</button>
     </div>
   </div>
 </div>
@@ -591,7 +724,7 @@
     <div class="footer-grid">
       <div class="footer-col">
         <a class="brand" href="index.html" style="display:inline-block; margin-bottom:12px;">NutriFlow</a>
-        <p>Simplifying all-day whole-food meal planning for healthy families. Designed to auto-reset every week to keep routine effortless.</p>
+        <p>Simplifying all-day whole-food meal planning for healthy families.</p>
       </div>
       <div class="footer-col">
         <h4>Navigation</h4>
@@ -603,7 +736,7 @@
       </div>
       <div class="footer-col">
         <h4>Guidelines</h4>
-        <p>No pork or beef items in any meal. Rich in dietary fiber, clean proteins, and unprocessed whole grains.</p>
+        <p>No pork or beef items. Rich in dietary fiber, clean proteins, and whole grains.</p>
       </div>
     </div>
     
@@ -617,7 +750,6 @@
 </footer>
 
 <script>
-  /* Theme Controller */
   (function() {
     const savedTheme = localStorage.getItem('nutriFlowTheme') || 'dark';
     const savedAccent = localStorage.getItem('nutriFlowAccent') || 'gold';
@@ -647,7 +779,6 @@
     }
   })();
 
-  /* Mobile Nav Controller */
   (function () {
     const btn = document.getElementById('menuBtn');
     const panel = document.getElementById('navPanel');
@@ -662,7 +793,6 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
   })();
 
-  /* Checklist Controller */
   (function () {
     const PLAN = {
       Monday: {
@@ -736,20 +866,98 @@
     renderChecklist();
   })();
 
-  /* Observer */
+  // Unique Non-Overlapping Looping Cards with Slower, Comfortable Transition Speed
+  (function() {
+    const cardDataPool = [
+      { icon: "🥗", title: "Fibre & Protein", desc: "Balanced across meals to maintain steady energy and curb cravings.", tipTitle: "Quick Tip", tipDesc: "Slows digestion to keep your blood glucose steady all day long." },
+      { icon: "🌾", title: "Complex Grains", desc: "Wholesome oats and brown rice instead of refined white carbs.", tipTitle: "Energy Focus", tipDesc: "Retains B-complex vitamins to support daytime focus and energy." },
+      { icon: "🥣", title: "Light Dinners", desc: "Nutrient-rich soups and lean proteins designed to ease digestion.", tipTitle: "Rest Well", tipDesc: "Reduces nighttime metabolic load to improve your deep REM sleep." },
+      { icon: "🥑", title: "Healthy Fats", desc: "Avocados, nuts, and cold oils for sustained metabolic health.", tipTitle: "Brain Fuel", tipDesc: "Supports cellular membrane health and cognitive sharpness." },
+      { icon: "💧", title: "Hydration Flow", desc: "Consistent fluid distribution maintains physical performance.", tipTitle: "Daily Habit", tipDesc: "Drink fluids between meals rather than heavy gulps during eating." },
+      { icon: "🌱", title: "Clean Greens", desc: "Antioxidant-rich vegetables incorporated into every single lunch.", tipTitle: "Immune Boost", tipDesc: "High micronutrient density naturally fortifies daily wellness." }
+    ];
+
+    const cards = document.querySelectorAll('.principle-card');
+    // Keep track of current indices assigned to each card DOM element
+    let currentIndices = [0, 1, 2];
+
+    cards.forEach((card, index) => {
+      // Toggle flip on click / keyboard
+      card.addEventListener('click', (e) => {
+        if(e.target.closest('.flip-hint') || !e.target.closest('.principle-back')) {
+          card.classList.toggle('flipped');
+        }
+      });
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          card.classList.toggle('flipped');
+        }
+      });
+    });
+
+    // Loop every 11 seconds (slower interval) ensuring all 3 cards display unique items
+    setInterval(() => {
+      const frontElems = document.querySelectorAll('.principle-front');
+      const backElems = document.querySelectorAll('.principle-back');
+
+      // Add fade animation class
+      frontElems.forEach(el => el.classList.add('animating'));
+      backElems.forEach(el => el.classList.add('animating'));
+
+      setTimeout(() => {
+        // Pick 3 completely unique random indices from the pool
+        let availableIndices = [...Array(cardDataPool.length).keys()];
+        let newIndices = [];
+        for (let i = 0; i < cards.length; i++) {
+          // Filter out indices currently in use or already chosen in this round if pool allows
+          let validChoices = availableIndices.filter(idx => !newIndices.includes(idx) && idx !== currentIndices[i]);
+          if (validChoices.length === 0) validChoices = availableIndices.filter(idx => !newIndices.includes(idx));
+          if (validChoices.length === 0) validChoices = availableIndices; // fallback
+          
+          const chosenIdx = validChoices[Math.floor(Math.random() * validChoices.length)];
+          newIndices.push(chosenIdx);
+        }
+        currentIndices = newIndices;
+
+        cards.forEach((card, i) => {
+          const data = cardDataPool[currentIndices[i]];
+          card.querySelector('.card-icon').textContent = data.icon;
+          card.querySelector('.card-title').textContent = data.title;
+          card.querySelector('.card-desc').textContent = data.desc;
+          card.querySelector('.tip-title').textContent = data.tipTitle;
+          card.querySelector('.tip-desc').textContent = data.tipDesc;
+        });
+
+        // Remove fade animation class to fade back in smoothly
+        frontElems.forEach(el => el.classList.remove('animating'));
+        backElems.forEach(el => el.classList.remove('animating'));
+      }, 600); // matches slower transition duration
+
+    }, 11000); // 11 seconds interval per rotation cycle
+  })();
+
+  (function() {
+    const track = document.getElementById('tickerTrack');
+    if (!track) return;
+    const totalItems = track.children.length;
+    let currentIndex = 0;
+    setInterval(() => {
+      currentIndex = (currentIndex + 1) % totalItems;
+      track.style.transform = `translateY(-${currentIndex * 1.5}em)`;
+    }, 4500);
+  })();
+
   (function() {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('reveal');
-        }
+        if (entry.isIntersecting) entry.target.classList.add('reveal');
       });
     }, { threshold: 0.1 });
 
-    document.querySelectorAll('.principle').forEach(card => observer.observe(card));
+    document.querySelectorAll('.principle-card, .insights-ticker').forEach(card => observer.observe(card));
   })();
 
-  /* Grocery Modal */
   (function() {
     const modal = document.getElementById('groceryModal');
     const openBtn = document.getElementById('groceryBtn');
@@ -757,9 +965,9 @@
     const content = document.getElementById('groceryContent');
 
     const ingredients = {
-      "Produce & Veggies": ["Avocados", "Fresh Berries", "Lauki (Bottle Gourd)", "Spinach", "Mushrooms", "Carrots & Celery"],
-      "Grains & Legumes": ["Rolled Oats", "Multigrain Bread", "Brown Rice", "Moong Dal", "Chana Dal", "Rajma (Kidney Beans)"],
-      "Proteins & Dairy": ["Chicken Breasts", "Fresh Fish Fillets", "Eggs", "Paneer", "Tofu", "Chia Seeds"]
+      "Produce & Veggies": ["Avocados", "Fresh Berries", "Lauki (Bottle Gourd)", "Spinach", "Mushrooms"],
+      "Grains & Legumes": ["Rolled Oats", "Multigrain Bread", "Brown Rice", "Moong Dal", "Rajma"],
+      "Proteins & Dairy": ["Chicken Breasts", "Fresh Fish", "Eggs", "Paneer", "Tofu"]
     };
 
     openBtn.addEventListener('click', () => {
@@ -777,7 +985,6 @@
     modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
   })();
 
-  /* Canvas Animation */
   (function () {
     const canvas = document.getElementById('nodeCanvas');
     if (!canvas) return;
@@ -851,8 +1058,8 @@
         n.x += n.vx; n.y += n.vy;
         if (n.x < 0) { n.x = 0; n.vx *= -1; }
         if (n.x > w) { n.x = w; n.vx *= -1; }
-        if (n.y < 0) { n.y = 0; n.vx *= -1; }
-        if (n.y > h) { n.y = h; n.vx *= -1; }
+        if (n.y < 0) { n.y = 0; n.vy *= -1; }
+        if (n.y > h) { n.y = h; n.vy *= -1; }
 
         ctx.beginPath();
         ctx.fillStyle = n.color;
@@ -884,9 +1091,8 @@
     resize(); initNodes(); renderFrame();
   })();
 
-  /* Typewriter Loop */
   (function() {
-    const words = ["Feel Great.", "Boost Energy.", "Stay Consistent.", "Repeat."];
+    const words = ["Live Better.", "Stay Healthy.", "Feel Energized.", "Eat Fresh."];
     let wordIndex = 0;
     let charIndex = words[0].length;
     let isDeleting = false;
