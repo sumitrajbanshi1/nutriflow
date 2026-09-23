@@ -58,7 +58,7 @@
   .topnav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 40;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 20px; background: rgba(11, 16, 13, 0.9);
+    padding: 12px 24px; background: rgba(11, 16, 13, 0.9);
     backdrop-filter: blur(16px); border-bottom: 1px solid var(--card-border);
     width: 100%; box-sizing: border-box; gap: 12px;
   }
@@ -75,10 +75,10 @@
 
   .theme-toggle, .accent-select, .cuisine-select {
     background: var(--card); border: 1px solid var(--card-border);
-    color: var(--text); padding: 6px 10px; border-radius: 20px;
+    color: var(--text); padding: 6px 12px; border-radius: 20px;
     font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; gap: 4px;
     transition: all 0.2s ease; min-height: 38px; touch-action: manipulation; white-space: nowrap;
-    outline: none; max-width: 130px; text-overflow: ellipsis; overflow: hidden;
+    outline: none;
   }
   .cuisine-select {
     background: var(--card-inner);
@@ -140,7 +140,7 @@
   .search-input {
     background: var(--card); border: 1px solid var(--card-border); color: var(--text);
     padding: 9px 14px; border-radius: 12px; font-size: 0.88rem; font-family: inherit;
-    min-height: 42px; min-width: 200px; outline: none; transition: border-color 0.2s ease;
+    min-height: 42px; min-width: 180px; outline: none; transition: border-color 0.2s ease;
   }
   .search-input:focus { border-color: var(--today); }
   .search-input::placeholder { color: var(--text-dim); }
@@ -270,10 +270,7 @@
   .signature { font-family: 'Caveat', cursive; color: var(--today); font-size: 1.3rem; font-weight: 600; }
 
   @media (max-width: 850px) {
-    .topnav { padding: 10px 14px; gap: 8px; }
-    .nav-controls { gap: 6px; }
-    .theme-toggle, .accent-select, .cuisine-select { padding: 4px 8px; font-size: 0.78rem; min-height: 36px; max-width: 95px; }
-    .wrap { padding: 0 16px; }
+    .topnav { padding: 10px 14px; }
     .action-toolbar { flex-direction: column; align-items: stretch; }
     .filter-tabs { justify-content: center; }
     .toolbar-right { justify-content: center; }
@@ -289,21 +286,6 @@
   <a class="brand" href="index.html">NutriFlow</a>
   
   <div class="nav-controls">
-    <select class="cuisine-select" id="cuisineSelectNav" aria-label="Select Cuisine Category">
-      <option value="all">🌐 All Cuisines</option>
-      <option value="Nepalese">🇳🇵 Nepalese</option>
-      <option value="Indian">🇮🇳 Indian</option>
-      <option value="Continental">🇪🇺 Continental</option>
-      <option value="Asian">🌏 Asian</option>
-      <option value="Chinese">🇨🇳 Chinese</option>
-      <option value="Malaysian">🇲🇾 Malaysian</option>
-      <option value="Thai">🇹🇭 Thai</option>
-      <option value="Bengali">🇧🇩 Bengali</option>
-      <option value="Mediterranean">🏛️ Mediterranean</option>
-      <option value="Italian">🇮🇹 Italian</option>
-      <option value="Mexican">🇲🇽 Mexican</option>
-    </select>
-
     <select class="accent-select" id="accentBtn" aria-label="Select Theme Accent">
       <option value="gold">✨ Gold</option>
       <option value="emerald">🌿 Emerald</option>
@@ -345,6 +327,22 @@
     </div>
 
     <div class="toolbar-right">
+      <!-- Cuisines Dropdown placed alongside search bar in the body -->
+      <select class="cuisine-select" id="cuisineSelectNav" aria-label="Select Cuisine Category">
+        <option value="all">🌐 All Cuisines</option>
+        <option value="Nepalese">🇳🇵 Nepalese Cuisine</option>
+        <option value="Indian">🇮🇳 Indian Cuisine</option>
+        <option value="Continental">🇪🇺 Continental</option>
+        <option value="Asian">🌏 Asian Cuisine</option>
+        <option value="Chinese">🇨🇳 Chinese Cuisine</option>
+        <option value="Malaysian">🇲🇾 Malaysian Cuisine</option>
+        <option value="Thai">🇹🇭 Thai Cuisine</option>
+        <option value="Bengali">🇧🇩 Bengali Cuisine</option>
+        <option value="Mediterranean">🏛️ Mediterranean</option>
+        <option value="Italian">🇮🇹 Italian Cuisine</option>
+        <option value="Mexican">🇲🇽 Mexican Cuisine</option>
+      </select>
+
       <input type="text" id="searchInput" class="search-input" placeholder="Search 230 recipes...">
       <button class="tag-chip" id="quickChip" data-tag="quick">🌿 Quick</button>
       <button class="tag-chip" id="proteinChip" data-tag="high-protein">💪 High-Protein</button>
@@ -411,6 +409,7 @@
 </footer>
 
 <script>
+  // High quality directly accurate matching unsplash images for specific dishes
   const DISH_IMAGES = {
     appleOats: 'https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=600&q=80',
     berryOats: 'https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?auto=format&fit=crop&w=600&q=80',
