@@ -337,6 +337,9 @@
   .meal-item-row.completed span { text-decoration: line-through; opacity: 0.5; }
   .meal-item-row input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--today); cursor: pointer; flex-shrink: 0; }
   .meal-item-row span { flex: 1; min-width: 0; word-break: break-word; overflow-wrap: break-word; }
+  .meal-thumb {
+    width: 44px; height: 44px; border-radius: 8px; object-fit: cover; flex-shrink: 0; border: 1px solid var(--card-border);
+  }
 
   /* Looping Dynamic Cards Grid Styles */
   .principles {
@@ -798,32 +801,88 @@
   (function () {
     const PLAN = {
       Monday: {
-        std: ["Overnight oats & berries", "Rajma curry & brown rice", "Vegetable soup & seeds"],
-        veg: ["Overnight oats & berries", "Rajma curry & brown rice", "Vegetable soup & seeds"]
+        std: [
+          { name: "Overnight oats & berries", image: "https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=150&q=80" },
+          { name: "Rajma curry & brown rice", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" },
+          { name: "Vegetable soup & seeds", image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=150&q=80" }
+        ],
+        veg: [
+          { name: "Overnight oats & berries", image: "https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=150&q=80" },
+          { name: "Rajma curry & brown rice", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" },
+          { name: "Vegetable soup & seeds", image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=150&q=80" }
+        ]
       },
       Tuesday: {
-        std: ["Multigrain avocado toast", "Grilled chicken & rotis", "Moong dal soup"],
-        veg: ["Multigrain avocado toast", "Tofu stir-fry & rotis", "Moong dal soup"]
+        std: [
+          { name: "Multigrain avocado toast", image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=150&q=80" },
+          { name: "Grilled chicken & rotis", image: "https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=150&q=80" },
+          { name: "Moong dal soup", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" }
+        ],
+        veg: [
+          { name: "Multigrain avocado toast", image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=150&q=80" },
+          { name: "Tofu stir-fry & rotis", image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=150&q=80" },
+          { name: "Moong dal soup", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" }
+        ]
       },
       Wednesday: {
-        std: ["Apple cinnamon oats", "Chana dal & lauki sabzi", "Grilled fish & steamed veg"],
-        veg: ["Apple cinnamon oats", "Chana dal & lauki sabzi", "Paneer tikka & steamed veg"]
+        std: [
+          { name: "Apple cinnamon oats", image: "https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=150&q=80" },
+          { name: "Chana dal & lauki sabzi", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" },
+          { name: "Grilled fish & steamed veg", image: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=150&q=80" }
+        ],
+        veg: [
+          { name: "Apple cinnamon oats", image: "https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=150&q=80" },
+          { name: "Chana dal & lauki sabzi", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" },
+          { name: "Paneer tikka & steamed veg", image: "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=150&q=80" }
+        ]
       },
       Thursday: {
-        std: ["Avocado herb toast", "Light fish curry & rice", "Light egg curry"],
-        veg: ["Avocado herb toast", "Soy chunk curry & rice", "Soya bhurji"]
+        std: [
+          { name: "Avocado herb toast", image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=150&q=80" },
+          { name: "Light fish curry & rice", image: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=150&q=80" },
+          { name: "Light egg curry", image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=150&q=80" }
+        ],
+        veg: [
+          { name: "Avocado herb toast", image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=150&q=80" },
+          { name: "Soy chunk curry & rice", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" },
+          { name: "Soya bhurji", image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=150&q=80" }
+        ]
       },
       Friday: {
-        std: ["Berry chia oats", "Paneer bhurji & roti", "Chicken clear soup"],
-        veg: ["Berry chia oats", "Paneer bhurji & roti", "Mushroom clear soup"]
+        std: [
+          { name: "Berry chia oats", image: "https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=150&q=80" },
+          { name: "Paneer bhurji & roti", image: "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=150&q=80" },
+          { name: "Chicken clear soup", image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=150&q=80" }
+        ],
+        veg: [
+          { name: "Berry chia oats", image: "https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=150&q=80" },
+          { name: "Paneer bhurji & roti", image: "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=150&q=80" },
+          { name: "Mushroom clear soup", image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=150&q=80" }
+        ]
       },
       Saturday: {
-        std: ["Multigrain toast", "Moong dal khichdi", "Vegetable khichdi"],
-        veg: ["Multigrain toast", "Moong dal khichdi", "Vegetable khichdi"]
+        std: [
+          { name: "Multigrain toast", image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=150&q=80" },
+          { name: "Moong dal khichdi", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" },
+          { name: "Vegetable khichdi", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" }
+        ],
+        veg: [
+          { name: "Multigrain toast", image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=150&q=80" },
+          { name: "Moong dal khichdi", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" },
+          { name: "Vegetable khichdi", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" }
+        ]
       },
       Sunday: {
-        std: ["Nut butter oats", "Chicken/Veg Pulao", "Light dal & spinach"],
-        veg: ["Nut butter oats", "Veg Pulao", "Light dal & spinach"]
+        std: [
+          { name: "Nut butter oats", image: "https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=150&q=80" },
+          { name: "Chicken/Veg Pulao", image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=150&q=80" },
+          { name: "Light dal & spinach", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" }
+        ],
+        veg: [
+          { name: "Nut butter oats", image: "https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=150&q=80" },
+          { name: "Veg Pulao", image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=150&q=80" },
+          { name: "Light dal & spinach", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" }
+        ]
       }
     };
 
@@ -840,7 +899,7 @@
       const savedStates = JSON.parse(localStorage.getItem(`nutriFlowState_${today}`) || "[false, false, false]");
 
       container.innerHTML = "";
-      meals.forEach((meal, idx) => {
+      meals.forEach((mealObj, idx) => {
         const row = document.createElement("label");
         row.className = `meal-item-row ${savedStates[idx] ? "completed" : ""}`;
         
@@ -854,11 +913,17 @@
           row.classList.toggle("completed", cb.checked);
         });
 
+        const img = document.createElement("img");
+        img.src = mealObj.image;
+        img.alt = mealObj.name;
+        img.className = "meal-thumb";
+
         const span = document.createElement("span");
         const mealType = idx === 0 ? "Breakfast" : idx === 1 ? "Lunch" : "Dinner";
-        span.innerHTML = `<strong>${mealType}:</strong> ${meal}`;
+        span.innerHTML = `<strong>${mealType}:</strong> ${mealObj.name}`;
 
         row.appendChild(cb);
+        row.appendChild(img);
         row.appendChild(span);
         container.appendChild(row);
       });
