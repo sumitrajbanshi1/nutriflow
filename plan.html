@@ -191,7 +191,7 @@
   .day-card-front, .day-card-back {
     background: var(--card); border: 1px solid var(--card-border); border-radius: 16px;
     padding: 18px; backface-visibility: hidden; -webkit-backface-visibility: hidden; width: 100%; box-sizing: border-box;
-    display: flex; flex-direction: column; justify-content: space-between; min-height: 480px;
+    display: flex; flex-direction: column; justify-content: space-between; min-height: 520px;
   }
 
   .day-card-front { position: relative; z-index: 2; }
@@ -217,18 +217,32 @@
   .meals-list { display: flex; flex-direction: column; gap: 12px; flex: 1; }
 
   .meal-row {
-    display: flex; flex-direction: column; justify-content: space-between;
-    padding: 12px 14px; border-radius: 12px; background: var(--card-inner);
-    border: 1px solid var(--card-border); gap: 8px; transition: all 0.2s ease; cursor: pointer;
+    display: flex; flex-direction: row; align-items: center; justify-content: space-between;
+    padding: 10px 12px; border-radius: 12px; background: var(--card-inner);
+    border: 1px solid var(--card-border); gap: 12px; transition: all 0.2s ease; cursor: pointer;
   }
   .meal-row:hover { background: var(--card-hover); border-color: rgba(255, 255, 255, 0.15); }
 
-  .meal-row-header { display: flex; align-items: flex-start; gap: 10px; width: 100%; }
+  .meal-row-header { display: flex; align-items: center; gap: 10px; width: 100%; }
   
+  /* MEAL THUMBNAIL STYLES */
+  .meal-thumb {
+    width: 52px; height: 52px; border-radius: 8px; object-fit: cover; flex-shrink: 0;
+    border: 1px solid var(--card-border); background: rgba(255,255,255,0.05);
+  }
+  .nutri-thumb {
+    width: 44px; height: 44px; border-radius: 6px; object-fit: cover; flex-shrink: 0;
+    border: 1px solid var(--card-border);
+  }
+  .swap-thumb {
+    width: 48px; height: 48px; border-radius: 6px; object-fit: cover; flex-shrink: 0;
+    border: 1px solid var(--card-border); margin-right: 10px;
+  }
+
   .check-btn {
     width: 16px; height: 16px; border-radius: 3px; border: 1.5px solid var(--text-dim);
     background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center;
-    color: transparent; transition: all 0.2s ease; flex-shrink: 0; margin-top: 2px; padding: 0;
+    color: transparent; transition: all 0.2s ease; flex-shrink: 0; margin-top: 0; padding: 0;
     touch-action: manipulation; font-size: 10px;
   }
   .meal-row.done .check-btn { background: var(--today); border-color: var(--today); color: #0D120F; font-weight: bold; }
@@ -247,8 +261,9 @@
 
   .meal-name { font-size: 0.92rem; font-weight: 600; line-height: 1.3; color: var(--text); word-break: break-word; }
   .meal-row.done .meal-name { text-decoration: line-through; opacity: 0.5; }
+  .meal-row.done .meal-thumb { filter: grayscale(80%); opacity: 0.6; }
 
-  .meal-stats { display: flex; align-items: center; gap: 12px; margin-top: 6px; font-size: 0.78rem; color: var(--text-dim); }
+  .meal-stats { display: flex; align-items: center; gap: 12px; margin-top: 4px; font-size: 0.78rem; color: var(--text-dim); }
   .stat-item { display: flex; align-items: center; gap: 4px; }
 
   .card-footer-actions {
@@ -271,7 +286,7 @@
   .nutrition-item {
     background: rgba(255, 255, 255, 0.02); border: 1px solid var(--card-border);
     border-radius: 10px; padding: 10px 12px; font-size: 0.82rem;
-    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; gap: 10px;
   }
   .nutri-title { font-weight: 600; color: var(--text); }
   .nutri-details { color: var(--text-dim); font-size: 0.78rem; margin-top: 2px; }
@@ -326,7 +341,7 @@
 
   /* VAULT STYLES */
   .db-item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid var(--card-border); font-size: 0.85rem; flex-wrap: wrap; gap: 8px; }
-  .db-item-info { flex: 1; min-width: 200px; }
+  .db-item-info { flex: 1; min-width: 200px; display: flex; align-items: center; gap: 10px; }
   .db-item-actions { display: flex; gap: 6px; }
 
   details.admin-group {
@@ -582,6 +597,7 @@
           </select>
           <input type="text" id="dbName" class="admin-input" placeholder="Meal Name (e.g. Quinoa Salad)" required>
           <input type="text" id="dbPortion" class="admin-input" placeholder="Portion (e.g. 1 bowl / 150g)" required>
+          <input type="url" id="dbImage" class="admin-input" placeholder="Image URL (e.g. https://images.unsplash.com/...)">
           <input type="text" id="dbNutrients" class="admin-input" placeholder="Key Nutrients (e.g. High fiber, Vitamin C)">
           <div style="display:flex; gap:10px;">
             <input type="number" id="dbProtein" class="admin-input" placeholder="Protein (g)" min="0" required>
@@ -613,6 +629,9 @@
       
       <label style="font-size:0.8rem; color:var(--text-dim); display:block; margin-bottom:4px;">Portion</label>
       <input type="text" id="editVaultPortion" class="admin-input" required>
+
+      <label style="font-size:0.8rem; color:var(--text-dim); display:block; margin-bottom:4px;">Image URL</label>
+      <input type="url" id="editVaultImage" class="admin-input" placeholder="https://images.unsplash.com/...">
 
       <label style="font-size:0.8rem; color:var(--text-dim); display:block; margin-bottom:4px;">Key Nutrients</label>
       <input type="text" id="editVaultNutrients" class="admin-input">
@@ -748,6 +767,7 @@
           </select>
           <input type="text" id="newMealName" class="admin-input" placeholder="Meal Name (e.g. Quinoa Salad)" required>
           <input type="text" id="newMealPortion" class="admin-input" placeholder="Portion (e.g. 1 bowl / 150g)" required>
+          <input type="url" id="newMealImage" class="admin-input" placeholder="Image URL (e.g. https://images.unsplash.com/...)">
           <div style="display:flex; gap:10px;">
             <input type="number" id="newMealProtein" class="admin-input" placeholder="Protein (g)" min="0" required>
             <input type="number" id="newMealCalories" class="admin-input" placeholder="Calories (kcal)" min="0" required>
@@ -886,25 +906,25 @@
   (function() {
     const defaultSwapDatabase = {
       Breakfast: [
-        { name: "Overnight oats & berries", portion: "1 bowl (~1 cup)", nutrients: "Soluble fiber, antioxidants", protein: 12, calories: 310, tags: ["quick"] },
-        { name: "Multigrain avocado toast", portion: "2 slices + 1/2 avocado", nutrients: "Healthy fats, potassium", protein: 9, calories: 290, tags: ["quick"] },
-        { name: "Apple cinnamon oats", portion: "1 bowl (~1 cup)", nutrients: "Pectin fiber, slow energy", protein: 10, calories: 320, tags: ["quick"] },
-        { name: "Berry chia oats", portion: "1 bowl (~1 cup)", nutrients: "High omega-3, fiber", protein: 11, calories: 300, tags: ["quick"] },
-        { name: "Tofu scrambled wrap", portion: "1 whole wheat wrap", nutrients: "Plant protein, iron", protein: 18, calories: 340, tags: ["high-protein"] }
+        { name: "Overnight oats & berries", portion: "1 bowl (~1 cup)", nutrients: "Soluble fiber, antioxidants", protein: 12, calories: 310, tags: ["quick"], image: "https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=300&q=80" },
+        { name: "Multigrain avocado toast", portion: "2 slices + 1/2 avocado", nutrients: "Healthy fats, potassium", protein: 9, calories: 290, tags: ["quick"], image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=300&q=80" },
+        { name: "Apple cinnamon oats", portion: "1 bowl (~1 cup)", nutrients: "Pectin fiber, slow energy", protein: 10, calories: 320, tags: ["quick"], image: "https://images.unsplash.com/photo-1584365685547-9a5fb6f3a70c?auto=format&fit=crop&w=300&q=80" },
+        { name: "Berry chia oats", portion: "1 bowl (~1 cup)", nutrients: "High omega-3, fiber", protein: 11, calories: 300, tags: ["quick"], image: "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=300&q=80" },
+        { name: "Tofu scrambled wrap", portion: "1 whole wheat wrap", nutrients: "Plant protein, iron", protein: 18, calories: 340, tags: ["high-protein"], image: "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=300&q=80" }
       ],
       Lunch: [
-        { name: "Rajma curry & brown rice", portion: "1 bowl + 1 cup rice", nutrients: "Complex carbs, iron", protein: 16, calories: 420, tags: [] },
-        { name: "Grilled chicken & rotis", portion: "150g chicken + 2 rotis", nutrients: "Lean protein, B vitamins", protein: 38, calories: 480, tags: ["high-protein"] },
-        { name: "Chana dal & lauki sabzi", portion: "1 bowl dal + 1 bowl sabzi", nutrients: "High zinc, hydration", protein: 15, calories: 380, tags: [] },
-        { name: "Light fish curry & rice", portion: "1 bowl curry + 1 cup rice", nutrients: "Iodine, clean energy", protein: 28, calories: 440, tags: ["high-protein"] },
-        { name: "Paneer bhurji & roti", portion: "100g paneer + 2 rotis", nutrients: "Calcium, healthy fats", protein: 22, calories: 450, tags: ["high-protein"] }
+        { name: "Rajma curry & brown rice", portion: "1 bowl + 1 cup rice", nutrients: "Complex carbs, iron", protein: 16, calories: 420, tags: [], image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=300&q=80" },
+        { name: "Grilled chicken & rotis", portion: "150g chicken + 2 rotis", nutrients: "Lean protein, B vitamins", protein: 38, calories: 480, tags: ["high-protein"], image: "https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=300&q=80" },
+        { name: "Chana dal & lauki sabzi", portion: "1 bowl dal + 1 bowl sabzi", nutrients: "High zinc, hydration", protein: 15, calories: 380, tags: [], image: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=300&q=80" },
+        { name: "Light fish curry & rice", portion: "1 bowl curry + 1 cup rice", nutrients: "Iodine, clean energy", protein: 28, calories: 440, tags: ["high-protein"], image: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=300&q=80" },
+        { name: "Paneer bhurji & roti", portion: "100g paneer + 2 rotis", nutrients: "Calcium, healthy fats", protein: 22, calories: 450, tags: ["high-protein"], image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=300&q=80" }
       ],
       Dinner: [
-        { name: "Vegetable soup & seeds", portion: "1 bowl + 2 tbsp seeds", nutrients: "Omega-3, Vitamins A/C", protein: 8, calories: 220, tags: ["quick"] },
-        { name: "Moong dal soup", portion: "1.5 cups bowl", nutrients: "Folate, gentle digestion", protein: 14, calories: 250, tags: ["quick"] },
-        { name: "Grilled fish & steamed veg", portion: "150g fish + 1.5 cups veg", nutrients: "Omega-3s, essential minerals", protein: 32, calories: 360, tags: ["high-protein"] },
-        { name: "Chicken clear soup", portion: "1.5 cups bowl", nutrients: "Electrolytes, collagen", protein: 24, calories: 280, tags: ["high-protein", "quick"] },
-        { name: "Moong dal khichdi", portion: "1.5 cups bowl", nutrients: "Gut-friendly amino acids", protein: 13, calories: 310, tags: [] }
+        { name: "Vegetable soup & seeds", portion: "1 bowl + 2 tbsp seeds", nutrients: "Omega-3, Vitamins A/C", protein: 8, calories: 220, tags: ["quick"], image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=300&q=80" },
+        { name: "Moong dal soup", portion: "1.5 cups bowl", nutrients: "Folate, gentle digestion", protein: 14, calories: 250, tags: ["quick"], image: "https://images.unsplash.com/photo-1541832676-9b763b0239ab?auto=format&fit=crop&w=300&q=80" },
+        { name: "Grilled fish & steamed veg", portion: "150g fish + 1.5 cups veg", nutrients: "Omega-3s, essential minerals", protein: 32, calories: 360, tags: ["high-protein"], image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=300&q=80" },
+        { name: "Chicken clear soup", portion: "1.5 cups bowl", nutrients: "Electrolytes, collagen", protein: 24, calories: 280, tags: ["high-protein", "quick"], image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=300&q=80" },
+        { name: "Moong dal khichdi", portion: "1.5 cups bowl", nutrients: "Gut-friendly amino acids", protein: 13, calories: 310, tags: [], image: "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=300&q=80" }
       ]
     };
 
@@ -973,11 +993,13 @@
 
           const done = savedStates[idx];
           const isBatch = idx === 1;
+          const photoUrl = m.image || "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=300&q=80";
 
           mealsHtml += `
             <div class="meal-row ${done ? 'done' : ''}" data-day="${d.day}" data-idx="${idx}" onclick="toggleMealDone(event, '${d.day}', ${idx})">
               <div class="meal-row-header">
                 <button class="check-btn">${done ? '✓' : ''}</button>
+                <img src="${photoUrl}" alt="${m.name}" class="meal-thumb" loading="lazy" />
                 <div class="meal-content">
                   <div class="meal-type-label">
                     <span>${m.type}</span>
@@ -995,9 +1017,12 @@
 
           nutriHtml += `
             <div class="nutrition-item">
-              <div>
-                <span class="nutri-title">${m.type}: ${m.name}</span>
-                <div class="nutri-details">Portion: ${m.portion} · ${m.nutrients || 'Custom Entry'}</div>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <img src="${photoUrl}" alt="${m.name}" class="nutri-thumb" loading="lazy" />
+                <div>
+                  <span class="nutri-title">${m.type}: ${m.name}</span>
+                  <div class="nutri-details">Portion: ${m.portion} · ${m.nutrients || 'Custom Entry'}</div>
+                </div>
               </div>
               <span class="nutri-tag">${m.protein}g Protein · ${m.calories} kcal</span>
             </div>
@@ -1094,18 +1119,23 @@
         catDetails.className = 'category-accordion';
         catDetails.open = false;
 
-        let itemsHtml = (SWAP_DATABASE[cat] || []).map((item, index) => `
+        let itemsHtml = (SWAP_DATABASE[cat] || []).map((item, index) => {
+          const photo = item.image || "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=300&q=80";
+          return `
           <div class="db-item-row">
             <div class="db-item-info">
-              <strong>${item.name}</strong> (${item.portion})<br>
-              <small style="color:var(--text-dim);">🔥 ${item.calories} kcal | 💪 ${item.protein}g protein ${item.nutrients ? ' | ' + item.nutrients : ''}</small>
+              <img src="${photo}" alt="${item.name}" class="nutri-thumb" loading="lazy" />
+              <div>
+                <strong>${item.name}</strong> (${item.portion})<br>
+                <small style="color:var(--text-dim);">🔥 ${item.calories} kcal | 💪 ${item.protein}g protein ${item.nutrients ? ' | ' + item.nutrients : ''}</small>
+              </div>
             </div>
             <div class="db-item-actions">
               <button class="tool-btn" style="padding:4px 8px; font-size:0.75rem;" onclick="editDbItem('${cat}', ${index})">✏️ Edit</button>
               <button class="tool-btn" style="padding:4px 8px; font-size:0.75rem; color:#E07A5F;" onclick="promptDeleteDbItem('${cat}', ${index})">🗑️ Delete</button>
             </div>
           </div>
-        `).join('');
+        `}).join('');
 
         if (!itemsHtml) itemsHtml = `<div style="font-size:0.85rem; color:var(--text-dim);">No meals registered in this category.</div>`;
 
@@ -1135,12 +1165,14 @@
       const cat = document.getElementById('dbCategory').value;
       const name = document.getElementById('dbName').value.trim();
       const portion = document.getElementById('dbPortion').value.trim();
+      const image = document.getElementById('dbImage').value.trim();
       const nutrients = document.getElementById('dbNutrients').value.trim();
       const protein = parseInt(document.getElementById('dbProtein').value, 10);
       const calories = parseInt(document.getElementById('dbCalories').value, 10);
 
       const newItem = {
         name, portion, nutrients, protein, calories,
+        image: image || "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=300&q=80",
         tags: protein >= 20 ? ["high-protein"] : []
       };
 
@@ -1163,6 +1195,7 @@
       
       document.getElementById('editVaultName').value = item.name || '';
       document.getElementById('editVaultPortion').value = item.portion || '';
+      document.getElementById('editVaultImage').value = item.image || '';
       document.getElementById('editVaultNutrients').value = item.nutrients || '';
       document.getElementById('editVaultProtein').value = item.protein || 0;
       document.getElementById('editVaultCalories').value = item.calories || 0;
@@ -1185,6 +1218,7 @@
       const { cat, index } = pendingEdit;
       const name = document.getElementById('editVaultName').value.trim();
       const portion = document.getElementById('editVaultPortion').value.trim();
+      const image = document.getElementById('editVaultImage').value.trim();
       const nutrients = document.getElementById('editVaultNutrients').value.trim();
       const protein = parseInt(document.getElementById('editVaultProtein').value, 10);
       const calories = parseInt(document.getElementById('editVaultCalories').value, 10);
@@ -1192,6 +1226,7 @@
       SWAP_DATABASE[cat][index] = {
         name,
         portion,
+        image: image || "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=300&q=80",
         nutrients,
         protein,
         calories,
@@ -1386,11 +1421,15 @@
           const isSelected = (opt.name === currentMeal.name);
           const item = document.createElement('div');
           item.className = `swap-option ${isSelected ? 'active-choice' : ''}`;
+          const photo = opt.image || "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=300&q=80";
           
           item.innerHTML = `
-            <div>
-              <strong>${opt.name}</strong> ${isSelected ? '<span class="current-badge">Current Choice</span>' : ''}<br>
-              <small style="color:var(--text-dim); font-size: 0.75rem;">${opt.portion} · ${opt.protein}g Protein · ${opt.calories} kcal</small>
+            <div style="display:flex; align-items:center;">
+              <img src="${photo}" alt="${opt.name}" class="swap-thumb" loading="lazy" />
+              <div>
+                <strong>${opt.name}</strong> ${isSelected ? '<span class="current-badge">Current Choice</span>' : ''}<br>
+                <small style="color:var(--text-dim); font-size: 0.75rem;">${opt.portion} · ${opt.protein}g Protein · ${opt.calories} kcal</small>
+              </div>
             </div>
             ${isSelected ? '<span style="color:var(--today);">✓</span>' : ''}
           `;
@@ -1524,12 +1563,14 @@
       const cat = document.getElementById('newMealCategory').value;
       const name = document.getElementById('newMealName').value.trim();
       const portion = document.getElementById('newMealPortion').value.trim();
+      const image = document.getElementById('newMealImage').value.trim();
       const protein = parseInt(document.getElementById('newMealProtein').value, 10);
       const calories = parseInt(document.getElementById('newMealCalories').value, 10);
 
       const newMeal = {
         name,
         portion,
+        image: image || "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=300&q=80",
         nutrients: "Custom Admin Item",
         protein,
         calories,
