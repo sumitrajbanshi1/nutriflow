@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="color-scheme" content="dark light">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NutriFlow — Weekly Family Meal System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://images.unsplash.com">
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" href="css/shared.css" as="style">
+<link rel="stylesheet" href="css/shared.css">
+<style>
+
+  /* Protect original home reveal system from shared.css .reveal rules */
+  .principle-card.reveal,
+  .insights-ticker.reveal {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+  }
+  .principle-card:not(.reveal),
+  .insights-ticker:not(.reveal) {
+    /* original page CSS already sets opacity:0 + transition */
+  }
+  :root {
+    --bg: #0D120F;
+    --card: #16201B;
+    --card-hover: #1E2B25;
+    --card-border: rgba(255, 255, 255, 0.08);
+    --text: #F7F4EF;
+    --text-dim: #9EAFA3;
+    --breakfast: #E07A5F;
+    --lunch: #81B29A;
+    --dinner: #6A93B0;
+    --today: #F2CC8F;
+    --accent-glow: rgba(242, 204, 143, 0.25);
+  }
+
+  [data-accent="emerald"] {
+    --today: #52B788;
+    --accent-glow: rgba(82, 183, 136, 0.25);
+  }
+  [data-accent="amber"] {
+    --today: #E76F51;
+    --accent-glow: rgba(231, 111, 81, 0.25);
+  }
+  [data-accent="teal"] {
+    --today: #2A9D8F;
+    --accent-glow: rgba(42, 157, 143, 0.25);
+  }
+
+  [data-theme="light"] {
+    --bg: #F4F1EA;
+    --card: #FFFFFF;
+    --card-hover: #F8F6F0;
+    --card-border: rgba(0, 0, 0, 0.08);
+    --text: #1C241F;
+    --text-dim: #5C6E62;
+    --accent-glow: rgba(217, 155, 38, 0.2);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  .topnav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 32px;
+    background: rgba(13, 18, 15, 0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--card-border);
+  }
+  [data-theme="light"] .topnav { background: rgba(244, 241, 234, 0.88); }
+
+  .nav-controls { display: flex; align-items: center; gap: 10px; }
+
+  .theme-toggle, .accent-select, .btn-secondary {
+    background: var(--card); border: 1px solid var(--card-border);
+    color: var(--text); padding: 8px 14px; border-radius: 20px;
+    font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 6px;
+    transition: all 0.2s ease;
+    min-height: 40px;
+    touch-action: manipulation;
+  }
+  .theme-toggle:hover, .accent-select:hover, .btn-secondary:hover { border-color: var(--today); }
+
+  .accent-select { padding: 6px 10px; outline: none; }
+  .accent-select option { background: var(--card); color: var(--text); }
+
+  .brand {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 1.35rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--text) 30%, var(--today) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .menu-btn {
+    width: 42px; height: 42px; border-radius: 12px;
+    border: 1px solid var(--card-border); background: var(--card);
+    cursor: pointer; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 5px; padding: 0;
+    transition: all 0.2s ease;
+  }
+  .menu-btn:hover { background: var(--card-hover); }
+
+  .menu-btn span {
+    display: block; width: 18px; height: 2px; background: var(--text);
+    border-radius: 2px; transition: transform 0.25s ease, opacity 0.25s ease;
+  }
+
+  .menu-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .menu-btn.open span:nth-child(2) { opacity: 0; }
+  .menu-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .nav-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 45;
+  }
+  .nav-overlay.open { opacity: 1; pointer-events: auto; }
+
+  .nav-panel {
+    position: fixed; top: 0; right: 0; height: 100%;
+    width: min(320px, 85vw); background: var(--card);
+    border-left: 1px solid var(--card-border);
+    transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 50; padding: 100px 32px 32px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .nav-panel.open { transform: translateX(0); }
+  .nav-panel a {
+    font-size: 1.15rem; padding: 12px 0;
+    border-bottom: 1px solid var(--card-border); color: var(--text-dim);
+    transition: color 0.2s ease, padding-left 0.2s ease;
+  }
+  .nav-panel a:hover, .nav-panel a.active { color: var(--text); padding-left: 8px; font-weight: 600; }
+  .nav-panel .nav-note { margin-top: auto; font-size: 0.85rem; color: var(--text-dim); opacity: 0.7; line-height: 1.6; }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 22px;
+  }
+
+  .btn-primary {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    background: linear-gradient(135deg, var(--today) 0%, #E8B96C 100%);
+    color: #0D120F; font-weight: 600; font-size: 1rem; padding: 16px 32px;
+    border-radius: 14px; border: none; cursor: pointer;
+    box-shadow: 0 4px 24px var(--accent-glow);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+    min-height: 48px;
+    touch-action: manipulation;
+  }
+  .btn-primary:hover { 
+    transform: translateY(-3px); 
+    box-shadow: 0 0 30px var(--today), 0 8px 32px var(--accent-glow); 
+  }
+
+  .btn-secondary {
+    padding: 16px 28px;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .hero {
+    position: relative; 
+    min-height: calc(100vh - 70px);
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    overflow: hidden; 
+    text-align: center;
+    padding-top: 80px;
+  }
+
+  #nodeCanvas {
+    position: absolute; inset: 0; width: 100%; height: 100%; display: block;
+    z-index: 1; pointer-events: auto;
+  }
+
+  .hero-content {
+    position: relative; z-index: 2; padding: 40px 0 60px;
+    display: flex; flex-direction: column; align-items: center;
+    pointer-events: none; width: 100%;
+  }
+  .hero-content a, .hero-content button, .hero-content input, .hero-content label { pointer-events: auto; }
+
+  @keyframes fadeInSlideUp {
+    0% { opacity: 0; transform: translateY(35px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .badge-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 16px; border-radius: 30px;
+    background: rgba(242, 204, 143, 0.08); border: 1px solid rgba(242, 204, 143, 0.25);
+    color: var(--today); font-size: 0.85rem; font-weight: 500;
+    margin-bottom: 20px; letter-spacing: 0.03em; text-transform: uppercase;
+    opacity: 0; animation: fadeInSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+    box-shadow: 0 0 15px var(--accent-glow);
+  }
+
+  .combined-heading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(2rem, 5.5vw, 4.2rem);
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 0 0 20px;
+    color: var(--text);
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .word-mask {
+    overflow: hidden;
+    display: inline-flex;
+    vertical-align: middle;
+    padding-bottom: 0.1em;
+    margin-right: 0.25em;
+  }
+
+  .word-mask span {
+    display: block;
+    transform: translateY(120%);
+    animation: revealFromBottom 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .word-mask:nth-child(1) span { animation-delay: 0.15s; }
+  .word-mask:nth-child(2) span { animation-delay: 0.35s; }
+
+  @keyframes revealFromBottom {
+    0% { transform: translateY(120%); }
+    100% { transform: translateY(0%); }
+  }
+
+  .accent-wrapper {
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    vertical-align: middle;
+    height: 1.25em;
+  }
+
+  .accent-mask-inner {
+    display: inline-flex;
+    align-items: center;
+    transform: translateY(120%);
+    animation: revealFromBottom 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.55s forwards;
+    height: 100%;
+  }
+
+  .typewriter-accent {
+    color: var(--today);
+    display: inline-block;
+    white-space: nowrap;
+    text-align: left;
+    vertical-align: middle;
+    text-shadow: 0 0 20px var(--accent-glow);
+  }
+
+  .cursor {
+    display: inline-block;
+    color: var(--today);
+    margin-left: 2px;
+    font-weight: 400;
+    opacity: 0;
+    vertical-align: middle;
+    flex-shrink: 0;
+  }
+
+  .cursor.active {
+    opacity: 1;
+    animation: blink 0.75s infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .hero p {
+    font-size: clamp(1rem, 2vw, 1.2rem); color: var(--text-dim); max-width: 52ch;
+    line-height: 1.65; margin: 0 0 24px; font-weight: 300;
+    opacity: 0; animation: fadeInSlideUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
+  }
+
+  .today-preview-box {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 20px; padding: 24px; margin-bottom: 32px;
+    display: flex; flex-direction: column; gap: 16px; text-align: left;
+    max-width: 640px; width: 100%; box-shadow: 0 12px 40px rgba(0,0,0,0.25), 0 0 25px var(--accent-glow);
+    backdrop-filter: blur(8px);
+    opacity: 0; animation: fadeInSlideUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 1.0s forwards;
+    pointer-events: auto;
+    transition: box-shadow 0.3s ease;
+  }
+  .today-preview-box:hover {
+    box-shadow: 0 15px 45px rgba(0,0,0,0.35), 0 0 35px var(--accent-glow);
+  }
+
+  .today-card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px; border-bottom: 1px solid var(--card-border);
+    padding-bottom: 12px;
+  }
+
+  .today-preview-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--today); font-weight: 600; }
+
+  .macro-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip { background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; color: var(--text-dim); }
+
+  .dietary-toggle { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-dim); cursor: pointer; }
+  .dietary-toggle input { cursor: pointer; accent-color: var(--today); width: 18px; height: 18px; }
+
+  .today-checklist { display: flex; flex-direction: column; gap: 10px; }
+  .meal-item-row { 
+    display: flex; align-items: center; gap: 12px; font-size: 0.95rem; line-height: 1.4; color: var(--text);
+    padding: 8px 12px; border-radius: 10px; background: rgba(255,255,255,0.02); transition: background 0.2s ease, transform 0.2s ease;
+    width: 100%; min-width: 0;
+  }
+  .meal-item-row:hover { background: var(--card-hover); transform: translateX(4px); }
+  .meal-item-row.completed span { text-decoration: line-through; opacity: 0.5; }
+  .meal-item-row input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--today); cursor: pointer; flex-shrink: 0; }
+  .meal-item-row span { flex: 1; min-width: 0; word-break: break-word; overflow-wrap: break-word; }
+  .meal-thumb {
+    width: 44px; height: 44px; border-radius: 8px; object-fit: cover; flex-shrink: 0; border: 1px solid var(--card-border);
+  }
+
+  /* Looping Dynamic Cards Grid Styles */
+  .principles {
+    position: relative; z-index: 2; padding: 40px 0 0;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  }
+
+  .principle-card {
+    background: transparent;
+    border: none;
+    perspective: 1000px;
+    height: 250px;
+    cursor: pointer;
+    opacity: 0; transform: translateY(30px);
+    transition: transform 0.4s ease, opacity 0.4s ease;
+  }
+  .principle-card.reveal { opacity: 1; transform: translateY(0); }
+
+  .principle-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: left;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+
+  .principle-card.flipped .principle-inner {
+    transform: rotateY(180deg);
+  }
+
+  .principle-front, .principle-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 20px;
+    padding: 32px 28px;
+    border: 1px solid var(--card-border);
+    background: var(--card);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.4s ease;
+  }
+
+  .principle-front {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .principle-card:hover .principle-front {
+    border-color: var(--today);
+    box-shadow: 0 0 25px var(--accent-glow), 0 12px 40px rgba(0,0,0,0.25);
+    background: radial-gradient(120% 120% at 50% 0%, var(--accent-glow) 0%, var(--card) 100%);
+  }
+
+  .principle-back {
+    background: var(--card-hover);
+    border-color: var(--today);
+    box-shadow: 0 0 25px var(--accent-glow), 0 12px 40px rgba(0,0,0,0.25);
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .icon { font-size: 1.5rem; margin-bottom: 16px; color: var(--today); }
+  h3 { font-family: 'Fraunces', serif; font-size: 1.25rem; margin: 0 0 12px; }
+  p { font-size: 0.95rem; color: var(--text-dim); line-height: 1.6; margin: 0; }
+  
+  .flip-hint {
+    font-size: 0.75rem;
+    color: var(--today);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: auto;
+    font-weight: 500;
+  }
+
+  /* Transition helper for card content loop with slower fade duration */
+  .fade-content {
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-content.animating {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  /* Looping Insights Ticker */
+  .insights-ticker {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-top: 24px;
+    margin-bottom: 80px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2), 0 0 20px var(--accent-glow);
+    opacity: 0; transform: translateY(30px);
+    transition: transform 0.4s ease, opacity 0.4s ease, box-shadow 0.3s ease;
+  }
+  .insights-ticker:hover {
+    box-shadow: 0 12px 40px rgba(0,0,0,0.3), 0 0 30px var(--accent-glow);
+  }
+  .insights-ticker.reveal { opacity: 1; transform: translateY(0); }
+
+  .ticker-badge {
+    background: var(--accent-glow);
+    color: var(--today);
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+  }
+
+  .ticker-viewport {
+    position: relative;
+    height: 1.5em;
+    overflow: hidden;
+    flex: 1;
+  }
+
+  .ticker-track {
+    position: absolute;
+    width: 100%;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .ticker-item {
+    height: 1.5em;
+    line-height: 1.5em;
+    font-size: 0.95rem;
+    color: var(--text-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .ticker-item strong { color: var(--text); }
+
+  .site-footer {
+    position: relative; z-index: 2;
+    background: var(--card); border-top: 1px solid var(--card-border);
+    padding: 56px 0 32px; margin-top: 40px;
+  }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+  .footer-col h4 { font-family: 'Fraunces', serif; font-size: 1.1rem; margin: 0 0 16px; }
+  .footer-col p { color: var(--text-dim); font-size: 0.9rem; line-height: 1.6; margin: 0; }
+  .footer-links { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+  .footer-links a { color: var(--text-dim); font-size: 0.9rem; transition: color 0.2s ease; display: inline-block; padding: 2px 0; }
+  .footer-links a:hover { color: var(--today); }
+
+  .footer-bottom {
+    border-top: 1px solid var(--card-border);
+    padding-top: 24px; display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px; font-size: 0.85rem; color: var(--text-dim);
+  }
+
+  .signature { font-family: 'Caveat', cursive; color: var(--today); font-size: 1.3rem; font-weight: 600; }
+
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center;
+    z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+    padding: 16px;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: auto; }
+
+  .modal-card {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 24px; max-width: 500px; width: 100%; max-height: 85vh;
+    display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 40px var(--accent-glow);
+  }
+
+  .modal-header {
+    padding: 20px 24px; border-bottom: 1px solid var(--card-border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .modal-header h3 { font-family: 'Fraunces', serif; margin: 0; font-size: 1.25rem; }
+  .close-modal { background: none; border: none; color: var(--text-dim); font-size: 1.5rem; cursor: pointer; padding: 4px; }
+
+  .modal-body { padding: 24px; overflow-y: auto; line-height: 1.6; color: var(--text-dim); font-size: 0.95rem; }
+  .modal-body ul { padding-left: 20px; margin: 8px 0 20px; color: var(--text); }
+  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--card-border); text-align: right; }
+
+  @media (max-width: 860px) {
+    .principles { grid-template-columns: 1fr; }
+    .principle-card { height: 230px; }
+  }
+
+  @media (max-width: 768px) {
+    .topnav { padding: 12px 16px; }
+    .wrap { padding: 0 16px; }
+    .hero { padding-top: 90px; }
+    .hero-content { padding-top: 20px; }
+    .combined-heading { font-size: clamp(2rem, 8vw, 2.8rem); flex-direction: row; }
+    .word-mask { margin-right: 0.2em; }
+    .accent-wrapper { flex-basis: 100%; width: 100%; height: 1.4em; margin-top: 4px; justify-content: center; }
+    .typewriter-accent { text-align: center; }
+    .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+    .hero-actions { width: 100%; flex-direction: column; }
+    .btn-primary, .btn-secondary { width: 100%; }
+    .today-card-header { flex-direction: column; align-items: flex-start; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .word-mask span, .accent-mask-inner, .badge-tag, .hero p, .today-preview-box, .principle-card, .insights-ticker {
+      transform: none !important; animation: none !important; opacity: 1 !important;
+    }
+    .cursor { display: none !important; }
+  }
+
+  /* === Home enhancements: progress, day strip, motion === */
+  .day-strip {
+    display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+    margin: 0 0 18px; padding: 0;
+  }
+  .day-pill {
+    min-width: 42px; padding: 8px 10px; border-radius: 12px;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--card-border);
+    color: var(--text-dim); font-size: 0.75rem; font-weight: 600;
+    text-align: center; letter-spacing: 0.02em;
+    transition: border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  .day-pill.today {
+    color: var(--text); border-color: var(--today);
+    box-shadow: 0 0 0 1px var(--today), 0 0 20px var(--accent-glow);
+    animation: dayPulse 2.4s ease-in-out infinite;
+  }
+  .day-pill.logged { color: var(--text); border-color: rgba(82,183,136,0.45); }
+  .day-pill .day-dot {
+    display: block; width: 6px; height: 6px; border-radius: 50%;
+    margin: 4px auto 0; background: transparent;
+  }
+  .day-pill.logged .day-dot { background: #52B788; }
+  .day-pill.today .day-dot { background: var(--today); }
+  @keyframes dayPulse {
+    0%, 100% { box-shadow: 0 0 0 1px var(--today), 0 0 12px var(--accent-glow); }
+    50% { box-shadow: 0 0 0 1px var(--today), 0 0 22px var(--accent-glow); }
+  }
+
+  .today-progress-row {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 12px;
+  }
+  .today-ring {
+    width: 52px; height: 52px; flex-shrink: 0; position: relative;
+  }
+  .today-ring svg { transform: rotate(-90deg); width: 52px; height: 52px; }
+  .today-ring circle {
+    fill: none; stroke-width: 5;
+  }
+  .today-ring .ring-bg { stroke: var(--card-border); }
+  .today-ring .ring-fill {
+    stroke: var(--today);
+    stroke-linecap: round;
+    stroke-dasharray: 131.9;
+    stroke-dashoffset: 131.9;
+    transition: stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .today-ring .ring-label {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 700; color: var(--today);
+  }
+  .today-progress-text { text-align: left; font-size: 0.85rem; color: var(--text-dim); line-height: 1.4; }
+  .today-progress-text strong { color: var(--text); font-weight: 600; }
+
+  .meal-item-row { transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s ease, opacity 0.25s ease; }
+  .meal-item-row.completed { opacity: 0.85; }
+  .meal-item-row.just-checked {
+    animation: checkPop 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes checkPop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+  }
+
+  .week-teaser {
+    margin: 18px auto 0;
+    max-width: 520px;
+    padding: 12px 16px;
+    border-radius: 14px;
+    background: rgba(242, 204, 143, 0.06);
+    border: 1px solid rgba(242, 204, 143, 0.2);
+    font-size: 0.9rem; color: var(--text-dim);
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  .week-teaser strong { color: var(--today); }
+  .week-teaser a {
+    color: var(--today); font-weight: 600; font-size: 0.85rem;
+    text-decoration: none; white-space: nowrap;
+  }
+  .week-teaser a:hover { text-decoration: underline; }
+
+  .tip-of-day {
+    margin: 28px auto 8px; max-width: 640px;
+    padding: 16px 20px; border-radius: 16px;
+    background: var(--card); border: 1px solid var(--card-border);
+    text-align: left;
+    opacity: 0; transform: translateY(12px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .tip-of-day.visible { opacity: 1; transform: translateY(0); }
+  .tip-of-day .tip-label {
+    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--today); font-weight: 600; margin-bottom: 6px;
+  }
+  .tip-of-day p { margin: 0; font-size: 0.95rem; color: var(--text); line-height: 1.5; }
+
+  .scroll-cue {
+    display: flex; justify-content: center; margin-top: 28px;
+    animation: cueBounce 2s ease-in-out infinite;
+    opacity: 0.55; color: var(--text-dim); font-size: 1.25rem;
+    background: none; border: none; cursor: pointer;
+  }
+  .scroll-cue.hidden { opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+  @keyframes cueBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .day-pill.today, .scroll-cue, .meal-item-row.just-checked { animation: none !important; }
+    .today-ring .ring-fill { transition: none; }
+  }
+
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="brand" href="index.html">NutriFlow</a>
+  <div class="nav-controls">
+    <select class="accent-select" id="accentBtn" aria-label="Select Theme Accent">
+      <option value="gold">✨ Gold</option>
+      <option value="emerald">🌿 Emerald</option>
+      <option value="amber">🍊 Amber</option>
+      <option value="teal">🌊 Teal</option>
+    </select>
+    <button class="theme-toggle" id="themeBtn" aria-label="Toggle Light/Dark Theme">
+      <span id="themeIcon">🌙</span> <span id="themeLabel">Dark</span>
+    </button>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="nav-overlay" id="navOverlay"></div>
+<aside class="nav-panel" id="navPanel">
+  <a href="index.html" class="active">Home</a>
+  <a href="plan.html">This Week's Plan</a>
+  <a href="recipes.html">Recipes</a>
+  <a href="analytics.html">Analytics</a>
+  <p class="nav-note">Shared family meal routine · Automatically resets every Monday morning.</p>
+</aside>
+
+<section class="hero">
+  <canvas id="nodeCanvas"></canvas>
+  <div class="hero-content wrap">
+    <div class="badge-tag">🌱 Family Nutrition</div>
+    
+    <h1 class="combined-heading">
+      <div class="word-mask"><span>Eat</span></div>
+      <div class="word-mask"><span>Smart,</span></div>
+      
+      <div class="accent-wrapper">
+        <div class="accent-mask-inner">
+          <span class="typewriter-accent" id="typeText">Live Better.</span>
+          <span class="cursor" id="cursor">|</span>
+        </div>
+      </div>
+    </h1>
+    
+    <p>A balanced, whole-food meal rotation for the household. Track prepped meals, stay healthy, and simplify your daily routine.</p>
+
+
+    <div class="day-strip" id="dayStrip" aria-label="Week overview"></div>
+    <div class="today-preview-box">
+      <div class="today-card-header">
+        <div>
+          <div class="today-preview-title" id="todayTitle">Today's Menu</div>
+          <div class="macro-chips" style="margin-top:6px;">
+            <span class="chip">~2,050 kcal</span>
+            <span class="chip">135g Protein</span>
+            <span class="chip">42g Fiber</span>
+          </div>
+        </div>
+        <label class="dietary-toggle">
+          <input type="checkbox" id="vegToggle"> Veg / Pescatarian View
+        </label>
+      </div>
+
+      <div class="today-progress-row">
+        <div class="today-ring" aria-hidden="true">
+          <svg viewBox="0 0 52 52">
+            <circle class="ring-bg" cx="26" cy="26" r="21"></circle>
+            <circle class="ring-fill" id="todayRingFill" cx="26" cy="26" r="21"></circle>
+          </svg>
+          <div class="ring-label" id="todayRingLabel">0/3</div>
+        </div>
+        <div class="today-progress-text" id="todayProgressText">
+          <strong>Today's plate</strong><br>Log meals as you go
+        </div>
+      </div>
+      <div class="today-checklist" id="todayChecklist">
+      </div>
+    </div>
+
+
+    <div class="week-teaser" id="weekTeaser">
+      <span id="weekTeaserText">This week: tracking starts when you log meals on Plan.</span>
+      <a href="analytics.html">View analytics →</a>
+    </div>
+
+    <div class="hero-actions">
+      <a class="btn-primary" href="plan.html">Explore Weekly Plan &rrarr;</a>
+      <button class="btn-secondary" id="groceryBtn">📋 Grocery List</button>
+    </div>
+  </div>
+</section>
+
+  <button type="button" class="scroll-cue" id="scrollCue" aria-label="Scroll to principles">↓</button>
+
+<div class="wrap">
+  <!-- Looping Dynamic Cards Grid -->
+  <section class="principles" id="principlesGrid">
+    <!-- Card 1 -->
+    <div class="principle-card" tabindex="0" role="button" aria-label="Toggle card insights" data-card-index="0">
+      <div class="principle-inner">
+        <div class="principle-front">
+          <div class="icon card-icon">🥗</div>
+          <h3 class="card-title">Fibre & Protein</h3>
+          <p class="card-desc">Balanced across meals to maintain steady energy and curb cravings.</p>
+          <div class="flip-hint">Click for Insights ↺</div>
+        </div>
+        <div class="principle-back">
+          <div>
+            <div class="icon" style="margin-bottom:8px;">💡</div>
+            <h3 class="tip-title" style="font-size:1.1rem; margin-bottom:6px;">Quick Tip</h3>
+            <p class="tip-desc" style="font-size:0.85rem;">Slows digestion to keep your blood glucose steady all day long.</p>
+          </div>
+          <div class="flip-hint" style="color:var(--text-dim);">↺ Click to flip back</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="principle-card" tabindex="0" role="button" aria-label="Toggle card insights" data-card-index="1">
+      <div class="principle-inner">
+        <div class="principle-front">
+          <div class="icon card-icon">🌾</div>
+          <h3 class="card-title">Complex Grains</h3>
+          <p class="card-desc">Wholesome oats and brown rice instead of refined white carbs.</p>
+          <div class="flip-hint">Click for Insights ↺</div>
+        </div>
+        <div class="principle-back">
+          <div>
+            <div class="icon" style="margin-bottom:8px;">💡</div>
+            <h3 class="tip-title" style="font-size:1.1rem; margin-bottom:6px;">Quick Tip</h3>
+            <p class="tip-desc" style="font-size:0.85rem;">Retains B-complex vitamins to support daytime focus and energy.</p>
+          </div>
+          <div class="flip-hint" style="color:var(--text-dim);">↺ Click to flip back</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="principle-card" tabindex="0" role="button" aria-label="Toggle card insights" data-card-index="2">
+      <div class="principle-inner">
+        <div class="principle-front">
+          <div class="icon card-icon">🥣</div>
+          <h3 class="card-title">Light Dinners</h3>
+          <p class="card-desc">Nutrient-rich soups and lean proteins designed to ease digestion.</p>
+          <div class="flip-hint">Click for Insights ↺</div>
+        </div>
+        <div class="principle-back">
+          <div>
+            <div class="icon" style="margin-bottom:8px;">💡</div>
+            <h3 class="tip-title" style="font-size:1.1rem; margin-bottom:6px;">Quick Tip</h3>
+            <p class="tip-desc" style="font-size:0.85rem;">Reduces nighttime metabolic load to improve your deep REM sleep.</p>
+          </div>
+          <div class="flip-hint" style="color:var(--text-dim);">↺ Click to flip back</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <div class="tip-of-day" id="tipOfDay">
+    <div class="tip-label">Tip of the day</div>
+    <p id="tipOfDayText">Warm lemon water before lunch can ease digestion.</p>
+  </div>
+
+  <div class="insights-ticker" id="insightsTicker">
+    <div class="ticker-badge">💡 Tip</div>
+    <div class="ticker-viewport">
+      <div class="ticker-track" id="tickerTrack">
+        <div class="ticker-item"><strong>Hydration:</strong> Warm water with lemon before lunch boosts your digestion.</div>
+        <div class="ticker-item"><strong>Protein:</strong> Combining legumes with grains creates complete plant proteins.</div>
+        <div class="ticker-item"><strong>Recovery:</strong> Light evening meals promote better sleep cycles and cellular repair.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="groceryModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Weekly Grocery Sheet</h3>
+      <button class="close-modal" id="closeModal">&times;</button>
+    </div>
+    <div class="modal-body" id="groceryContent"></div>
+    <div class="modal-footer">
+      <button class="btn-primary" onclick="window.print()" style="padding: 10px 20px; font-size:0.9rem;">🖨️ Print List</button>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <a class="brand" href="index.html" style="display:inline-block; margin-bottom:12px;">NutriFlow</a>
+        <p>Simplifying all-day whole-food meal planning for healthy families.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul class="footer-links">
+          <li><a href="index.html">Home Overview</a></li>
+          <li><a href="plan.html">Weekly Tracker</a></li>
+          <li><a href="recipes.html">Recipe Library</a></li>
+          <li><a href="analytics.html">Analytics</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Guidelines</h4>
+        <p>No pork or beef items. Rich in dietary fiber, clean proteins, and whole grains.</p>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <div>Weekly family meal system · Auto-resets every Monday</div>
+      <div>
+        &copy; 2026 All rights reserved. Developed by <span class="signature">Sumit Rajbanshi</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* Theme handled by js/theme-nav.js */
+
+  /* Menu handled by js/theme-nav.js */
+
+  (function () {
+    const PLAN = {
+      Monday: {
+        std: [
+          { name: "Overnight oats & berries", image: "https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=150&q=80" },
+          { name: "Rajma curry & brown rice", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" },
+          { name: "Vegetable soup & seeds", image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=150&q=80" }
+        ],
+        veg: [
+          { name: "Overnight oats & berries", image: "https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=150&q=80" },
+          { name: "Rajma curry & brown rice", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" },
+          { name: "Vegetable soup & seeds", image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=150&q=80" }
+        ]
+      },
+      Tuesday: {
+        std: [
+          { name: "Multigrain avocado toast", image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=150&q=80" },
+          { name: "Grilled chicken & rotis", image: "https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=150&q=80" },
+          { name: "Moong dal soup", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" }
+        ],
+        veg: [
+          { name: "Multigrain avocado toast", image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=150&q=80" },
+          { name: "Tofu stir-fry & rotis", image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=150&q=80" },
+          { name: "Moong dal soup", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" }
+        ]
+      },
+      Wednesday: {
+        std: [
+          { name: "Apple cinnamon oats", image: "https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=150&q=80" },
+          { name: "Chana dal & lauki sabzi", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" },
+          { name: "Grilled fish & steamed veg", image: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=150&q=80" }
+        ],
+        veg: [
+          { name: "Apple cinnamon oats", image: "https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=150&q=80" },
+          { name: "Chana dal & lauki sabzi", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" },
+          { name: "Paneer tikka & steamed veg", image: "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=150&q=80" }
+        ]
+      },
+      Thursday: {
+        std: [
+          { name: "Avocado herb toast", image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=150&q=80" },
+          { name: "Light fish curry & rice", image: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=150&q=80" },
+          { name: "Light egg curry", image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=150&q=80" }
+        ],
+        veg: [
+          { name: "Avocado herb toast", image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=150&q=80" },
+          { name: "Soy chunk curry & rice", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" },
+          { name: "Soya bhurji", image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=150&q=80" }
+        ]
+      },
+      Friday: {
+        std: [
+          { name: "Berry chia oats", image: "https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=150&q=80" },
+          { name: "Paneer bhurji & roti", image: "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=150&q=80" },
+          { name: "Chicken clear soup", image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=150&q=80" }
+        ],
+        veg: [
+          { name: "Berry chia oats", image: "https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=150&q=80" },
+          { name: "Paneer bhurji & roti", image: "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=150&q=80" },
+          { name: "Mushroom clear soup", image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=150&q=80" }
+        ]
+      },
+      Saturday: {
+        std: [
+          { name: "Multigrain toast", image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=150&q=80" },
+          { name: "Moong dal khichdi", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" },
+          { name: "Vegetable khichdi", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" }
+        ],
+        veg: [
+          { name: "Multigrain toast", image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=150&q=80" },
+          { name: "Moong dal khichdi", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" },
+          { name: "Vegetable khichdi", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" }
+        ]
+      },
+      Sunday: {
+        std: [
+          { name: "Nut butter oats", image: "https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=150&q=80" },
+          { name: "Chicken/Veg Pulao", image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=150&q=80" },
+          { name: "Light dal & spinach", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" }
+        ],
+        veg: [
+          { name: "Nut butter oats", image: "https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=150&q=80" },
+          { name: "Veg Pulao", image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=150&q=80" },
+          { name: "Light dal & spinach", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=150&q=80" }
+        ]
+      }
+    };
+
+    const today = new Date().toLocaleDateString("en-US", { weekday: "long" });
+    const todayTitle = document.getElementById("todayTitle");
+    const container = document.getElementById("todayChecklist");
+    const vegToggle = document.getElementById("vegToggle");
+
+    todayTitle.textContent = `Today's Menu (${today})`;
+
+    function renderChecklist() {
+      const mode = vegToggle.checked ? "veg" : "std";
+      const meals = (PLAN[today] || PLAN["Monday"])[mode];
+      const savedStates = JSON.parse(localStorage.getItem(`nutriFlowState_${today}`) || "[false, false, false]");
+
+      container.innerHTML = "";
+      meals.forEach((mealObj, idx) => {
+        const row = document.createElement("label");
+        row.className = `meal-item-row ${savedStates[idx] ? "completed" : ""}`;
+        
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = savedStates[idx];
+
+        cb.addEventListener("change", () => {
+          savedStates[idx] = cb.checked;
+          localStorage.setItem(`nutriFlowState_${today}`, JSON.stringify(savedStates));
+          row.classList.toggle("completed", cb.checked);
+          if (cb.checked) {
+            row.classList.remove("just-checked");
+            void row.offsetWidth;
+            row.classList.add("just-checked");
+          }
+          if (window.nutriUpdateHomeExtras) window.nutriUpdateHomeExtras();
+        });
+
+        const img = document.createElement("img");
+        img.src = mealObj.image;
+        img.alt = mealObj.name;
+        img.className = "meal-thumb";
+
+        const span = document.createElement("span");
+        const mealType = idx === 0 ? "Breakfast" : idx === 1 ? "Lunch" : "Dinner";
+        span.innerHTML = `<strong>${mealType}:</strong> ${mealObj.name}`;
+
+        row.appendChild(cb);
+        row.appendChild(img);
+        row.appendChild(span);
+        container.appendChild(row);
+      });
+    }
+
+    vegToggle.addEventListener("change", renderChecklist);
+    renderChecklist();
+  })();
+
+  // Unique Non-Overlapping Looping Cards with Slower, Comfortable Transition Speed
+  (function() {
+    const cardDataPool = [
+      { icon: "🥗", title: "Fibre & Protein", desc: "Balanced across meals to maintain steady energy and curb cravings.", tipTitle: "Quick Tip", tipDesc: "Slows digestion to keep your blood glucose steady all day long." },
+      { icon: "🌾", title: "Complex Grains", desc: "Wholesome oats and brown rice instead of refined white carbs.", tipTitle: "Energy Focus", tipDesc: "Retains B-complex vitamins to support daytime focus and energy." },
+      { icon: "🥣", title: "Light Dinners", desc: "Nutrient-rich soups and lean proteins designed to ease digestion.", tipTitle: "Rest Well", tipDesc: "Reduces nighttime metabolic load to improve your deep REM sleep." },
+      { icon: "🥑", title: "Healthy Fats", desc: "Avocados, nuts, and cold oils for sustained metabolic health.", tipTitle: "Brain Fuel", tipDesc: "Supports cellular membrane health and cognitive sharpness." },
+      { icon: "💧", title: "Hydration Flow", desc: "Consistent fluid distribution maintains physical performance.", tipTitle: "Daily Habit", tipDesc: "Drink fluids between meals rather than heavy gulps during eating." },
+      { icon: "🌱", title: "Clean Greens", desc: "Antioxidant-rich vegetables incorporated into every single lunch.", tipTitle: "Immune Boost", tipDesc: "High micronutrient density naturally fortifies daily wellness." }
+    ];
+
+    const cards = document.querySelectorAll('.principle-card');
+    // Keep track of current indices assigned to each card DOM element
+    let currentIndices = [0, 1, 2];
+
+    cards.forEach((card, index) => {
+      // Toggle flip on click / keyboard
+      card.addEventListener('click', (e) => {
+        if(e.target.closest('.flip-hint') || !e.target.closest('.principle-back')) {
+          card.classList.toggle('flipped');
+        }
+      });
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          card.classList.toggle('flipped');
+        }
+      });
+    });
+
+    // Loop every 11 seconds (slower interval) ensuring all 3 cards display unique items
+    setInterval(() => {
+      const frontElems = document.querySelectorAll('.principle-front');
+      const backElems = document.querySelectorAll('.principle-back');
+
+      // Add fade animation class
+      frontElems.forEach(el => el.classList.add('animating'));
+      backElems.forEach(el => el.classList.add('animating'));
+
+      setTimeout(() => {
+        // Pick 3 completely unique random indices from the pool
+        let availableIndices = [...Array(cardDataPool.length).keys()];
+        let newIndices = [];
+        for (let i = 0; i < cards.length; i++) {
+          // Filter out indices currently in use or already chosen in this round if pool allows
+          let validChoices = availableIndices.filter(idx => !newIndices.includes(idx) && idx !== currentIndices[i]);
+          if (validChoices.length === 0) validChoices = availableIndices.filter(idx => !newIndices.includes(idx));
+          if (validChoices.length === 0) validChoices = availableIndices; // fallback
+          
+          const chosenIdx = validChoices[Math.floor(Math.random() * validChoices.length)];
+          newIndices.push(chosenIdx);
+        }
+        currentIndices = newIndices;
+
+        cards.forEach((card, i) => {
+          const data = cardDataPool[currentIndices[i]];
+          card.querySelector('.card-icon').textContent = data.icon;
+          card.querySelector('.card-title').textContent = data.title;
+          card.querySelector('.card-desc').textContent = data.desc;
+          card.querySelector('.tip-title').textContent = data.tipTitle;
+          card.querySelector('.tip-desc').textContent = data.tipDesc;
+        });
+
+        // Remove fade animation class to fade back in smoothly
+        frontElems.forEach(el => el.classList.remove('animating'));
+        backElems.forEach(el => el.classList.remove('animating'));
+      }, 600); // matches slower transition duration
+
+    }, 11000); // 11 seconds interval per rotation cycle
+  })();
+
+  (function() {
+    const track = document.getElementById('tickerTrack');
+    if (!track) return;
+    const totalItems = track.children.length;
+    let currentIndex = 0;
+    setInterval(() => {
+      currentIndex = (currentIndex + 1) % totalItems;
+      track.style.transform = `translateY(-${currentIndex * 1.5}em)`;
+    }, 4500);
+  })();
+
+  (function() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('reveal');
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.principle-card, .insights-ticker').forEach(card => observer.observe(card));
+  })();
+
+  (function() {
+    const modal = document.getElementById('groceryModal');
+    const openBtn = document.getElementById('groceryBtn');
+    const closeBtn = document.getElementById('closeModal');
+    const content = document.getElementById('groceryContent');
+
+    const ingredients = {
+      "Produce & Veggies": ["Avocados", "Fresh Berries", "Lauki (Bottle Gourd)", "Spinach", "Mushrooms"],
+      "Grains & Legumes": ["Rolled Oats", "Multigrain Bread", "Brown Rice", "Moong Dal", "Rajma"],
+      "Proteins & Dairy": ["Chicken Breasts", "Fresh Fish", "Eggs", "Paneer", "Tofu"]
+    };
+
+    openBtn.addEventListener('click', () => {
+      let html = "";
+      for (const [category, items] of Object.entries(ingredients)) {
+        html += `<strong style="color:var(--today);">${category}</strong><ul>`;
+        items.forEach(item => { html += `<li>${item}</li>`; });
+        html += `</ul>`;
+      }
+      content.innerHTML = html;
+      modal.classList.add('open');
+    });
+
+    closeBtn.addEventListener('click', () => modal.classList.remove('open'));
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
+  })();
+
+  (function () {
+    const canvas = document.getElementById('nodeCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let nodes = [], w, h, dpr;
+    const pointer = { x: -9999, y: -9999, active: false };
+
+    function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = canvas.clientWidth; h = canvas.clientHeight;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function initNodes() {
+      const count = Math.round((w * h) / 9000);
+      const colors = ['#F2CC8F', '#E07A5F', '#81B29A', '#6A93B0'];
+      nodes = Array.from({ length: Math.max(50, Math.min(count, 120)) }, () => {
+        const speed = 0.8 + Math.random() * 1.0;
+        const angle = Math.random() * Math.PI * 2;
+        return {
+          x: Math.random() * w, y: Math.random() * h,
+          vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+          baseSpeed: speed, radius: 2 + Math.random() * 2.5,
+          color: colors[Math.floor(Math.random() * colors.length)]
+        };
+      });
+    }
+
+    function renderFrame() {
+      ctx.clearRect(0, 0, w, h);
+      const lineColor = getComputedStyle(document.documentElement).getPropertyValue('--lunch').trim() || '#81B29A';
+
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const dx = nodes[i].x - nodes[j].x;
+          const dy = nodes[i].y - nodes[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 130) {
+            ctx.beginPath();
+            ctx.strokeStyle = lineColor;
+            ctx.globalAlpha = (1 - dist / 130) * 0.25;
+            ctx.lineWidth = 1;
+            ctx.moveTo(nodes[i].x, nodes[i].y);
+            ctx.lineTo(nodes[j].x, nodes[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      nodes.forEach(n => {
+        if (pointer.active) {
+          const dx = n.x - pointer.x;
+          const dy = n.y - pointer.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 180 && dist > 0) {
+            const force = (1 - dist / 180) * 8;
+            n.vx += (dx / dist) * force;
+            n.vy += (dy / dist) * force;
+          }
+        }
+
+        n.vx *= 0.95; n.vy *= 0.95;
+        const currentSpeed = Math.sqrt(n.vx * n.vx + n.vy * n.vy);
+        if (currentSpeed < n.baseSpeed) {
+          const angle = Math.atan2(n.vy, n.vx) || Math.random() * Math.PI * 2;
+          n.vx = Math.cos(angle) * n.baseSpeed;
+          n.vy = Math.sin(angle) * n.baseSpeed;
+        }
+
+        n.x += n.vx; n.y += n.vy;
+        if (n.x < 0) { n.x = 0; n.vx *= -1; }
+        if (n.x > w) { n.x = w; n.vx *= -1; }
+        if (n.y < 0) { n.y = 0; n.vy *= -1; }
+        if (n.y > h) { n.y = h; n.vy *= -1; }
+
+        ctx.beginPath();
+        ctx.fillStyle = n.color;
+        ctx.globalAlpha = 0.85;
+        ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      ctx.globalAlpha = 1;
+      if (document.visibilityState === 'visible') {
+        requestAnimationFrame(renderFrame);
+      }
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        requestAnimationFrame(renderFrame);
+      }
+    });
+
+    function updatePointer(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      pointer.x = clientX - rect.left;
+      pointer.y = clientY - rect.top;
+      pointer.active = true;
+    }
+
+    window.addEventListener('mousemove', updatePointer);
+    window.addEventListener('mouseleave', () => { pointer.active = false; });
+    window.addEventListener('touchstart', updatePointer, { passive: true });
+    window.addEventListener('touchmove', updatePointer, { passive: true });
+    window.addEventListener('touchend', () => { pointer.active = false; });
+    window.addEventListener('resize', () => { resize(); initNodes(); });
+
+    resize(); initNodes(); renderFrame();
+  })();
+
+  (function() {
+    const words = ["Live Better.", "Stay Healthy.", "Feel Energized.", "Eat Fresh."];
+    let wordIndex = 0;
+    let charIndex = words[0].length;
+    let isDeleting = false;
+    
+    const target = document.getElementById('typeText');
+    const cursor = document.getElementById('cursor');
+
+    function runTypewriterLoop() {
+      const current = words[wordIndex];
+
+      if (isDeleting) {
+        target.textContent = current.substring(0, charIndex - 1);
+        charIndex--;
+      } else {
+        target.textContent = current.substring(0, charIndex + 1);
+        charIndex++;
+      }
+
+      let speed = isDeleting ? 45 : 85;
+
+      if (!isDeleting && charIndex === current.length) {
+        speed = 2000;
+        isDeleting = true;
+      } else if (isDeleting && charIndex === 0) {
+        isDeleting = false;
+        wordIndex = (wordIndex + 1) % words.length;
+        speed = 350;
+      }
+
+      setTimeout(runTypewriterLoop, speed);
+    }
+
+    setTimeout(() => {
+      cursor.classList.add('active');
+      setTimeout(() => {
+        isDeleting = true;
+        runTypewriterLoop();
+      }, 1800);
+    }, 1400);
+  })();
+</script>
+
+<script>
+/* Home extras: day strip, progress ring, week teaser, tip, scroll cue */
+(function() {
+  const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+  const short = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  const todayName = days[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1];
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const tips = [
+    "Warm water with lemon before lunch can ease digestion.",
+    "Pair legumes with grains for complete plant proteins.",
+    "A lighter dinner often means deeper, steadier sleep.",
+    "Prep overnight oats once — breakfast is done for three mornings.",
+    "Drink fluids between meals rather than large gulps while eating.",
+    "Color on the plate usually means a wider micronutrient mix."
+  ];
+
+  function mealCount(day) {
+    try {
+      const s = JSON.parse(localStorage.getItem('nutriFlowState_' + day) || '[false,false,false]');
+      return s.filter(Boolean).length;
+    } catch (e) { return 0; }
+  }
+
+  function updateHomeExtras() {
+    const strip = document.getElementById('dayStrip');
+    if (strip) {
+      strip.innerHTML = days.map((d, i) => {
+        const n = mealCount(d);
+        const cls = ['day-pill'];
+        if (d === todayName) cls.push('today');
+        if (n > 0) cls.push('logged');
+        return '<div class="' + cls.join(' ') + '" title="' + d + ': ' + n + '/3 meals"><span>' + short[i] + '</span><span class="day-dot"></span></div>';
+      }).join('');
+    }
+
+    const done = mealCount(todayName);
+    const ring = document.getElementById('todayRingFill');
+    const label = document.getElementById('todayRingLabel');
+    const text = document.getElementById('todayProgressText');
+    const circ = 2 * Math.PI * 21;
+    if (ring) {
+      const offset = circ - (done / 3) * circ;
+      ring.style.strokeDasharray = String(circ);
+      ring.style.strokeDashoffset = String(offset);
+    }
+    if (label) label.textContent = done + '/3';
+    if (text) {
+      text.innerHTML = done === 3
+        ? '<strong>Today complete</strong><br>Nice work — full plate logged'
+        : '<strong>Today\'s plate</strong><br>' + (3 - done) + ' meal' + (3-done===1?'':'s') + ' left to log';
+    }
+
+    let completed = 0;
+    days.forEach(d => { completed += mealCount(d); });
+    const rate = Math.round((completed / 21) * 100);
+    const teaser = document.getElementById('weekTeaserText');
+    if (teaser) {
+      teaser.innerHTML = completed === 0
+        ? 'This week: tracking starts when you log meals on <strong>Plan</strong>.'
+        : 'This week you\'re at <strong>' + rate + '%</strong> adherence (' + completed + '/21 meals).';
+    }
+  }
+  window.nutriUpdateHomeExtras = updateHomeExtras;
+  updateHomeExtras();
+
+  // Tip of the day — rotate gently
+  const tipEl = document.getElementById('tipOfDay');
+  const tipText = document.getElementById('tipOfDayText');
+  let tipIdx = new Date().getDate() % tips.length;
+  function showTip() {
+    if (!tipText || !tipEl) return;
+    tipEl.classList.remove('visible');
+    setTimeout(function() {
+      tipText.textContent = tips[tipIdx % tips.length];
+      tipEl.classList.add('visible');
+      tipIdx++;
+    }, reduce ? 0 : 280);
+  }
+  showTip();
+  if (!reduce) setInterval(showTip, 10000);
+
+  // Scroll cue
+  const cue = document.getElementById('scrollCue');
+  if (cue) {
+    cue.addEventListener('click', function() {
+      const target = document.getElementById('principlesGrid');
+      if (target) target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    });
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 80) cue.classList.add('hidden');
+    }, { passive: true });
+  }
+})();
+</script>
+
+<script src="js/theme-nav.js" defer></script>
+</body>
+</html>
